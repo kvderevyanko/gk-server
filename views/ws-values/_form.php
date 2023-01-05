@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\bootstrap\Modal;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\WsValues */
@@ -18,6 +19,12 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'defaultBuffer')->textInput() ?>
+
+    <?php Modal::begin([
+        'size' => Modal::SIZE_LARGE,
+        'id' => 'fullSettings'
+    ]) ?>
+
     <?= $form->field($model, 'buffer')->textInput() ?>
 
     <?= $form->field($model, 'mode')->dropDownList(\app\models\WsValues::$modeList) ?>
@@ -31,6 +38,13 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'gradientColor')->textarea(['rows' => 6]) ?>
 
     <?= $form->field($model, 'modeOptions')->textInput(['maxlength' => true]) ?>
+
+    <?php Modal::end() ?>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#fullSettings">
+        Все настройки
+    </button>
+    <hr />
 
     <?= $form->field($model, 'home')->checkbox() ?>
     <?= $form->field($model, 'active')->checkbox() ?>
