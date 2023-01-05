@@ -1,10 +1,3 @@
-Создаём пользователя с рут правами
-========================
-
-Примерная инструкция - `https://www.digitalocean.com/community/tutorials/how-to-create-a-new-sudo-enabled-user-on-ubuntu-18-04-quickstart-ru`
-
-Входим под этим пользователем на микрокомпьютер.
-
 Настройка микрокомпьютера
 ========================
 
@@ -31,7 +24,7 @@
 Возвращаемся обратно к пользователю, клонируем репозиторий в нужную нам папку, подтягиваем зависимости
 
     cd /var/www/html
-    git clone https://kvderevyanko@bitbucket.org/kvderevyanko/dacha.git .
+    git clone https://github.com/kvderevyanko/gk-server .
     composer update
 
 Запускаем команды для yii. При запуске команды app/start в консоль выведется инструкция, что  нужно сделать (задание для
@@ -76,21 +69,20 @@
 
 
 
-
-
-
-
 Получение температуры для крона:  
-php yii device/temperature  
+
+    php yii device/temperature  
 
 cron каждые 10 минут
-*/10 * * * * php  /var/www/html/yii device/temperature
+
+    */10 * * * * php  /var/www/html/yii device/temperature
 
 
 
-* * * * * php  /var/www/html/yii device/motor
-* * * * * sleep 30; php  /var/www/html/yii device/motor
+    * * * * * php  /var/www/html/yii device/motor
+    * * * * * sleep 30; php  /var/www/html/yii device/motor
 
 
-* * * * * php  /var/www/html/yii command
+
+    * * * * * php  /var/www/html/yii command
 
