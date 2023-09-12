@@ -66,8 +66,8 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $devices = Device::findAll(['active' => Device::STATUS_ACTIVE]);
-        return $this->render('index', ['devices' => $devices]);
+        //$devices = Device::findAll(['active' => Device::STATUS_ACTIVE]);
+        return $this->render('index');
     }
 
     /**

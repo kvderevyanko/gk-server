@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Device;
 use Yii;
 use app\models\WsValues;
 use yii\data\ActiveDataProvider;
@@ -36,7 +37,9 @@ class WsValuesController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => WsValues::find(),
+            'query' => WsValues::find()
+                ->leftJoin(Device::tableName(), Device::tableName().".id = ".WsValues::tableName().".deviceId")
+                ->andWhere([Device::tableName().".active" => Device::STATUS_ACTIVE]),
         ]);
 
         return $this->render('index', [

@@ -20,7 +20,7 @@ use yii\web\Controller;
 class SettingsController extends Controller
 {
     /**
-     * @return string
+     * @return string|\yii\web\Response
      */
     public function actionIndex(){
         $settings = Settings::find()->all();

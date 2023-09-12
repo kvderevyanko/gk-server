@@ -3,6 +3,8 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
+use app\components\widgets\SettingValueWidget;
+use app\models\Settings;
 use app\widgets\Alert;
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
@@ -29,7 +31,7 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => Yii::$app->name,
+        'brandLabel' => SettingValueWidget::widget(['key' => Settings::SITE_NAME]),
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
@@ -50,7 +52,7 @@ AppAsset::register($this);
                     ['label' => 'Настройка GPIO', 'url' => ['/gpio/index']],
                     //['label' => 'Настройка Термометра', 'url' => ['/dht/index']],
                     //['label' => 'Управление SSD 1306', 'url' => ['/ssd1306/default/index']],
-                    //['label' => 'Дополнительные настройки', 'url' => ['/settings/index']],
+                    ['label' => 'Дополнительные настройки', 'url' => ['/settings/index']],
                     //['label' => 'Джойстик', 'url' => ['/gamepad/index']],
                 ]
             ],

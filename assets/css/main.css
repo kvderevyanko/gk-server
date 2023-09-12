@@ -179,3 +179,11 @@ input:checked + .checkBoxSlider:before {
 .checkBoxSlider.round:before {
     border-radius: 50%;
 }
+
+.m-b-15 {
+    margin-bottom: 15px;
+}
+
+.m-t-15 {
+    margin-top: 15px;
+}

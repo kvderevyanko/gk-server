@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Commands;
+use app\models\Device;
 use Yii;
 use app\models\Gpio;
 use yii\data\ActiveDataProvider;
@@ -38,7 +39,9 @@ class GpioController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Gpio::find(),
+            'query' => Gpio::find()
+                ->leftJoin(Device::tableName(), Device::tableName().".id = ".Gpio::tableName().".deviceId")
+                ->andWhere([Device::tableName().".active" => Device::STATUS_ACTIVE]),
         ]);
 
         return $this->render('index', [

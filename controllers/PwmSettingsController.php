@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Device;
 use Yii;
 use app\models\PwmSettings;
 use yii\data\ActiveDataProvider;
@@ -36,7 +37,9 @@ class PwmSettingsController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => PwmSettings::find(),
+            'query' => PwmSettings::find()
+                ->leftJoin(Device::tableName(), Device::tableName().".id = ".PwmSettings::tableName().".deviceId")
+                ->andWhere([Device::tableName().".active" => Device::STATUS_ACTIVE]),
         ]);
 
         return $this->render('index', [

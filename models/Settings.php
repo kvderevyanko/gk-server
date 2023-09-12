@@ -16,6 +16,7 @@ class Settings extends \yii\db\ActiveRecord
 {
 
     const MOTOR_INTERVAL = 'motor_interval';
+    const SITE_NAME = 'site_name';
 
     /**
      * {@inheritdoc}
