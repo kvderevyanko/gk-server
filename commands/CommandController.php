@@ -3,6 +3,7 @@
 namespace app\commands;
 
 use app\models\Commands;
+use app\models\Device;
 use app\models\Dht;
 use app\models\Gpio;
 use yii\console\Controller;
@@ -19,10 +20,15 @@ class CommandController extends Controller
 
     /**
      * Базовая команда
+     * @return void
      */
     public function actionIndex()
     {
-        $commands = Commands::find()->where(['active' => true])->orderBy(['conditionSort' => SORT_ASC])->all();
+        $commands = Commands::find()->where([Commands::tableName().'.active' => true])
+            ->orderBy([Commands::tableName().'.conditionSort' => SORT_ASC])
+            ->leftJoin(Device::tableName(), Device::tableName().".id = ".Commands::tableName().".deviceId")
+            ->andWhere([Device::tableName().".active" => Device::STATUS_ACTIVE])
+            ->all();
         $commands = ArrayHelper::toArray($commands);
         $commands = ArrayHelper::index($commands, function ($element) {
             return $element['id'];
