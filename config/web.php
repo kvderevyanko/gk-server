@@ -59,6 +59,21 @@ $config = [
         'ssd1306' => [
             'class' => 'app\modules\ssd1306\Module',
         ],
+        'gpio' => [
+            'class' => 'app\modules\gpio\Module',
+        ],
+        'pwm' => [
+            'class' => 'app\modules\pwm\Module',
+        ],
+        'ws' => [
+            'class' => 'app\modules\ws\Module',
+        ],
+        'dht' => [
+            'class' => 'app\modules\dht\Module',
+        ],
+        'gamepad' => [
+            'class' => 'app\modules\gamepad\Module',
+        ],
     ],
     'params' => $params,
 ];

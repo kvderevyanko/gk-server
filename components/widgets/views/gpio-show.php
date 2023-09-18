@@ -2,7 +2,7 @@
 
 /* @var $this \yii\web\View */
 /* @var $gpioValues array */
-/* @var $gpio \app\models\Gpio */
+/* @var $gpio \modules\gpio\models\Gpio */
 ?>
     <div class="col-sm-6">
 <h4>GPIO</h4>

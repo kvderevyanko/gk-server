@@ -2,7 +2,9 @@
 
 namespace app\models;
 
-use Yii;
+use modules\gpio\models\Gpio;
+use modules\pwm\models\PwmSettings;
+use modules\pwm\models\PwmValues;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -114,7 +116,7 @@ class Device extends \yii\db\ActiveRecord
         foreach ($pwmValues as $values)
             $values->delete();
 
-        $wsValues = WsValues::findAll(['deviceId' => $this->id]);
+        $wsValues = DbWsValues::findAll(['deviceId' => $this->id]);
         foreach ($wsValues as $ws)
             $ws->delete();
 

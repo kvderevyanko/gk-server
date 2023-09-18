@@ -2,7 +2,7 @@
 
 /* @var $this \yii\web\View */
 /* @var $pwmValues array */
-/* @var $pwm \app\models\PwmValues */
+/* @var $pwm \modules\pwm\models\PwmValues */
 ?>
     <div class="col-sm-6">
 <h4>PWM</h4>

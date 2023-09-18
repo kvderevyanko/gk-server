@@ -4,10 +4,9 @@ namespace app\commands;
 
 use app\components\widgets\SettingValueWidget;
 use app\models\Dht;
-use app\models\Gpio;
 use app\models\Settings;
+use modules\gpio\models\Gpio;
 use yii\console\Controller;
-use yii\console\ExitCode;
 
 /**
  * Установка параметров по крону

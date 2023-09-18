@@ -5,7 +5,6 @@ namespace app\components\widgets;
 
 
 use app\models\Dht;
-use app\models\PwmValues;
 use yii\base\Widget;
 
 class DhtShowWidget extends Widget

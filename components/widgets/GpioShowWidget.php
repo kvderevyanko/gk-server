@@ -4,8 +4,8 @@
 namespace app\components\widgets;
 
 
-use app\models\Gpio;
-use app\models\PwmValues;
+use modules\gpio\models\Gpio;
+use modules\pwm\models\PwmValues;
 use yii\base\Widget;
 
 class GpioShowWidget extends Widget

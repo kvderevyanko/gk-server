@@ -4,10 +4,9 @@ namespace app\controllers;
 
 
 use app\models\Dht;
-use app\models\Gpio;
-use app\models\PwmValues;
-use app\models\WsValues;
-use yii\helpers\ArrayHelper;
+use app\models\DbWsValues;
+use modules\gpio\models\Gpio;
+use modules\pwm\models\PwmValues;
 use yii\helpers\Json;
 use yii\web\Controller;
 
@@ -44,7 +43,7 @@ class CommandsController extends Controller
     }
 
     public function actionWs($deviceId){
-        $ws = WsValues::findOne(['deviceId' => $deviceId]);
+        $ws = DbWsValues::findOne(['deviceId' => $deviceId]);
         if($ws) {
             $ws->attributes = \Yii::$app->request->get();
             if($ws->delay < 5)
@@ -54,7 +53,7 @@ class CommandsController extends Controller
             if(!$ws->save()){
                 return Json::encode($ws->errors);
             }
-            return WsValues::sendRequest($deviceId);
+            return DbWsValues::sendRequest($deviceId);
         }
         return 'error';
     }

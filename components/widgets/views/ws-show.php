@@ -1,12 +1,11 @@
 <?php
 
+use app\models\DbWsValues;
 use yii\helpers\Html;
-use app\models\WsValues;
-use yii\bootstrap\Modal;
 
 /* @var $this \yii\web\View */
 /* @var $wsValues array */
-/* @var $ws \app\models\WsValues */
+/* @var $ws \app\models\DbWsValues */
 
 \app\components\widgets\assets\WsAsset::register($this);
 ?>
@@ -16,7 +15,7 @@ use yii\bootstrap\Modal;
 <div id="ws_block_<?=$ws->deviceId?>" class="ws_block">
     <label><?=$ws->name?> / <?=$ws->device->name?> / <?=$ws->defaultBuffer?></label><br>
     <label>Режим</label>
-    <?=Html::dropDownList('mode', $ws->mode, WsValues::$modeList, ['class' => 'form-control', 'data-device' => $ws->deviceId])?><br>
+    <?=Html::dropDownList('mode', $ws->mode, DbWsValues::$modeList, ['class' => 'form-control', 'data-device' => $ws->deviceId])?><br>
     <label>Количество диодов</label>
     <div class="slider_block">
     <input

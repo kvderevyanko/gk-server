@@ -4,8 +4,7 @@
 namespace app\components\widgets;
 
 
-use app\models\PwmValues;
-use app\models\WsValues;
+use app\models\DbWsValues;
 use yii\base\Widget;
 
 class WsShowWidget extends Widget
@@ -15,7 +14,7 @@ class WsShowWidget extends Widget
 
     public function run()
     {
-        $wsValues = WsValues::find()->where(['active' => WsValues::STATUS_ACTIVE]);
+        $wsValues = DbWsValues::find()->where(['active' => DbWsValues::STATUS_ACTIVE]);
         if($this->deviceId)
             $wsValues->andWhere(['deviceId' => $this->deviceId]);
         if($this->mainPage)

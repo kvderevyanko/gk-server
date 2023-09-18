@@ -4,7 +4,7 @@
 namespace app\components\widgets;
 
 
-use app\models\PwmValues;
+use modules\pwm\models\PwmValues;
 use yii\base\Widget;
 
 class PwmShowWidget extends Widget

@@ -3,11 +3,7 @@
 namespace app\controllers;
 
 
-use app\models\Dht;
-use app\models\Gpio;
-use app\models\PwmValues;
 use app\models\Settings;
-use app\models\WsValues;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 

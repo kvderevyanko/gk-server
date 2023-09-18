@@ -4,10 +4,8 @@ namespace app\commands;
 
 use app\models\Commands;
 use app\models\Device;
-use app\models\Dht;
-use app\models\Gpio;
+use modules\gpio\models\Gpio;
 use yii\console\Controller;
-use yii\console\ExitCode;
 use yii\helpers\ArrayHelper;
 
 /**
