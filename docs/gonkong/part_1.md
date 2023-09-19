@@ -106,8 +106,11 @@ blank4.bin - пустой файл для перезаписи всей памя
 Для остальных операционок - смотрите <a href="https://nodemcu.readthedocs.io/en/latest/flash/" target="_blank">здесь</a>.
 
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/kqvMylgm9yo?si=X5vTN4bPE-6Em0U3" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-
+<iframe width="560" height="315"
+src="https://www.youtube.com/embed/kqvMylgm9yo?si=X5vTN4bPE-6Em0U3"
+frameborder="0"
+allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+allowfullscreen></iframe>
 
 Если залили прошивку - мы молодцы. Это была самая сложная часть, с которой стоит раз разобраться, запомнить, и потом не возникнет трудностей.
 Для заливки файлов на микроконтроллер используем программу <a href="https://esp8266.ru/esplorer/" target="_blank">ESPlorer</a>. 
