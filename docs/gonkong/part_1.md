@@ -105,7 +105,9 @@ blank4.bin - пустой файл для перезаписи всей памя
 вместо /dev/ttyUSB0. На убунте такой по умолчанию, если не подключены ещё какие то устройства. 
 Для остальных операционок - смотрите <a href="https://nodemcu.readthedocs.io/en/latest/flash/" target="_blank">здесь</a>.
 
+
 <iframe width="560" height="315" src="https://www.youtube.com/embed/kqvMylgm9yo?si=X5vTN4bPE-6Em0U3" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
 
 Если залили прошивку - мы молодцы. Это была самая сложная часть, с которой стоит раз разобраться, запомнить, и потом не возникнет трудностей.
 Для заливки файлов на микроконтроллер используем программу <a href="https://esp8266.ru/esplorer/" target="_blank">ESPlorer</a>. 
@@ -117,7 +119,9 @@ blank4.bin - пустой файл для перезаписи всей памя
 
 И так, после прошивки запускаем ESPlorer. Если всё ок, то сверху в выпадающем списке будет отображаться порт NodeMcu,   кликаем Open (на самом микроконтроллере скорее всего нужно будет нажать кнопку reset). И в итоге получаем лог с информацией о прошивке.
 
+
 <iframe width="560" height="315" src="https://www.youtube.com/embed/1M45IY8E-GA?si=cNqDHTymay3zMnzQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
 
 Задержка, в отличии от ардуины, где она вызывается через delay(), здесь вызывается через таймеры. С одной стороны кажется что это сложно, но с другой стороны - можно без проблем запустить до 7 таймеров, которые будут выполнять асинхронный код без танцев с бубнами. Про это тоже позже расскажу.
 
