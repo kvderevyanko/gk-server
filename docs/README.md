@@ -7,3 +7,4 @@
 --------------
 
 * [NodeMCU на ESP8266 - введение](gonkong/part_1.md)
+* [Запуск сервера на ESP8266 и управление GPIO и PWM через web интерефейс](gonkong/part_2.md)
