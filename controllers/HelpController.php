@@ -35,7 +35,7 @@ class HelpController extends Controller
     }
 
     /**
-     * Приходят параметры документа. Находим документ, приводим маркдаун к html, саменяем ссылки, обрабатываем изображения
+     * Приходят параметры документа. Находим документ, приводим маркдаун к html, заменяем ссылки, обрабатываем изображения
      * @param string $docName
      * @param string $folder
      * @param string $fileFolder
@@ -97,8 +97,6 @@ class HelpController extends Controller
             return $link;
 
         return Url::to(['index', 'docName' => $link, 'folder' => $fileFolder]);
-
-       // return $link;
     }
 
     /**
@@ -112,7 +110,6 @@ class HelpController extends Controller
      */
     private function mdFileReplace($link, $folder, $fileFolder)
     {
-        echo $fileFolder. " \n \n <br>\n ";
         //Делаем проверку на картинку, если есть - изображение копируем в web/assets, и возвращаем урл на него
         $checkImage = stripos(trim($link), "image");
         if ($checkImage === 0) {
@@ -125,9 +122,7 @@ class HelpController extends Controller
 
 
             if (!file_exists($dirCopy . $link)) {
-                //echo 'Нет файла - ' . $dirCopy . $link . " \n \n <br>\n ";
                 $originalFile = Yii::getAlias('@app/docs') . $fileFolder . $link;
-                //echo $originalFile."\n";
 
                 if (file_exists($originalFile)) {
                     /*Если файл имеет дирректорию типа images/date-course-group.png, получаем дирректорию,
