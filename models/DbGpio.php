@@ -21,6 +21,8 @@ use yii\web\NotFoundHttpException;
  */
 class DbGpio extends \yii\db\ActiveRecord
 {
+    const STATUS_ACTIVE = 1;
+    const STATUS_NO_ACTIVE = 0;
 
     /**
      * {@inheritdoc}

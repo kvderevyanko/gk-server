@@ -10,14 +10,6 @@ use yii\httpclient\Client;
 class Dht extends \app\models\Dht
 {
 
-
-    const STATUS_ACTIVE = 1;
-    const STATUS_NO_ACTIVE = 0;
-
-
-
-
-
     public function lastTemperature(){
         $temperatureInfo = TemperatureInfo::find()->where(['deviceId' => $this->deviceId])->orderBy(['id' => SORT_DESC])->one();
         return $temperatureInfo;

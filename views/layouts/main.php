@@ -41,6 +41,7 @@ AppAsset::register($this);
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             ['label' => 'Главная', 'url' => ['/site/index']],
+            ['label' => 'Справка', 'url' => ['/help/index']],
             [
                 'label' => 'Настройки',
                 'url' => '#',
