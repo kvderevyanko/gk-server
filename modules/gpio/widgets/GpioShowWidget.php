@@ -1,11 +1,9 @@
 <?php
 
 
-namespace app\components\widgets;
+namespace app\modules\gpio\widgets;
 
-
-use modules\gpio\models\Gpio;
-use modules\pwm\models\PwmValues;
+use app\modules\gpio\models\Gpio;
 use yii\base\Widget;
 
 class GpioShowWidget extends Widget
@@ -16,7 +14,7 @@ class GpioShowWidget extends Widget
 
     public function run()
     {
-        $gpioValues = Gpio::find()->where(['active' => PwmValues::STATUS_ACTIVE]);
+        $gpioValues = Gpio::find()->where(['active' => Gpio::STATUS_ACTIVE]);
         if($this->deviceId)
             $gpioValues->andWhere(['deviceId' => $this->deviceId]);
         if($this->mainPage)

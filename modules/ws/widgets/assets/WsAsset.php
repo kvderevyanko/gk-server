@@ -1,7 +1,7 @@
 <?php
 
 
-namespace app\components\widgets\assets;
+namespace app\modules\ws\widgets\assets;
 
 use yii\web\AssetBundle;
 

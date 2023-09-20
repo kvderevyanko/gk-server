@@ -3,10 +3,10 @@
 namespace app\controllers;
 
 
-use app\models\Dht;
 use app\models\DbWsValues;
-use modules\gpio\models\Gpio;
-use modules\pwm\models\PwmValues;
+use app\modules\gpio\models\Gpio;
+use app\modules\pwm\models\PwmValues;
+use modules\dht\models\Dht;
 use yii\helpers\Json;
 use yii\web\Controller;
 

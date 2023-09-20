@@ -2,7 +2,7 @@
 
 namespace app\modules\dht\controllers;
 
-use app\models\Dht;
+use app\models\DbDht;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\VerbFilter;
@@ -36,7 +36,7 @@ class DhtController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Dht::find(),
+            'query' => DbDht::find(),
         ]);
 
         return $this->render('index', [
@@ -64,7 +64,7 @@ class DhtController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Dht();
+        $model = new DbDht();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -113,12 +113,12 @@ class DhtController extends Controller
      * Finds the Dht model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Dht the loaded model
+     * @return DbDht the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Dht::findOne($id)) !== null) {
+        if (($model = DbDht::findOne($id)) !== null) {
             return $model;
         }
 

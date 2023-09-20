@@ -10,10 +10,10 @@ $this->title = 'Главная';
 ?>
 <div class="row">
 
-     <?php /*=\app\components\widgets\DeviceBtnWidget::widget()?>
-     <?php  =\app\components\widgets\WsShowWidget::widget(['mainPage' => true])?>
-     <?php =\app\components\widgets\DhtShowWidget::widget(['mainPage' => true])?>
-    <?php =\app\components\widgets\PwmShowWidget::widget(['mainPage' => true])?>
-     <?php =\app\components\widgets\GpioShowWidget::widget(['mainPage' => true]) */?>
+     <?=\app\components\widgets\DeviceBtnWidget::widget()?>
+     <?=\app\modules\ws\widgets\WsShowWidget::widget(['mainPage' => true])?>
+     <?=\app\modules\dht\widgets\DhtShowWidget::widget(['mainPage' => true])?>
+    <?=\app\modules\pwm\widgets\PwmShowWidget::widget(['mainPage' => true])?>
+     <?=\app\modules\gpio\widgets\GpioShowWidget::widget(['mainPage' => true]) ?>
 </div>
 

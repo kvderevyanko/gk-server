@@ -7,7 +7,7 @@ use PHPUnit\Exception;
 use yii\helpers\Json;
 use yii\httpclient\Client;
 
-class Dht extends \app\models\Dht
+class Dht extends \app\models\DbDht
 {
 
     public function lastTemperature(){

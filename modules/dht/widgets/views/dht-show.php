@@ -2,7 +2,7 @@
 
 /* @var $this \yii\web\View */
 /* @var $dhts array */
-/* @var $dht \app\models\Dht */
+/* @var $dht \app\models\DbDht */
 ?>
     <div class="col-sm-12">
 <h4>Температура</h4>

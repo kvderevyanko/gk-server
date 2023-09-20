@@ -2,7 +2,7 @@
 
 namespace app\modules\dht\controllers;
 
-use app\models\TemperatureInfo;
+use app\models\DbTemperatureInfo;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\VerbFilter;
@@ -36,7 +36,7 @@ class TemperatureInfoController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => TemperatureInfo::find(),
+            'query' => DbTemperatureInfo::find(),
         ]);
 
         return $this->render('index', [
@@ -64,7 +64,7 @@ class TemperatureInfoController extends Controller
      */
     public function actionCreate()
     {
-        $model = new TemperatureInfo();
+        $model = new DbTemperatureInfo();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -113,12 +113,12 @@ class TemperatureInfoController extends Controller
      * Finds the TemperatureInfo model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return TemperatureInfo the loaded model
+     * @return DbTemperatureInfo the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = TemperatureInfo::findOne($id)) !== null) {
+        if (($model = DbTemperatureInfo::findOne($id)) !== null) {
             return $model;
         }
 

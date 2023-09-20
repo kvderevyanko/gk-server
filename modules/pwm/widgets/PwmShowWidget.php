@@ -1,10 +1,10 @@
 <?php
 
 
-namespace app\components\widgets;
+namespace app\modules\pwm\widgets;
 
 
-use modules\pwm\models\PwmValues;
+use app\modules\pwm\models\PwmValues;
 use yii\base\Widget;
 
 class PwmShowWidget extends Widget

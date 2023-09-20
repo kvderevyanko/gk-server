@@ -9,9 +9,7 @@ use yii\base\Widget;
 
 class SettingValueWidget extends Widget
 {
-
     public $key;
-
     public function run()
     {
         $setting = Settings::findOne(['key' => $this->key]);

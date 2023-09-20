@@ -7,7 +7,7 @@ use yii\helpers\Html;
 /* @var $wsValues array */
 /* @var $ws \app\models\DbWsValues */
 
-\app\components\widgets\assets\WsAsset::register($this);
+\app\modules\ws\widgets\assets\WsAsset::register($this);
 ?>
     <div class="col-sm-6">
 <h4>WS2812</h4>

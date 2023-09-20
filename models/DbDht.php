@@ -16,7 +16,7 @@ use yii\httpclient\Client;
  * @property bool|null $active
  * @property bool|null $home
  */
-class Dht extends \yii\db\ActiveRecord
+class DbDht extends \yii\db\ActiveRecord
 {
     const STATUS_ACTIVE = 1;
     const STATUS_NO_ACTIVE = 0;

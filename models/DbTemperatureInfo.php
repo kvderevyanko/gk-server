@@ -11,7 +11,7 @@ namespace app\models;
  * @property float|null $humidity
  * @property int|null $datetime
  */
-class TemperatureInfo extends \yii\db\ActiveRecord
+class DbTemperatureInfo extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}

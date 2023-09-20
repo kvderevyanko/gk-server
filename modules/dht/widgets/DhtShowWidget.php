@@ -1,10 +1,10 @@
 <?php
 
 
-namespace app\components\widgets;
+namespace app\modules\dht\widgets;
 
 
-use app\models\Dht;
+use app\models\DbDht;
 use yii\base\Widget;
 
 class DhtShowWidget extends Widget
@@ -15,7 +15,7 @@ class DhtShowWidget extends Widget
     public function run()
     {
 
-        $dhts = Dht::find()->where(['active' => Dht::STATUS_ACTIVE]);
+        $dhts = DbDht::find()->where(['active' => DbDht::STATUS_ACTIVE]);
         if($this->deviceId)
             $dhts->andWhere(['deviceId' => $this->deviceId]);
         if($this->mainPage)

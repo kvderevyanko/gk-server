@@ -1,10 +1,6 @@
 <?php
 
 namespace app\models;
-
-use modules\gpio\models\Gpio;
-use modules\pwm\models\PwmSettings;
-use modules\pwm\models\PwmValues;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -99,20 +95,15 @@ class Device extends \yii\db\ActiveRecord
         return 'АХТУНГ!!! Основное устройство не найдено';
     }
 
-    public function getPwmSettings()
-    {
-        return $this->hasOne(PwmSettings::className(), ['deviceId' => 'id']);
-    }
-
     public function afterDelete()
     {
         parent::afterDelete();
 
-        $pwmSettings = PwmSettings::findAll(['deviceId' => $this->id]);
+        $pwmSettings = DbPwmSettings::findAll(['deviceId' => $this->id]);
         foreach ($pwmSettings as $settings)
             $settings->delete();
 
-        $pwmValues = PwmValues::findAll(['deviceId' => $this->id]);
+        $pwmValues = DbPwmValues::findAll(['deviceId' => $this->id]);
         foreach ($pwmValues as $values)
             $values->delete();
 
@@ -120,11 +111,11 @@ class Device extends \yii\db\ActiveRecord
         foreach ($wsValues as $ws)
             $ws->delete();
 
-        $gpioValues = Gpio::findAll(['deviceId' => $this->id]);
+        $gpioValues = DbGpio::findAll(['deviceId' => $this->id]);
         foreach ($gpioValues as $gpio)
             $gpio->delete();
 
-        $dhtDevices = Dht::findAll(['deviceId' => $this->id]);
+        $dhtDevices = DbDht::findAll(['deviceId' => $this->id]);
         foreach ($dhtDevices as $dht)
             $dht->delete();
 

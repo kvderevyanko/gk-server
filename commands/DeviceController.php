@@ -3,7 +3,7 @@
 namespace app\commands;
 
 use app\components\widgets\SettingValueWidget;
-use app\models\Dht;
+use app\models\DbDht;
 use app\models\Settings;
 use modules\gpio\models\Gpio;
 use yii\console\Controller;
@@ -21,9 +21,9 @@ class DeviceController extends Controller
      */
     public function actionTemperature()
     {
-        $dhts = Dht::findAll(['active' => Dht::STATUS_ACTIVE]);
+        $dhts = DbDht::findAll(['active' => DbDht::STATUS_ACTIVE]);
         foreach ($dhts as $dht){
-            Dht::sendRequest($dht->deviceId);
+            DbDht::sendRequest($dht->deviceId);
         }
     }
 
