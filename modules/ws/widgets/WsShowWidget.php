@@ -18,7 +18,6 @@ class WsShowWidget extends Widget
             $wsValues->andWhere(['deviceId' => $this->deviceId]);
         if($this->mainPage)
             $wsValues->andWhere(['home' => true]);
-
         $wsValues = $wsValues->all();
 
         if(count($wsValues) < 1)

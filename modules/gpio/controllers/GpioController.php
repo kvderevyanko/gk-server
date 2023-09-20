@@ -81,11 +81,9 @@ class GpioController extends Controller
     }
 
     /**
-     * Updates an existing Gpio model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return string|\yii\web\Response
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
@@ -133,7 +131,8 @@ class GpioController extends Controller
             return $this->redirect(['index', 'id' => $model->id]);
         }
 
-        $commands = Commands::find()->where(['deviceId' => $model->deviceId, 'pin' => $model->pin])
+        $commands = Commands::find()
+            ->where(['deviceId' => $model->deviceId, 'pin' => $model->pin])
             ->orderBy(['conditionSort' => SORT_ASC])->all();
 
         return $this->render('update', [

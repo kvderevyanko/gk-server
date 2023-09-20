@@ -7,7 +7,7 @@ use yii\web\AssetBundle;
 
 class WsAsset extends AssetBundle
 {
-    public $sourcePath = '@app/components/widgets/assets/';
+    public $sourcePath = '@app/modules/ws/widgets/assets/';
 
 
     public $css = [

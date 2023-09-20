@@ -54,7 +54,7 @@ AppAsset::register($this);
                             ['label' => 'Настройка PWM пинов', 'url' => ['/pwm/pwm-values/index']],
                         ]
                     ],
-                    ['label' => 'Настройка WS', 'url' => ['/ws-values/index']],
+                    ['label' => 'Настройка WS', 'url' => ['/ws/ws-values/index']],
                     ['label' => 'Настройка GPIO', 'url' => ['/gpio/gpio/index']],
                     //['label' => 'Настройка Термометра', 'url' => ['/dht/index']],
                     //['label' => 'Управление SSD 1306', 'url' => ['/ssd1306/default/index']],

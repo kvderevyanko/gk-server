@@ -49,6 +49,7 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                '/device/control/<device:\d+>' => 'device/control',
             ],
         ],
         'assetManager' => [

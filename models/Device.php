@@ -2,6 +2,7 @@
 
 namespace app\models;
 use yii\helpers\ArrayHelper;
+use yii\web\NotFoundHttpException;
 
 /**
  * This is the model class for table "device".
@@ -78,6 +79,19 @@ class Device extends \yii\db\ActiveRecord
             self::TYPE_ESP_8266 => self::TYPE_ESP_8266,
             //self::TYPE_ESP_32 => self::TYPE_ESP_32,
         ];
+    }
+
+    /**
+     * Получение активного устройства
+     * @param $deviceId
+     * @return Device
+     * @throws NotFoundHttpException
+     */
+    public static function getActiveDevice($deviceId){
+        $device = Device::findOne(['id' => $deviceId, 'active' => self::STATUS_ACTIVE]);
+        if($device === null)
+            throw new NotFoundHttpException("Устройство не найдено");
+        return $device;
     }
 
     public static function devicesList()
