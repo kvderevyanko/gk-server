@@ -3,9 +3,11 @@
 namespace app\controllers;
 
 
+use yii\base\InvalidConfigException;
 use yii\httpclient\Client;
 use Yii;
 use yii\filters\AccessControl;
+use yii\httpclient\Exception;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
@@ -66,7 +68,10 @@ class SiteController extends Controller
     }
 
 
-
+    /**
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
     public function actionTest(){
         $client = new Client([
             'transport' => 'yii\httpclient\CurlTransport'

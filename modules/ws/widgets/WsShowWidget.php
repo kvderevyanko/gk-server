@@ -8,8 +8,8 @@ use yii\base\Widget;
 
 class WsShowWidget extends Widget
 {
-    public int $deviceId;
-    public bool $mainPage;
+    public  $deviceId;
+    public  $mainPage;
 
     public function run()
     {

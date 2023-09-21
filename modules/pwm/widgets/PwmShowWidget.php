@@ -10,8 +10,8 @@ use yii\base\Widget;
 class PwmShowWidget extends Widget
 {
 
-    public int $deviceId;
-    public bool $mainPage;
+    public  $deviceId;
+    public  $mainPage;
 
     public function run()
     {
