@@ -2,7 +2,7 @@
 
 namespace app\modules\ws\models;
 
-use app\components\EspRequest;
+use app\components\EspRequest\EspRequest;
 use app\models\Device;
 use yii\base\InvalidConfigException;
 use yii\helpers\ArrayHelper;
@@ -53,7 +53,7 @@ class WsValues extends DbWsValues
         $ws = self::findOne(['deviceId' => $deviceId, 'active' => self::STATUS_ACTIVE]);
         $device = Device::getActiveDevice($deviceId);
         if($ws) {
-            $request = [
+            $params = [
                 'buffer' => $ws->buffer,
                 'mode' => $ws->mode,
                 'delay' => $ws->delay, //clock 1~1000, pwm frequency
@@ -62,7 +62,7 @@ class WsValues extends DbWsValues
                 'gradient_color' => Json::encode(self::convertHexString($ws->gradientColor)),
                 'mode_options' => $ws->modeOptions,
             ];
-            return EspRequest::send($device->host.'ws.lc', $request);
+            return (new EspRequest($device->host,'ws.lc', $params))->send();
         }
         return 'error';
     }

@@ -24,7 +24,7 @@ class GpioController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'verbs' => [
@@ -39,13 +39,14 @@ class GpioController extends Controller
 
     /**
      * Получение запроса со значением пинов для  устройства
-     * @param $deviceId
+     * @param int $deviceId
      * @return string
-     * @throws NotFoundHttpException
-     * @throws InvalidConfigException
      * @throws Exception
+     * @throws InvalidConfigException
+     * @throws NotFoundHttpException
      */
-    public function actionRequest($deviceId){
+    public function actionRequest(int $deviceId): string
+    {
         $request = \Yii::$app->request->get();
         $gpioList = Gpio::findAll(['deviceId' => $deviceId]);
         if(!is_array($request)) {
@@ -63,12 +64,12 @@ class GpioController extends Controller
     /**
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $dataProvider = new ActiveDataProvider([
             'query' => Gpio::find()
                 ->leftJoin(Device::tableName(), Device::tableName().".id = ".Gpio::tableName().".deviceId")
-                ->andWhere([Device::tableName().".active" => Device::STATUS_ACTIVE]),
+                ->andWhere([Device::tableName().".active" => Device::STATUS_ACTIVE])
         ]);
 
         return $this->render('index', [
@@ -77,11 +78,11 @@ class GpioController extends Controller
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @return string
      * @throws NotFoundHttpException
      */
-    public function actionView($id)
+    public function actionView(int $id): string
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
@@ -91,7 +92,7 @@ class GpioController extends Controller
     /**
      * @return string|Response
      */
-    public function actionCreate()
+    public function actionCreate(): string
     {
         $model = new Gpio();
 
@@ -105,11 +106,11 @@ class GpioController extends Controller
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @return string|Response
      * @throws NotFoundHttpException
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
 
@@ -173,7 +174,7 @@ class GpioController extends Controller
      * @throws StaleObjectException
      * @throws \Throwable
      */
-    public function actionDelete($id)
+    public function actionDelete($id): Response
     {
         $this->findModel($id)->delete();
 
@@ -185,7 +186,7 @@ class GpioController extends Controller
      * @return Gpio|null
      * @throws NotFoundHttpException
      */
-    protected function findModel($id)
+    protected function findModel($id): Gpio
     {
         if (($model = Gpio::findOne($id)) !== null) {
             return $model;

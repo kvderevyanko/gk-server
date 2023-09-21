@@ -35,3 +35,4 @@ tests/_support/_generated
 
 .ag.sh
 composer.lock
+task.php

@@ -2,7 +2,7 @@
 
 namespace app\modules\gpio\models;
 
-use app\components\EspRequest;
+use app\components\EspRequest\EspRequest;
 use app\models\Device;
 use yii\base\InvalidConfigException;
 use yii\httpclient\Exception;
@@ -19,19 +19,22 @@ class Gpio extends DbGpio
      * @throws InvalidConfigException
      * @throws Exception
      */
-    public static function sendRequest($deviceId) {
+    public static function sendRequest($deviceId): string
+    {
         $gpios = self::findAll(['deviceId' => $deviceId, 'active' => self::STATUS_ACTIVE]);
 
-        $request = [];
+        $params = [];
         foreach ($gpios as $gpio) {
             if($gpio->negative) {
-                $request[$gpio->pin] = $gpio->value?0:1;
+                $params[$gpio->pin] = $gpio->value?0:1;
             } else {
-                $request[$gpio->pin] = $gpio->value;
+                $params[$gpio->pin] = $gpio->value;
             }
         }
+
         $device = Device::getActiveDevice($deviceId);
-        return EspRequest::send(trim($device->host).'gpio.lc', $request);
+
+        return (new EspRequest($device->host,'gpio.lc', $params))->send();
     }
 
 }

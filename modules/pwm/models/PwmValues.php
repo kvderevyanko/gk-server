@@ -2,7 +2,7 @@
 
 namespace app\modules\pwm\models;
 
-use app\components\EspRequest;
+use app\components\EspRequest\EspRequest;
 use app\models\Device;
 use yii\base\InvalidConfigException;
 use yii\helpers\ArrayHelper;
@@ -42,15 +42,14 @@ class PwmValues extends DbPwmValues
      */
     public static function sendRequest($deviceId) {
         $pwm = self::findAll(['deviceId' => $deviceId, 'active' => self::STATUS_ACTIVE]);
-        $request = ArrayHelper::map($pwm, 'pinId', 'value');
+        $params = ArrayHelper::map($pwm, 'pinId', 'value');
         $pwmSettings = PwmSettings::findOne(['deviceId' => $deviceId]);
         if($pwmSettings === null)
             throw new NotFoundHttpException("Настройки PWM не найдены");
 
         $device = Device::getActiveDevice($deviceId);
-        $request['clock'] = $pwmSettings->clock;
-        $request['duty'] = $pwmSettings->duty;
-
-        return EspRequest::send($device->host.'gpio-pwm.lc', $request);
+        $params['clock'] = $pwmSettings->clock;
+        $params['duty'] = $pwmSettings->duty;
+        return (new EspRequest($device->host,'gpio-pwm.lc', $params))->send();
     }
 }

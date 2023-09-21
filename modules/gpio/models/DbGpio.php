@@ -3,6 +3,7 @@
 namespace app\modules\gpio\models;
 
 use app\models\Device;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "gpio".
@@ -15,6 +16,7 @@ use app\models\Device;
  * @property bool|null $active
  * @property bool|null $home
  * @property bool|null $motor
+ * @property-read ActiveQuery $device
  * @property bool|null $negative
  */
 class DbGpio extends \yii\db\ActiveRecord
@@ -25,7 +27,7 @@ class DbGpio extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'gpio';
     }
@@ -33,7 +35,7 @@ class DbGpio extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['deviceId', 'pin'], 'required'],
@@ -46,7 +48,7 @@ class DbGpio extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -62,9 +64,10 @@ class DbGpio extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getDevice(){
+    public function getDevice(): ActiveQuery
+    {
         return $this->hasOne(Device::className(), ['id' => 'deviceId']);
     }
 }

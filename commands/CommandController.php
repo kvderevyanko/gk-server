@@ -4,25 +4,14 @@ namespace app\commands;
 
 use app\models\Commands;
 use app\models\Device;
-use modules\gpio\models\Gpio;
+use app\modules\gpio\models\Gpio;
 use yii\console\Controller;
 use yii\helpers\ArrayHelper;
 
-/**
- * Выполнение команд системы
- * Class CommandController
- * @package app\commands
- */
+
 class CommandController extends Controller
 {
 
-    public function actionTest(){
-
-print (!! "false")."\n";
-print (!! true)."\n";
-print ((int) '125g7')."\n";
-print ((int) 'x52')."\n";
-    }
 
     /**
      * Базовая команда
