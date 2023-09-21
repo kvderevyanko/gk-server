@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model \app\models\DbTemperatureInfo */
+/* @var $model \modules\dht\models\DbTemperatureInfo */
 
 $this->title = $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Temperature Infos', 'url' => ['index']];

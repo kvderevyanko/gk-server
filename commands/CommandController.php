@@ -16,6 +16,14 @@ use yii\helpers\ArrayHelper;
 class CommandController extends Controller
 {
 
+    public function actionTest(){
+
+print (!! "false")."\n";
+print (!! true)."\n";
+print ((int) '125g7')."\n";
+print ((int) 'x52')."\n";
+    }
+
     /**
      * Базовая команда
      * @return void

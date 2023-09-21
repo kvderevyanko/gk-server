@@ -3,7 +3,7 @@
 namespace app\modules\ws\controllers;
 
 use app\models\Device;
-use app\models\DbWsValues;
+use app\modules\ws\models\DbWsValues;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\VerbFilter;

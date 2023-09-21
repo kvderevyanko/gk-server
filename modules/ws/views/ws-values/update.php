@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model \app\models\DbWsValues */
+/* @var $model \app\modules\ws\models\DbWsValues */
 
 $this->title = 'Изменить Ws настройку: ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Настройка WS', 'url' => ['index']];

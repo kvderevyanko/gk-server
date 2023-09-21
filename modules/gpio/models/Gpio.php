@@ -3,7 +3,6 @@
 namespace app\modules\gpio\models;
 
 use app\components\EspRequest;
-use app\models\DbGpio;
 use app\models\Device;
 use yii\base\InvalidConfigException;
 use yii\httpclient\Exception;

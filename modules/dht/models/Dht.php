@@ -1,13 +1,12 @@
 <?php
 
-namespace modules\dht\models;
+namespace app\modules\dht\models;
 
-use app\models\Device;
 use PHPUnit\Exception;
 use yii\helpers\Json;
 use yii\httpclient\Client;
 
-class Dht extends \app\models\DbDht
+class Dht extends DbDht
 {
 
     public function lastTemperature(){

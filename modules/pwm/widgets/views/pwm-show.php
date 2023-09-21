@@ -1,6 +1,6 @@
 <?php
 
-use app\models\DbPwmValues;
+use app\modules\pwm\models\DbPwmValues;
 use yii\helpers\Url;
 use yii\web\View;
 

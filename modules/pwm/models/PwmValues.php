@@ -2,9 +2,8 @@
 
 namespace app\modules\pwm\models;
 
-use app\models\DbPwmValues;
+use app\components\EspRequest;
 use app\models\Device;
-use \app\components\EspRequest;
 use yii\base\InvalidConfigException;
 use yii\helpers\ArrayHelper;
 use yii\httpclient\Exception;

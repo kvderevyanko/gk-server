@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model \app\models\DbTemperatureInfo */
+/* @var $model \modules\dht\models\DbTemperatureInfo */
 
 $this->title = 'Create Temperature Info';
 $this->params['breadcrumbs'][] = ['label' => 'Temperature Infos', 'url' => ['index']];

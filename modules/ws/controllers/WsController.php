@@ -3,7 +3,7 @@
 namespace app\modules\ws\controllers;
 
 
-use app\models\DbWsValues;
+use app\modules\ws\models\DbWsValues;
 use app\modules\ws\models\WsValues;
 use yii\helpers\Json;
 use yii\web\Controller;

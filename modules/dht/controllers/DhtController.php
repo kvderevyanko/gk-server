@@ -2,7 +2,7 @@
 
 namespace app\modules\dht\controllers;
 
-use app\models\DbDht;
+use modules\dht\models\DbDht;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\VerbFilter;

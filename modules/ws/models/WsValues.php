@@ -3,12 +3,10 @@
 namespace app\modules\ws\models;
 
 use app\components\EspRequest;
-use app\models\DbWsValues;
 use app\models\Device;
 use yii\base\InvalidConfigException;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
-use yii\httpclient\Client;
 use yii\httpclient\Exception;
 use yii\web\NotFoundHttpException;
 

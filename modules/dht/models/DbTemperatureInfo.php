@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace app\modules\dht\models;
 
 /**
  * This is the model class for table "temperature_info".

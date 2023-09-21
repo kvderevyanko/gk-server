@@ -1,10 +1,8 @@
 <?php
 
-namespace app\models;
+namespace app\modules\ws\models;
 
-use yii\helpers\ArrayHelper;
-use yii\helpers\Json;
-use yii\httpclient\Client;
+use app\models\Device;
 
 /**
  * This is the model class for table "ws_values".

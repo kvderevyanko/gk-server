@@ -1,9 +1,9 @@
 <?php
 
-namespace modules\dht\models;
+namespace app\modules\dht\models;
 
 
-class TemperatureInfo extends \app\models\DbTemperatureInfo
+class TemperatureInfo extends \modules\dht\models\DbTemperatureInfo
 {
 
 }

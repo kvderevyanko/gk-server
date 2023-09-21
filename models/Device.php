@@ -1,6 +1,11 @@
 <?php
 
 namespace app\models;
+use app\modules\gpio\models\DbGpio;
+use app\modules\pwm\models\DbPwmSettings;
+use app\modules\pwm\models\DbPwmValues;
+use app\modules\ws\models\DbWsValues;
+use modules\dht\models\DbDht;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 

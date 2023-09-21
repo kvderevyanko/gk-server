@@ -2,7 +2,7 @@
 
 namespace app\modules\dht\controllers;
 
-use app\models\DbTemperatureInfo;
+use modules\dht\models\DbTemperatureInfo;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\VerbFilter;

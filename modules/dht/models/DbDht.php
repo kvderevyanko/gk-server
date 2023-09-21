@@ -1,10 +1,8 @@
 <?php
 
-namespace app\models;
+namespace app\modules\dht\models;
 
-use PHPUnit\Exception;
-use yii\helpers\Json;
-use yii\httpclient\Client;
+use app\models\Device;
 
 /**
  * This is the model class for table "dht".

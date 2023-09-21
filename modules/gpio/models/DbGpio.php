@@ -1,10 +1,8 @@
 <?php
 
-namespace app\models;
+namespace app\modules\gpio\models;
 
 use app\models\Device;
-use yii\httpclient\Client;
-use yii\web\NotFoundHttpException;
 
 /**
  * This is the model class for table "gpio".

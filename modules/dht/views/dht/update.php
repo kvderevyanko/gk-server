@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model \app\models\DbDht */
+/* @var $model \modules\dht\models\DbDht */
 
 $this->title = 'Изменить термометр: ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Термометры', 'url' => ['index']];

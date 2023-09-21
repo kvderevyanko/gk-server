@@ -3,8 +3,8 @@
 namespace app\commands;
 
 use app\components\widgets\SettingValueWidget;
-use app\models\DbDht;
 use app\models\Settings;
+use modules\dht\models\DbDht;
 use modules\gpio\models\Gpio;
 use yii\console\Controller;
 

@@ -1,6 +1,6 @@
 <?php
 
-use app\models\DbWsValues;
+use app\modules\ws\models\DbWsValues;
 use app\modules\ws\models\WsValues;
 use app\modules\ws\widgets\assets\WsAsset;
 use yii\helpers\Html;

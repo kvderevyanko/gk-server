@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace app\modules\pwm\models;
 
 use app\models\Device;
 use yii\helpers\ArrayHelper;
