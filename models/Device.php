@@ -1,11 +1,13 @@
 <?php
 
 namespace app\models;
+use app\modules\dht\models\DbDht;
+use app\modules\dht\models\DbTemperatureInfo;
 use app\modules\gpio\models\DbGpio;
 use app\modules\pwm\models\DbPwmSettings;
 use app\modules\pwm\models\DbPwmValues;
 use app\modules\ws\models\DbWsValues;
-use modules\dht\models\DbDht;
+use yii\db\StaleObjectException;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 
@@ -32,7 +34,7 @@ class Device extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'device';
     }
@@ -40,7 +42,7 @@ class Device extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['host'], 'required'],
@@ -52,7 +54,7 @@ class Device extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -65,7 +67,7 @@ class Device extends \yii\db\ActiveRecord
         ];
     }
 
-    public static function btnClass()
+    public static function btnClass(): array
     {
         return [
             'btn-default' => 'btn-default',
@@ -78,7 +80,7 @@ class Device extends \yii\db\ActiveRecord
         ];
     }
 
-    public static function typeList()
+    public static function typeList(): array
     {
         return [
             self::TYPE_ESP_8266 => self::TYPE_ESP_8266,
@@ -88,24 +90,25 @@ class Device extends \yii\db\ActiveRecord
 
     /**
      * Получение активного устройства
-     * @param $deviceId
+     * @param int $deviceId
      * @return Device
      * @throws NotFoundHttpException
      */
-    public static function getActiveDevice($deviceId){
+    public static function getActiveDevice(int $deviceId): Device
+    {
         $device = Device::findOne(['id' => $deviceId, 'active' => self::STATUS_ACTIVE]);
         if($device === null)
             throw new NotFoundHttpException("Устройство не найдено");
         return $device;
     }
 
-    public static function devicesList()
+    public static function devicesList(): array
     {
         $devices = self::findAll(['active' => self::STATUS_ACTIVE]);
         return ArrayHelper::map($devices, 'id', 'name');
     }
 
-    public static function deviceName($id)
+    public static function deviceName(int $id): string
     {
         $device = self::findOne($id);
         if ($device)
@@ -114,6 +117,10 @@ class Device extends \yii\db\ActiveRecord
         return 'АХТУНГ!!! Основное устройство не найдено';
     }
 
+    /**
+     * @throws \Throwable
+     * @throws StaleObjectException
+     */
     public function afterDelete()
     {
         parent::afterDelete();
@@ -138,6 +145,6 @@ class Device extends \yii\db\ActiveRecord
         foreach ($dhtDevices as $dht)
             $dht->delete();
 
-        //TemperatureInfo::deleteAll(['deviceId' => $this->id]);
+        DbTemperatureInfo::deleteAll(['deviceId' => $this->id]);
     }
 }

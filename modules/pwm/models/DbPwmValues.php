@@ -3,8 +3,11 @@
 namespace app\modules\pwm\models;
 
 use app\models\Device;
+use yii\base\InvalidConfigException;
+use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
 use yii\httpclient\Client;
+use yii\httpclient\Exception;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -18,6 +21,8 @@ use yii\web\NotFoundHttpException;
  * @property bool|null $active
  * @property bool|null $home
  *
+ * @property-read ActiveQuery $device
+ * @property-read ActiveQuery $settings
  * @property Device getDevice()
  */
 class DbPwmValues extends \yii\db\ActiveRecord
@@ -27,7 +32,7 @@ class DbPwmValues extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'pwm_values';
     }
@@ -35,7 +40,7 @@ class DbPwmValues extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['deviceId', 'pinId'], 'required'],
@@ -50,7 +55,7 @@ class DbPwmValues extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -64,21 +69,29 @@ class DbPwmValues extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getDevice(){
+    public function getDevice(): ActiveQuery
+    {
         return $this->hasOne(Device::className(), ['id' => 'deviceId']);
     }
 
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getSettings(){
+    public function getSettings(): ActiveQuery
+    {
         return $this->hasOne(DbPwmSettings::className(), ['deviceId' => 'deviceId']);
     }
 
-    public static function sendRequest($deviceId) {
+    /**
+     * @throws Exception
+     * @throws NotFoundHttpException
+     * @throws InvalidConfigException
+     */
+    public static function sendRequest($deviceId): string
+    {
         $pwm = self::findAll(['deviceId' => $deviceId, 'active' => self::STATUS_ACTIVE]);
         $request = ArrayHelper::map($pwm, 'pinId', 'value');
         $device = Device::findOne($deviceId);

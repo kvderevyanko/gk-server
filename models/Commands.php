@@ -23,7 +23,7 @@ class Commands extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'commands';
     }
@@ -35,7 +35,7 @@ class Commands extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['deviceId', 'pinType', 'pin', 'conditionType', 'conditionFrom', 'conditionTo', 'pinValue', 'conditionSort'], 'required'],
@@ -48,7 +48,7 @@ class Commands extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -64,14 +64,16 @@ class Commands extends \yii\db\ActiveRecord
         ];
     }
 
-    public static function deviceTypeList(){
+    public static function deviceTypeList(): array
+    {
         return [
             self::PIN_TYPE_GPIO => 'GPIO',
             self::PIN_TYPE_PWM => 'PWM',
         ];
     }
 
-    public static function conditionsList(){
+    public static function conditionsList(): array
+    {
         return [
             self::CONDITION_TYPE_TIME => 'Время',
             self::CONDITION_TYPE_TEMPERATURE => 'Температура',

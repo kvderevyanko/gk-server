@@ -21,7 +21,7 @@ class Settings extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'settings';
     }
@@ -29,7 +29,7 @@ class Settings extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['key'], 'required'],
@@ -41,7 +41,7 @@ class Settings extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',

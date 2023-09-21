@@ -9,8 +9,8 @@ use yii\base\Widget;
 class GpioShowWidget extends Widget
 {
 
-    public $deviceId;
-    public $mainPage;
+    public int $deviceId;
+    public bool $mainPage;
 
     public function run()
     {

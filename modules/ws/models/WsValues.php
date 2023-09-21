@@ -14,7 +14,7 @@ use yii\web\NotFoundHttpException;
 class WsValues extends DbWsValues
 {
 
-    public static $modeList = [
+    public static array $modeList = [
         'off' => 'Выключить',
         'static' => 'Статичный',
         'static-soft-blink' => 'Статичный мягкий мигающий',

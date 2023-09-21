@@ -6,6 +6,7 @@ namespace app\controllers;
 use app\models\Settings;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
+use yii\web\Response;
 
 
 /**
@@ -16,7 +17,7 @@ use yii\web\Controller;
 class SettingsController extends Controller
 {
     /**
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
     public function actionIndex(){
         $settings = Settings::find()->all();

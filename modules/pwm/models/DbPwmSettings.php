@@ -3,6 +3,7 @@
 namespace app\modules\pwm\models;
 
 use app\models\Device;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "pwm_settings".
@@ -12,6 +13,7 @@ use app\models\Device;
  * @property int $clock
  * @property int $duty
  *
+ * @property-read ActiveQuery $device
  * @property Device getDevice()
  */
 class DbPwmSettings extends \yii\db\ActiveRecord
@@ -19,7 +21,7 @@ class DbPwmSettings extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'pwm_settings';
     }
@@ -27,7 +29,7 @@ class DbPwmSettings extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['deviceId', 'clock', 'duty'], 'required'],
@@ -41,7 +43,7 @@ class DbPwmSettings extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -52,9 +54,10 @@ class DbPwmSettings extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getDevice(){
+    public function getDevice(): ActiveQuery
+    {
         return $this->hasOne(Device::className(), ['id' => 'deviceId']);
     }
 }

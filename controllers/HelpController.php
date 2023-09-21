@@ -3,6 +3,8 @@
 namespace app\controllers;
 
 use Yii;
+use yii\base\ErrorException;
+use yii\base\Exception;
 use yii\helpers\FileHelper;
 use yii\helpers\Html;
 use yii\helpers\Markdown;
@@ -20,7 +22,7 @@ class HelpController extends Controller
      * @param string $folder
      * @return string
      */
-    public function actionIndex($docName = "", $folder = "")
+    public function actionIndex(string $docName = "", string $folder = ""): string
     {
         $fileFolder = "";
         if($docName) {
@@ -40,10 +42,10 @@ class HelpController extends Controller
      * @param string $folder
      * @param string $fileFolder
      * @return array|false|string|string[]
-     * @throws \yii\base\ErrorException
-     * @throws \yii\base\Exception
+     * @throws ErrorException
+     * @throws Exception
      */
-    private function getDoc($docName, $folder, $fileFolder)
+    private function getDoc(string $docName, string $folder, string $fileFolder)
     {
         if (!$docName)
             $docName = 'README.md';
@@ -84,11 +86,12 @@ class HelpController extends Controller
 
     /**
      * Замена ссылки в файле с маркдауном
-     * @param $link
-     * @param $folder
+     * @param string $link
+     * @param string $folder
+     * @param string $fileFolder
      * @return string
      */
-    private function mdLinkReplace($link, $folder, $fileFolder)
+    private function mdLinkReplace(string $link, string $folder, string $fileFolder): string
     {
         //Проверяем, начинается ли урл с http - если да, то это скорее всего ссылка, возвращаем, как есть
         $checkHttp = stripos(trim($link), "http://");
@@ -101,14 +104,14 @@ class HelpController extends Controller
 
     /**
      * Принимает имя файла из ссылки и делает нужные манипуляции
-     * @param $link
-     * @param $folder
-     * @param $fileFolder
+     * @param string $link
+     * @param string $folder
+     * @param string $fileFolder
      * @return string
-     * @throws \yii\base\ErrorException
-     * @throws \yii\base\Exception
+     * @throws ErrorException
+     * @throws Exception
      */
-    private function mdFileReplace($link, $folder, $fileFolder)
+    private function mdFileReplace(string $link, string $folder, string $fileFolder): string
     {
         //Делаем проверку на картинку, если есть - изображение копируем в web/assets, и возвращаем урл на него
         $checkImage = stripos(trim($link), "image");

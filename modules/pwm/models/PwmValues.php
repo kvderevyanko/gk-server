@@ -5,6 +5,7 @@ namespace app\modules\pwm\models;
 use app\components\EspRequest\EspRequest;
 use app\models\Device;
 use yii\base\InvalidConfigException;
+use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
 use yii\httpclient\Exception;
 use yii\web\NotFoundHttpException;
@@ -27,9 +28,10 @@ class PwmValues extends DbPwmValues
 
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getSettings(){
+    public function getSettings(): ActiveQuery
+    {
         return $this->hasOne(PwmSettings::className(), ['deviceId' => 'deviceId']);
     }
 
@@ -40,7 +42,8 @@ class PwmValues extends DbPwmValues
      * @throws InvalidConfigException
      * @throws Exception
      */
-    public static function sendRequest($deviceId) {
+    public static function sendRequest($deviceId): string
+    {
         $pwm = self::findAll(['deviceId' => $deviceId, 'active' => self::STATUS_ACTIVE]);
         $params = ArrayHelper::map($pwm, 'pinId', 'value');
         $pwmSettings = PwmSettings::findOne(['deviceId' => $deviceId]);
