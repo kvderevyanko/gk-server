@@ -1,13 +1,16 @@
 <?php
 
 use app\models\DbWsValues;
+use app\modules\ws\models\WsValues;
+use app\modules\ws\widgets\assets\WsAsset;
 use yii\helpers\Html;
+use yii\web\View;
 
-/* @var $this \yii\web\View */
+/* @var $this View */
 /* @var $wsValues array */
-/* @var $ws \app\models\DbWsValues */
+/* @var $ws DbWsValues */
 
-\app\modules\ws\widgets\assets\WsAsset::register($this);
+WsAsset::register($this);
 ?>
     <div class="col-sm-6">
 <h4>WS2812</h4>
@@ -15,7 +18,7 @@ use yii\helpers\Html;
 <div id="ws_block_<?=$ws->deviceId?>" class="ws_block">
     <label><?=$ws->name?> / <?=$ws->device->name?> / <?=$ws->defaultBuffer?></label><br>
     <label>Режим</label>
-    <?=Html::dropDownList('mode', $ws->mode, DbWsValues::$modeList, ['class' => 'form-control', 'data-device' => $ws->deviceId])?><br>
+    <?=Html::dropDownList('mode', $ws->mode, WsValues::$modeList, ['class' => 'form-control', 'data-device' => $ws->deviceId])?><br>
     <label>Количество диодов</label>
     <div class="slider_block">
     <input
@@ -92,6 +95,6 @@ Modal::end(); */
 ?>
 
 <script>
-    let urlCommandWs = "<?=\yii\helpers\Url::to(['/commands/ws'])?>";
+    let urlCommandWs = "<?=\yii\helpers\Url::to(['/ws/ws/request'])?>";
     //let urlCommandWs = "<?=\yii\helpers\Url::to(['/commands/ws'])?>";
 </script>

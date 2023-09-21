@@ -1,8 +1,14 @@
 <?php
 
-/* @var $this \yii\web\View */
+use app\modules\gpio\models\Gpio;
+use yii\helpers\Url;
+use yii\web\View;
+
+/* @var $this View */
 /* @var $gpioValues array */
-/* @var $gpio \modules\gpio\models\Gpio */
+/* @var $gpio Gpio */
+
+
 ?>
     <div class="col-sm-6">
 <h4>GPIO</h4>
@@ -24,7 +30,7 @@
 </div>
     </div>
 <script>
-    let urlCommandGpio = "<?=\yii\helpers\Url::to(['/commands/gpio'])?>";
+    let urlCommandGpio = "<?=Url::to(['/gpio/gpio/request'])?>";
 </script>
 <?php
 $this->registerJs(<<<JS

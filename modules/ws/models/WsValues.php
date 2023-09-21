@@ -2,11 +2,15 @@
 
 namespace app\modules\ws\models;
 
+use app\components\EspRequest;
 use app\models\DbWsValues;
 use app\models\Device;
+use yii\base\InvalidConfigException;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\httpclient\Client;
+use yii\httpclient\Exception;
+use yii\web\NotFoundHttpException;
 
 
 class WsValues extends DbWsValues
@@ -39,35 +43,30 @@ class WsValues extends DbWsValues
     ];
 
 
+    /**
+     * @param $deviceId
+     * @return string
+     * @throws InvalidConfigException
+     * @throws Exception
+     * @throws NotFoundHttpException
+     */
     public static function sendRequest($deviceId) {
 
         $ws = self::findOne(['deviceId' => $deviceId, 'active' => self::STATUS_ACTIVE]);
+        $device = Device::getActiveDevice($deviceId);
         if($ws) {
-            self::convertHexString($ws->gradientColor);
-            $client = new Client([
-                'transport' => 'yii\httpclient\CurlTransport'
-            ]);
-            $response = $client->createRequest()
-                ->setMethod('GET')
-                ->setUrl($ws->device->host.'ws.lc')
-                ->setData([
-                    'buffer' => $ws->buffer,
-                    'mode' => $ws->mode,
-                    'delay' => $ws->delay, //clock 1~1000, pwm frequency
-                    'bright' => $ws->bright, //duty 0~1023, pwm duty cycle, max 1023 (10bit)
-                    'single_color' => Json::encode(self::convertColor($ws->singleColor)), //grb
-                    'gradient_color' => Json::encode(self::convertHexString($ws->gradientColor)),
-                    'mode_options' => $ws->modeOptions,
-                ])
-                ->setOptions([
-                    'timeout' => 2, // set timeout to 5 seconds for the case server is not responding
-                ])
-                ->send();
-            if ($response->isOk) {
-                return $response->content;
-            }
+            $request = [
+                'buffer' => $ws->buffer,
+                'mode' => $ws->mode,
+                'delay' => $ws->delay, //clock 1~1000, pwm frequency
+                'bright' => $ws->bright, //duty 0~1023, pwm duty cycle, max 1023 (10bit)
+                'single_color' => Json::encode(self::convertColor($ws->singleColor)), //grb
+                'gradient_color' => Json::encode(self::convertHexString($ws->gradientColor)),
+                'mode_options' => $ws->modeOptions,
+            ];
+            return EspRequest::send($device->host.'ws.lc', $request);
         }
-
+        return 'error';
     }
 
     /**

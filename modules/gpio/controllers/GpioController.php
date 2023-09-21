@@ -6,11 +6,15 @@ use app\models\Commands;
 use app\models\Device;
 use app\modules\gpio\models\Gpio;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\data\ActiveDataProvider;
+use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
 use yii\helpers\Json;
+use yii\httpclient\Exception;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * GpioController implements the CRUD actions for Gpio model.
@@ -32,9 +36,32 @@ class GpioController extends Controller
         ];
     }
 
+
     /**
-     * Lists all Gpio models.
-     * @return mixed
+     * Получение запроса со значением пинов для  устройства
+     * @param $deviceId
+     * @return string
+     * @throws NotFoundHttpException
+     * @throws InvalidConfigException
+     * @throws Exception
+     */
+    public function actionRequest($deviceId){
+        $request = \Yii::$app->request->get();
+        $gpioList = Gpio::findAll(['deviceId' => $deviceId]);
+        if(!is_array($request)) {
+            return 'error';
+        }
+        foreach ($gpioList as $gpio) {
+            if(array_key_exists($gpio->id, $request)){
+                $gpio->value = $request[$gpio->id];
+                $gpio->save();
+            }
+        }
+        return Gpio::sendRequest($deviceId);
+    }
+
+    /**
+     * @return string
      */
     public function actionIndex()
     {
@@ -50,10 +77,9 @@ class GpioController extends Controller
     }
 
     /**
-     * Displays a single Gpio model.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return string
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -63,9 +89,7 @@ class GpioController extends Controller
     }
 
     /**
-     * Creates a new Gpio model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return string|Response
      */
     public function actionCreate()
     {
@@ -82,7 +106,7 @@ class GpioController extends Controller
 
     /**
      * @param $id
-     * @return string|\yii\web\Response
+     * @return string|Response
      * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
@@ -93,7 +117,8 @@ class GpioController extends Controller
             Commands::deleteAll(['deviceId' => $model->deviceId, 'pin' => $model->pin]);
             $commands = Yii::$app->request->post('Commands');
 
-            if($commands && is_array($commands) && array_key_exists('conditionType', $commands) && is_array($commands['conditionType'])) {
+            if($commands && is_array($commands) && array_key_exists('conditionType', $commands) &&
+                is_array($commands['conditionType'])) {
                 $i = 0;
                 foreach ($commands['conditionType'] as $key => $conditionType) {
                     $command = new Commands();
@@ -142,11 +167,11 @@ class GpioController extends Controller
     }
 
     /**
-     * Deletes an existing Gpio model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return Response
+     * @throws NotFoundHttpException
+     * @throws StaleObjectException
+     * @throws \Throwable
      */
     public function actionDelete($id)
     {
@@ -156,11 +181,9 @@ class GpioController extends Controller
     }
 
     /**
-     * Finds the Gpio model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Gpio the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return Gpio|null
+     * @throws NotFoundHttpException
      */
     protected function findModel($id)
     {

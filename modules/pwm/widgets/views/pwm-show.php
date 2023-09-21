@@ -1,31 +1,38 @@
 <?php
 
-/* @var $this \yii\web\View */
+use app\models\DbPwmValues;
+use yii\helpers\Url;
+use yii\web\View;
+
+/* @var $this View */
 /* @var $pwmValues array */
-/* @var $pwm \modules\pwm\models\PwmValues */
+/* @var $pwm DbPwmValues */
+
+
+
 ?>
     <div class="col-sm-6">
 <h4>PWM</h4>
 <div id="pwmBlock">
 <?php foreach ($pwmValues as $pwm): ?>
 <label><?=$pwm->name?> / <?=$pwm->device->name?></label>
-    <input
-            type="range"
-            min="0"
-            max="1020"
-            step="5"
-            value="<?=$pwm->value?$pwm->value:0?>"
-            data-pin="<?=$pwm->pinId?>"
-            data-device="<?=$pwm->deviceId?>"
-            data-id="<?=$pwm->id?>"
-            class="slider sliderPwm"
-    ><br>
+        <input
+                type="range"
+                min="0"
+                max="1020"
+                step="5"
+                value="<?=$pwm->value?$pwm->value:0?>"
+                data-pin="<?=$pwm->pinId?>"
+                data-device="<?=$pwm->deviceId?>"
+                data-id="<?=$pwm->id?>"
+                class="slider sliderPwm"
+<br>
 
 <?php endforeach; ?>
 </div>
     </div>
 <script>
-    let urlCommandPwm = "<?=\yii\helpers\Url::to(['/commands/pwm'])?>";
+    let urlCommandPwm = "<?=Url::to(['/pwm/pwm/request'])?>";
 </script>
 <?php
 $this->registerJs(<<<JS

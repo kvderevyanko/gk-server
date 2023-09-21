@@ -30,6 +30,7 @@ class WsValuesController extends Controller
         ];
     }
 
+
     /**
      * Lists all WsValues models.
      * @return mixed

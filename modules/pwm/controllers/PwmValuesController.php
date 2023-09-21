@@ -5,8 +5,10 @@ namespace app\modules\pwm\controllers;
 use app\models\Device;
 use app\modules\pwm\models\PwmValues;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\data\ActiveDataProvider;
 use yii\filters\VerbFilter;
+use yii\httpclient\Exception;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
