@@ -41,11 +41,11 @@ class HelpController extends Controller
      * @param string $docName
      * @param string $folder
      * @param string $fileFolder
-     * @return array|false|string|string[]
+     * @return string
      * @throws ErrorException
      * @throws Exception
      */
-    private function getDoc(string $docName, string $folder, string $fileFolder)
+    private function getDoc(string $docName, string $folder, string $fileFolder): string
     {
         if (!$docName)
             $docName = 'README.md';

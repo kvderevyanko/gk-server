@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use app\models\Device;
 use yii\data\ActiveDataProvider;
+use yii\db\StaleObjectException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -31,10 +32,9 @@ class DeviceController extends Controller
     }
 
     /**
-     * Lists all Device models.
-     * @return mixed
+     * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $dataProvider = new ActiveDataProvider([
             'query' => Device::find(),
@@ -46,6 +46,8 @@ class DeviceController extends Controller
     }
 
     /**
+     * @param $device
+     * @return string
      * @throws NotFoundHttpException
      */
     public function actionControl($device): string
@@ -58,10 +60,9 @@ class DeviceController extends Controller
     }
 
     /**
-     * Displays a single Device model.
-     * @param integer $id
+     * @param int $id
      * @return string
-     * @throws NotFoundHttpException if the model cannot be found
+     * @throws NotFoundHttpException
      */
     public function actionView(int $id): string
     {
@@ -71,8 +72,6 @@ class DeviceController extends Controller
     }
 
     /**
-     * Creates a new Device model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|Response
      */
     public function actionCreate()
@@ -89,11 +88,9 @@ class DeviceController extends Controller
     }
 
     /**
-     * Updates an existing Device model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return Response|string
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param int $id
+     * @return string|Response
+     * @throws NotFoundHttpException
      */
     public function actionUpdate(int $id)
     {
@@ -109,13 +106,13 @@ class DeviceController extends Controller
     }
 
     /**
-     * Deletes an existing Device model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
+     * @param int $id
      * @return Response
-     * @throws NotFoundHttpException if the model cannot be found
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws StaleObjectException
      */
-    public function actionDelete($id): Response
+    public function actionDelete(int $id): Response
     {
         $this->findModel($id)->delete();
 
@@ -123,13 +120,11 @@ class DeviceController extends Controller
     }
 
     /**
-     * Finds the Device model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Device the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param int $id
+     * @return Device
+     * @throws NotFoundHttpException
      */
-    protected function findModel($id): Device
+    protected function findModel(int $id): Device
     {
         if (($model = Device::findOne($id)) !== null) {
             return $model;

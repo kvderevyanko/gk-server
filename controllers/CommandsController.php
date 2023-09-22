@@ -2,15 +2,11 @@
 
 namespace app\controllers;
 
-
-use modules\dht\models\Dht;
 use yii\web\Controller;
 
 
 /**
- * Выполнение команд на ноду
- * Class CommandsController
- * @package app\controllers
+ * @TO-DO К удалению
  */
 class CommandsController extends Controller
 {
