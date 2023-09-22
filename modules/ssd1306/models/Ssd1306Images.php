@@ -3,6 +3,7 @@
 namespace app\modules\ssd1306\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "ssd1306_images".
@@ -14,12 +15,12 @@ use Yii;
  * @property string|null $code
  * @property string|null $html
  */
-class Ssd1306Images extends \yii\db\ActiveRecord
+class Ssd1306Images extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'ssd1306_images';
     }
@@ -27,7 +28,7 @@ class Ssd1306Images extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['width', 'height', 'size'], 'integer'],
@@ -39,7 +40,7 @@ class Ssd1306Images extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',

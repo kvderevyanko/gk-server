@@ -24,6 +24,7 @@ local serverFiles = {
    'gpio.lua',
    'config.lua',
    'json.lua',
+   'dht.lua',
 }
 
 for i, f in ipairs(serverFiles) do compileAndRemoveIfNeeded(f) end

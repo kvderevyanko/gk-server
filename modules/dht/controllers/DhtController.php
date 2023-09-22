@@ -3,9 +3,12 @@
 namespace app\modules\dht\controllers;
 
 use app\modules\dht\models\Dht;
+use app\modules\gpio\models\Gpio;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\data\ActiveDataProvider;
 use yii\filters\VerbFilter;
+use yii\httpclient\Exception;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -28,6 +31,18 @@ class DhtController extends Controller
                 ],
             ],
         ];
+    }
+
+    /**
+     * @param int $deviceId
+     * @return string
+     * @throws NotFoundHttpException
+     * @throws InvalidConfigException
+     * @throws Exception
+     */
+    public function actionRequest(int $deviceId): string
+    {
+        return Dht::sendRequest($deviceId);
     }
 
     /**

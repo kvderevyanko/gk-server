@@ -56,7 +56,7 @@ AppAsset::register($this);
                     ],
                     ['label' => 'Настройка WS', 'url' => ['/ws/ws-values/index']],
                     ['label' => 'Настройка GPIO', 'url' => ['/gpio/gpio/index']],
-                    //['label' => 'Настройка Термометра', 'url' => ['/dht/index']],
+                    ['label' => 'Настройка Термометра', 'url' => ['/dht/dht/index']],
                     //['label' => 'Управление SSD 1306', 'url' => ['/ssd1306/default/index']],
                     ['label' => 'Дополнительные настройки', 'url' => ['/settings/index']],
                     //['label' => 'Джойстик', 'url' => ['/gamepad/index']],

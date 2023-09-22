@@ -14,7 +14,5 @@ class CommandsController extends Controller
 
 
 
-    public function actionDht($deviceId){
-        return Dht::sendRequest($deviceId);
-    }
+
 }

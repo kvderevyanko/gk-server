@@ -1,8 +1,14 @@
 <?php
 
-/* @var $this \yii\web\View */
+use app\modules\dht\models\Dht;
+use yii\helpers\Url;
+use yii\web\View;
+
+/* @var $this View */
 /* @var $dhts array */
-/* @var $dht \modules\dht\models\DbDht */
+/* @var $dht Dht */
+
+
 ?>
     <div class="col-sm-12">
 <h4>Температура</h4>
@@ -31,7 +37,7 @@
 <?php endforeach; ?>
     </div>
 <script>
-    let urlCommandDht = "<?=\yii\helpers\Url::to(['/commands/dht'])?>";
+    let urlCommandDht = "<?=Url::to(['/dht/dht/request'])?>";
 </script>
 <?php
 $this->registerJs(<<<JS

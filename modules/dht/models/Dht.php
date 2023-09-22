@@ -36,7 +36,7 @@ class Dht extends DbDht
 
             $params = ['pin' => $dht->pin];
 
-            $content = (new EspRequest($device->host,'gpio.lc', $params))->send();
+            $content = (new EspRequest($device->host,'dht.lc', $params))->send();
 
             if ($content != EspRequest::RESPONSE_ERROR) {
                 try {

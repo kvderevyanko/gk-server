@@ -13,6 +13,7 @@ class EspRequest implements EspRequestInterface
     private array $params;
 
     const RESPONSE_ERROR = 'error';
+    const TIMEOUT = 2;
 
     public function __construct(
         string $host,
@@ -39,7 +40,7 @@ class EspRequest implements EspRequestInterface
             ->setUrl($this->host.$this->file)
             ->setData($this->params)
             ->setOptions([
-                'timeout' => 2,
+                'timeout' => self::TIMEOUT,
             ])
             ->send();
         if ($response->isOk) {
