@@ -1,10 +1,12 @@
 <?php
 
+use app\modules\gpio\models\Gpio;
 use yii\helpers\Html;
+use yii\helpers\Json;
 
 /* @var $this yii\web\View */
-/* @var $model \modules\gpio\models\Gpio */
-/* @var $commands \yii\helpers\Json */
+/* @var $model Gpio */
+/* @var $commands Json */
 
 $this->title = 'Изменить GPIO: ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'GPIO', 'url' => ['index']];

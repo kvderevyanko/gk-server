@@ -17,7 +17,8 @@ class PwmController extends Controller
      * @throws InvalidConfigException
      * @throws Exception
      */
-    public function actionRequest($deviceId){
+    public function actionRequest($deviceId): string
+    {
         $request = \Yii::$app->request->get();
         $pwmList = PwmValues::findAll(['deviceId' => $deviceId]);
         foreach ($pwmList as $pwm) {

@@ -5,12 +5,12 @@ namespace app\modules\pwm\controllers;
 use app\models\Device;
 use app\modules\pwm\models\PwmValues;
 use Yii;
-use yii\base\InvalidConfigException;
 use yii\data\ActiveDataProvider;
+use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
-use yii\httpclient\Exception;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * PwmValuesController implements the CRUD actions for PwmValues model.
@@ -20,7 +20,7 @@ class PwmValuesController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'verbs' => [
@@ -33,10 +33,9 @@ class PwmValuesController extends Controller
     }
 
     /**
-     * Lists all PwmValues models.
-     * @return mixed
+     * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $dataProvider = new ActiveDataProvider([
             'query' => PwmValues::find()
@@ -50,12 +49,11 @@ class PwmValuesController extends Controller
     }
 
     /**
-     * Displays a single PwmValues model.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param int $id
+     * @return string
+     * @throws NotFoundHttpException
      */
-    public function actionView($id)
+    public function actionView(int $id): string
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
@@ -63,9 +61,7 @@ class PwmValuesController extends Controller
     }
 
     /**
-     * Creates a new PwmValues model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return string|Response
      */
     public function actionCreate()
     {
@@ -81,13 +77,11 @@ class PwmValuesController extends Controller
     }
 
     /**
-     * Updates an existing PwmValues model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param int $id
+     * @return string|Response
+     * @throws NotFoundHttpException
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
 
@@ -101,13 +95,13 @@ class PwmValuesController extends Controller
     }
 
     /**
-     * Deletes an existing PwmValues model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param int $id
+     * @return Response
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws StaleObjectException
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response
     {
         $this->findModel($id)->delete();
 
@@ -115,13 +109,11 @@ class PwmValuesController extends Controller
     }
 
     /**
-     * Finds the PwmValues model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return PwmValues the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param int $id
+     * @return PwmValues|null
+     * @throws NotFoundHttpException
      */
-    protected function findModel($id)
+    protected function findModel(int $id): PwmValues
     {
         if (($model = PwmValues::findOne($id)) !== null) {
             return $model;

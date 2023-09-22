@@ -1,9 +1,10 @@
 <?php
 
+use app\modules\gpio\models\Gpio;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model \modules\gpio\models\Gpio */
+/* @var $model Gpio */
 
 $this->title = 'Добавить GPIO';
 $this->params['breadcrumbs'][] = ['label' => 'GPIO', 'url' => ['index']];

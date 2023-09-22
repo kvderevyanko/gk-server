@@ -1,9 +1,10 @@
 <?php
 
+use app\modules\ws\models\WsValues;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model \app\modules\ws\models\DbWsValues */
+/* @var $model WsValues */
 
 $this->title = 'Создание Ws настроек';
 $this->params['breadcrumbs'][] = ['label' => 'Настройка WS', 'url' => ['index']];

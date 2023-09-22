@@ -1,10 +1,11 @@
 <?php
 
+use app\modules\gpio\models\Gpio;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model \modules\gpio\models\Gpio */
+/* @var $model Gpio */
 
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'GPIO', 'url' => ['index']];

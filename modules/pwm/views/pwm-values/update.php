@@ -1,9 +1,10 @@
 <?php
 
+use app\modules\pwm\models\PwmValues;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model \modules\pwm\models\PwmValues */
+/* @var $model PwmValues */
 
 $this->title = 'Изменить PWM пин: ' . $model->pinId;
 $this->params['breadcrumbs'][] = ['label' => 'PWM пины', 'url' => ['index']];

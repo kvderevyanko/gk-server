@@ -4,6 +4,7 @@ namespace app\modules\gpio\models;
 
 use app\models\Device;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "gpio".
@@ -19,7 +20,7 @@ use yii\db\ActiveQuery;
  * @property-read ActiveQuery $device
  * @property bool|null $negative
  */
-class DbGpio extends \yii\db\ActiveRecord
+class DbGpio extends ActiveRecord
 {
     const STATUS_ACTIVE = 1;
     const STATUS_NO_ACTIVE = 0;

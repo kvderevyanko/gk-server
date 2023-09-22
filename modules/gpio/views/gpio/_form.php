@@ -1,11 +1,12 @@
 <?php
 
 use app\models\Commands;
+use app\modules\gpio\models\Gpio;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model \modules\gpio\models\Gpio */
+/* @var $model Gpio */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 

@@ -1,10 +1,11 @@
 <?php
 
+use app\modules\pwm\models\PwmValues;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model \modules\pwm\models\PwmValues */
+/* @var $model PwmValues */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 

@@ -2,8 +2,8 @@
 
 namespace app\commands;
 
-use app\components\widgets\SettingValueWidget;
 use app\models\Settings;
+use app\widgets\SettingValueWidget;
 use modules\dht\models\DbDht;
 use modules\gpio\models\Gpio;
 use yii\console\Controller;

@@ -1,10 +1,11 @@
 <?php
 
+use app\modules\ws\models\WsValues;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model \app\modules\ws\models\DbWsValues */
+/* @var $model WsValues */
 
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Настройка WS', 'url' => ['index']];

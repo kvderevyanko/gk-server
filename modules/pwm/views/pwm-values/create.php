@@ -1,9 +1,10 @@
 <?php
 
+use app\modules\pwm\models\PwmValues;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model \modules\pwm\models\PwmValues */
+/* @var $model PwmValues */
 
 $this->title = 'Добавить пин';
 $this->params['breadcrumbs'][] = ['label' => 'PWM пины', 'url' => ['index']];

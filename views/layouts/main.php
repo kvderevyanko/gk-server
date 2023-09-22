@@ -3,14 +3,14 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
-use app\components\widgets\SettingValueWidget;
+use app\assets\AppAsset;
 use app\models\Settings;
 use app\widgets\Alert;
-use yii\helpers\Html;
+use app\widgets\SettingValueWidget;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
+use yii\helpers\Html;
 use yii\widgets\Breadcrumbs;
-use app\assets\AppAsset;
 
 AppAsset::register($this);
 ?>

@@ -1,11 +1,12 @@
 <?php
 
+use app\modules\ws\models\WsValues;
 use yii\bootstrap\Modal;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model \app\modules\ws\models\DbWsValues */
+/* @var $model WsValues */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
@@ -27,7 +28,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'buffer')->textInput() ?>
 
-    <?= $form->field($model, 'mode')->dropDownList(\app\modules\ws\models\WsValues::$modeList) ?>
+    <?= $form->field($model, 'mode')->dropDownList(WsValues::$modeList) ?>
 
     <?= $form->field($model, 'delay')->textInput() ?>
 

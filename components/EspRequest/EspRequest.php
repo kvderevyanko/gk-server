@@ -37,7 +37,7 @@ class EspRequest implements EspRequestInterface
             ->setUrl($this->host.$this->file)
             ->setData($this->params)
             ->setOptions([
-                'timeout' => 2, // set timeout to 5 seconds for the case server is not responding
+                'timeout' => 2,
             ])
             ->send();
         if ($response->isOk) {

@@ -4,21 +4,21 @@ namespace app\modules\ws\controllers;
 
 use app\models\Device;
 use app\modules\ws\models\DbWsValues;
+use app\modules\ws\models\WsValues;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
-/**
- * WsValuesController implements the CRUD actions for WsValues model.
- */
 class WsValuesController extends Controller
 {
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'verbs' => [
@@ -32,14 +32,13 @@ class WsValuesController extends Controller
 
 
     /**
-     * Lists all WsValues models.
-     * @return mixed
+     * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => DbWsValues::find()
-                ->leftJoin(Device::tableName(), Device::tableName().".id = ".DbWsValues::tableName().".deviceId")
+            'query' => WsValues::find()
+                ->leftJoin(Device::tableName(), Device::tableName().".id = ".WsValues::tableName().".deviceId")
                 ->andWhere([Device::tableName().".active" => Device::STATUS_ACTIVE]),
         ]);
 
@@ -49,12 +48,11 @@ class WsValuesController extends Controller
     }
 
     /**
-     * Displays a single WsValues model.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param int $id
+     * @return string
+     * @throws NotFoundHttpException
      */
-    public function actionView($id)
+    public function actionView(int $id): string
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
@@ -62,13 +60,11 @@ class WsValuesController extends Controller
     }
 
     /**
-     * Creates a new WsValues model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return string|Response
      */
     public function actionCreate()
     {
-        $model = new DbWsValues();
+        $model = new WsValues();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -80,13 +76,11 @@ class WsValuesController extends Controller
     }
 
     /**
-     * Updates an existing WsValues model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param int $id
+     * @return string|Response
+     * @throws NotFoundHttpException
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
 
@@ -100,13 +94,13 @@ class WsValuesController extends Controller
     }
 
     /**
-     * Deletes an existing WsValues model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param int $id
+     * @return Response
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws StaleObjectException
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response
     {
         $this->findModel($id)->delete();
 
@@ -114,15 +108,13 @@ class WsValuesController extends Controller
     }
 
     /**
-     * Finds the WsValues model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return DbWsValues the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param int $id
+     * @return WsValues|null
+     * @throws NotFoundHttpException
      */
-    protected function findModel($id)
+    protected function findModel(int $id): WsValues
     {
-        if (($model = DbWsValues::findOne($id)) !== null) {
+        if (($model = WsValues::findOne($id)) !== null) {
             return $model;
         }
 

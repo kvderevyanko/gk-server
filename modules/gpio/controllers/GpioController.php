@@ -16,9 +16,6 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
-/**
- * GpioController implements the CRUD actions for Gpio model.
- */
 class GpioController extends Controller
 {
     /**
@@ -168,13 +165,13 @@ class GpioController extends Controller
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @return Response
      * @throws NotFoundHttpException
      * @throws StaleObjectException
      * @throws \Throwable
      */
-    public function actionDelete($id): Response
+    public function actionDelete(int $id): Response
     {
         $this->findModel($id)->delete();
 
@@ -182,11 +179,11 @@ class GpioController extends Controller
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @return Gpio|null
      * @throws NotFoundHttpException
      */
-    protected function findModel($id): Gpio
+    protected function findModel(int $id): Gpio
     {
         if (($model = Gpio::findOne($id)) !== null) {
             return $model;

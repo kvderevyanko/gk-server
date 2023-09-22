@@ -1,9 +1,10 @@
 <?php
 
+use app\modules\pwm\models\PwmSettings;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model \modules\pwm\models\PwmSettings */
+/* @var $model PwmSettings */
 
 $this->title = 'Установка настроек PWM';
 $this->params['breadcrumbs'][] = ['label' => 'PWM настройки', 'url' => ['index']];

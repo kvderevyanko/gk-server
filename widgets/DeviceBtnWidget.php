@@ -1,7 +1,7 @@
 <?php
 
 
-namespace app\components\widgets;
+namespace app\widgets;
 
 
 use app\models\Device;
