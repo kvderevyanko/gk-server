@@ -3,6 +3,7 @@
 namespace app\modules\dht\models;
 
 use app\models\Device;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "dht".
@@ -12,6 +13,7 @@ use app\models\Device;
  * @property string|null $name
  * @property int $pin
  * @property bool|null $active
+ * @property-read ActiveQuery $device
  * @property bool|null $home
  */
 class DbDht extends \yii\db\ActiveRecord
@@ -22,7 +24,7 @@ class DbDht extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'dht';
     }
@@ -30,7 +32,7 @@ class DbDht extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['deviceId', 'pin'], 'required'],
@@ -44,7 +46,7 @@ class DbDht extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -57,9 +59,10 @@ class DbDht extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getDevice(){
+    public function getDevice(): ActiveQuery
+    {
         return $this->hasOne(Device::className(), ['id' => 'deviceId']);
     }
 

@@ -2,12 +2,13 @@
 
 namespace app\modules\dht\controllers;
 
-use modules\dht\models\DbDht;
+use app\modules\dht\models\Dht;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * DhtController implements the CRUD actions for Dht model.
@@ -17,7 +18,7 @@ class DhtController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'verbs' => [
@@ -30,13 +31,12 @@ class DhtController extends Controller
     }
 
     /**
-     * Lists all Dht models.
-     * @return mixed
+     * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => DbDht::find(),
+            'query' => Dht::find(),
         ]);
 
         return $this->render('index', [
@@ -45,12 +45,11 @@ class DhtController extends Controller
     }
 
     /**
-     * Displays a single Dht model.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param int $id
+     * @return string
+     * @throws NotFoundHttpException
      */
-    public function actionView($id)
+    public function actionView(int $id): string
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
@@ -58,13 +57,11 @@ class DhtController extends Controller
     }
 
     /**
-     * Creates a new Dht model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return string|Response
      */
     public function actionCreate()
     {
-        $model = new DbDht();
+        $model = new Dht();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -76,13 +73,11 @@ class DhtController extends Controller
     }
 
     /**
-     * Updates an existing Dht model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param int $id
+     * @return string|Response
+     * @throws NotFoundHttpException
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
 
@@ -96,13 +91,11 @@ class DhtController extends Controller
     }
 
     /**
-     * Deletes an existing Dht model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param int $id
+     * @return Response
+     * @throws NotFoundHttpException
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response
     {
         $this->findModel($id)->delete();
 
@@ -110,15 +103,13 @@ class DhtController extends Controller
     }
 
     /**
-     * Finds the Dht model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return DbDht the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param int $id
+     * @return Dht
+     * @throws NotFoundHttpException
      */
-    protected function findModel($id)
+    protected function findModel(int $id): Dht
     {
-        if (($model = DbDht::findOne($id)) !== null) {
+        if (($model = Dht::findOne($id)) !== null) {
             return $model;
         }
 

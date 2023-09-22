@@ -12,6 +12,8 @@ class EspRequest implements EspRequestInterface
     private string $file;
     private array $params;
 
+    const RESPONSE_ERROR = 'error';
+
     public function __construct(
         string $host,
         string $file,
@@ -43,6 +45,6 @@ class EspRequest implements EspRequestInterface
         if ($response->isOk) {
             return $response->content;
         }
-        return 'error';
+        return self::RESPONSE_ERROR;
     }
 }

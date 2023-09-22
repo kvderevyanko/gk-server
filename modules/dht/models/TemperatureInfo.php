@@ -3,7 +3,7 @@
 namespace app\modules\dht\models;
 
 
-class TemperatureInfo extends \modules\dht\models\DbTemperatureInfo
+class TemperatureInfo extends DbTemperatureInfo
 {
 
 }

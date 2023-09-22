@@ -2,37 +2,44 @@
 
 namespace app\modules\dht\models;
 
-use PHPUnit\Exception;
+use app\components\EspRequest\EspRequest;
+use app\models\Device;
+use yii\base\InvalidConfigException;
 use yii\helpers\Json;
-use yii\httpclient\Client;
+use yii\web\NotFoundHttpException;
 
 class Dht extends DbDht
 {
 
+    /**
+     * @return TemperatureInfo|array|\yii\db\ActiveRecord|null
+     */
     public function lastTemperature(){
-        $temperatureInfo = TemperatureInfo::find()->where(['deviceId' => $this->deviceId])->orderBy(['id' => SORT_DESC])->one();
+        $temperatureInfo = TemperatureInfo::find()
+            ->where(['deviceId' => $this->deviceId])
+            ->orderBy(['id' => SORT_DESC])->one();
         return $temperatureInfo;
     }
 
-    public static function sendRequest($deviceId) {
+    /**
+     * @param int $deviceId
+     * @return string
+     * @throws InvalidConfigException
+     * @throws \yii\httpclient\Exception
+     * @throws NotFoundHttpException
+     */
+    public static function sendRequest(int $deviceId): string
+    {
         $dht = self::findOne(['deviceId' => $deviceId, 'active' => self::STATUS_ACTIVE]);
         if($dht) {
-            $client = new Client([
-                'transport' => 'yii\httpclient\CurlTransport'
-            ]);
-            $response = $client->createRequest()
-                ->setMethod('GET')
-                ->setUrl($dht->device->host.'dht')
-                ->setData([
-                    'pin' => $dht->pin,
-                ])
-                ->setOptions([
-                    'timeout' => 2, // set timeout to 5 seconds for the case server is not responding
-                ])
-                ->send();
-            if ($response->isOk) {
+            $device = Device::getActiveDevice($deviceId);
+
+            $params = ['pin' => $dht->pin];
+
+            $content = (new EspRequest($device->host,'gpio.lc', $params))->send();
+
+            if ($content != EspRequest::RESPONSE_ERROR) {
                 try {
-                    $content = $response->content;
                     $content = Json::decode($content);
                     if($content['status'] === 'ok') {
                         $temperatureInfo = new TemperatureInfo();
@@ -42,12 +49,12 @@ class Dht extends DbDht
                         $temperatureInfo->datetime = time();
                         $temperatureInfo->save();
                     }
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
 
                 }
-                return $response->content;
+                return Json::encode($content);
             }
         }
-
+        return EspRequest::RESPONSE_ERROR;
     }
 }

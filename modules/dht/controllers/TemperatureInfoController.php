@@ -2,12 +2,13 @@
 
 namespace app\modules\dht\controllers;
 
-use modules\dht\models\DbTemperatureInfo;
+use app\modules\dht\models\TemperatureInfo;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * TemperatureInfoController implements the CRUD actions for TemperatureInfo model.
@@ -17,7 +18,7 @@ class TemperatureInfoController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'verbs' => [
@@ -30,13 +31,12 @@ class TemperatureInfoController extends Controller
     }
 
     /**
-     * Lists all TemperatureInfo models.
-     * @return mixed
+     * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => DbTemperatureInfo::find(),
+            'query' => TemperatureInfo::find(),
         ]);
 
         return $this->render('index', [
@@ -45,12 +45,11 @@ class TemperatureInfoController extends Controller
     }
 
     /**
-     * Displays a single TemperatureInfo model.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param int $id
+     * @return string
+     * @throws NotFoundHttpException
      */
-    public function actionView($id)
+    public function actionView(int $id): string
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
@@ -58,13 +57,11 @@ class TemperatureInfoController extends Controller
     }
 
     /**
-     * Creates a new TemperatureInfo model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return string|Response
      */
     public function actionCreate()
     {
-        $model = new DbTemperatureInfo();
+        $model = new TemperatureInfo();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -76,13 +73,11 @@ class TemperatureInfoController extends Controller
     }
 
     /**
-     * Updates an existing TemperatureInfo model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param int $id
+     * @return string|Response
+     * @throws NotFoundHttpException
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
 
@@ -96,13 +91,11 @@ class TemperatureInfoController extends Controller
     }
 
     /**
-     * Deletes an existing TemperatureInfo model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param int $id
+     * @return Response
+     * @throws NotFoundHttpException
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response
     {
         $this->findModel($id)->delete();
 
@@ -110,15 +103,13 @@ class TemperatureInfoController extends Controller
     }
 
     /**
-     * Finds the TemperatureInfo model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return DbTemperatureInfo the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param int $id
+     * @return TemperatureInfo|null
+     * @throws NotFoundHttpException
      */
-    protected function findModel($id)
+    protected function findModel(int $id): TemperatureInfo
     {
-        if (($model = DbTemperatureInfo::findOne($id)) !== null) {
+        if (($model = TemperatureInfo::findOne($id)) !== null) {
             return $model;
         }
 
