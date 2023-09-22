@@ -20,6 +20,12 @@ use Yii;
  */
 class Commands extends \yii\db\ActiveRecord
 {
+
+    const PIN_TYPE_PWM = 'pwm';
+    const PIN_TYPE_GPIO = 'gpio';
+    const CONDITION_TYPE_TIME = 'time';
+    const CONDITION_TYPE_TEMPERATURE = 'temperature';
+
     /**
      * {@inheritdoc}
      */
@@ -27,11 +33,6 @@ class Commands extends \yii\db\ActiveRecord
     {
         return 'commands';
     }
-    const PIN_TYPE_PWM = 'pwm';
-    const PIN_TYPE_GPIO = 'gpio';
-    const CONDITION_TYPE_TIME = 'time';
-    const CONDITION_TYPE_TEMPERATURE = 'temperature';
-
     /**
      * {@inheritdoc}
      */

@@ -19,7 +19,7 @@ class Settings extends \yii\db\ActiveRecord
     const SITE_NAME = 'site_name';
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public static function tableName(): string
     {
@@ -27,7 +27,7 @@ class Settings extends \yii\db\ActiveRecord
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     public function rules(): array
     {
@@ -39,7 +39,7 @@ class Settings extends \yii\db\ActiveRecord
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     public function attributeLabels(): array
     {

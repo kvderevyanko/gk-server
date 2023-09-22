@@ -80,6 +80,9 @@ class Device extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * @return array
+     */
     public static function typeList(): array
     {
         return [
@@ -102,12 +105,19 @@ class Device extends \yii\db\ActiveRecord
         return $device;
     }
 
+    /**
+     * @return array
+     */
     public static function devicesList(): array
     {
         $devices = self::findAll(['active' => self::STATUS_ACTIVE]);
         return ArrayHelper::map($devices, 'id', 'name');
     }
 
+    /**
+     * @param int $id
+     * @return string
+     */
     public static function deviceName(int $id): string
     {
         $device = self::findOne($id);
@@ -118,13 +128,12 @@ class Device extends \yii\db\ActiveRecord
     }
 
     /**
-     * @throws \Throwable
+     * @return void
      * @throws StaleObjectException
+     * @throws \Throwable
      */
-    public function afterDelete()
+    public function afterDelete(): void
     {
-        parent::afterDelete();
-
         $pwmSettings = DbPwmSettings::findAll(['deviceId' => $this->id]);
         foreach ($pwmSettings as $settings)
             $settings->delete();
@@ -146,5 +155,7 @@ class Device extends \yii\db\ActiveRecord
             $dht->delete();
 
         DbTemperatureInfo::deleteAll(['deviceId' => $this->id]);
+
+        parent::afterDelete();
     }
 }

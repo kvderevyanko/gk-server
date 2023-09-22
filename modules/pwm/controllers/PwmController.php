@@ -11,13 +11,13 @@ use yii\web\NotFoundHttpException;
 class PwmController extends Controller
 {
     /**
-     * @param $deviceId
+     * @param int $deviceId
      * @return string
      * @throws NotFoundHttpException
      * @throws InvalidConfigException
      * @throws Exception
      */
-    public function actionRequest($deviceId): string
+    public function actionRequest(int $deviceId): string
     {
         $request = \Yii::$app->request->get();
         $pwmList = PwmValues::findAll(['deviceId' => $deviceId]);
