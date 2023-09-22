@@ -1,10 +1,11 @@
 <?php
 
+use app\modules\dht\models\TemperatureInfo;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model \modules\dht\models\DbTemperatureInfo */
+/* @var $model TemperatureInfo */
 
 $this->title = $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Temperature Infos', 'url' => ['index']];

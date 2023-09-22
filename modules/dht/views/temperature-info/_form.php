@@ -1,10 +1,11 @@
 <?php
 
+use app\modules\dht\models\TemperatureInfo;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model \modules\dht\models\DbTemperatureInfo */
+/* @var $model TemperatureInfo */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 

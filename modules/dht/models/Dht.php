@@ -3,16 +3,19 @@
 namespace app\modules\dht\models;
 
 use app\components\EspRequest\EspRequest;
+use app\components\EspRequest\EspRequestSenderFactory;
 use app\models\Device;
 use yii\base\InvalidConfigException;
+use yii\db\ActiveRecord;
 use yii\helpers\Json;
+use yii\httpclient\Exception;
 use yii\web\NotFoundHttpException;
 
 class Dht extends DbDht
 {
 
     /**
-     * @return TemperatureInfo|array|\yii\db\ActiveRecord|null
+     * @return TemperatureInfo|array|ActiveRecord|null
      */
     public function lastTemperature(){
         $temperatureInfo = TemperatureInfo::find()
@@ -24,8 +27,7 @@ class Dht extends DbDht
     /**
      * @param int $deviceId
      * @return string
-     * @throws InvalidConfigException
-     * @throws \yii\httpclient\Exception
+     * @throws Exception
      * @throws NotFoundHttpException
      */
     public static function sendRequest(int $deviceId): string
@@ -36,7 +38,9 @@ class Dht extends DbDht
 
             $params = ['pin' => $dht->pin];
 
-            $content = (new EspRequest($device->host,'dht.lc', $params))->send();
+            $requestSenderFactory = new EspRequestSenderFactory();
+            $espRequest = $requestSenderFactory->createEspRequest($device->host,'dht.lc', $params);
+            $content = $espRequest->send();
 
             if ($content != EspRequest::RESPONSE_ERROR) {
                 try {

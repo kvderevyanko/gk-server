@@ -12,7 +12,10 @@ class GpioShowWidget extends Widget
     public  $deviceId;
     public  $mainPage;
 
-    public function run()
+    /**
+     * @return string
+     */
+    public function run(): string
     {
         $gpioValues = Gpio::find()->where(['active' => Gpio::STATUS_ACTIVE]);
         if($this->deviceId)

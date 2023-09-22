@@ -1,10 +1,11 @@
 <?php
 
+use app\modules\dht\models\Dht;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model \modules\dht\models\DbDht */
+/* @var $model Dht */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 

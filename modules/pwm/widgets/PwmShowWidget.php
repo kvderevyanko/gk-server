@@ -13,7 +13,10 @@ class PwmShowWidget extends Widget
     public  $deviceId;
     public  $mainPage;
 
-    public function run()
+    /**
+     * @return string
+     */
+    public function run(): string
     {
         $pwmValues = PwmValues::find()->where(['active' => PwmValues::STATUS_ACTIVE]);
         if($this->deviceId)

@@ -1,10 +1,11 @@
 <?php
 
+use app\modules\dht\models\Dht;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model \modules\dht\models\DbDht */
+/* @var $model Dht */
 
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Термометры', 'url' => ['index']];

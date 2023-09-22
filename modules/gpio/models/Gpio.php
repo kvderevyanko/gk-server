@@ -3,6 +3,7 @@
 namespace app\modules\gpio\models;
 
 use app\components\EspRequest\EspRequest;
+use app\components\EspRequest\EspRequestSenderFactory;
 use app\models\Device;
 use yii\base\InvalidConfigException;
 use yii\httpclient\Exception;
@@ -34,7 +35,9 @@ class Gpio extends DbGpio
 
         $device = Device::getActiveDevice($deviceId);
 
-        return (new EspRequest($device->host,'gpio.lc', $params))->send();
+        $requestSenderFactory = new EspRequestSenderFactory();
+        $espRequest = $requestSenderFactory->createEspRequest($device->host,'gpio.lc', $params);
+        return $espRequest->send();
     }
 
 }

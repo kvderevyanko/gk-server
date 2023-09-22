@@ -3,6 +3,7 @@
 namespace app\modules\ws\models;
 
 use app\components\EspRequest\EspRequest;
+use app\components\EspRequest\EspRequestSenderFactory;
 use app\models\Device;
 use yii\base\InvalidConfigException;
 use yii\helpers\ArrayHelper;
@@ -13,7 +14,9 @@ use yii\web\NotFoundHttpException;
 
 class WsValues extends DbWsValues
 {
-
+    /**
+     * @var array|string[]
+     */
     public static array $modeList = [
         'off' => 'Выключить',
         'static' => 'Статичный',
@@ -42,13 +45,12 @@ class WsValues extends DbWsValues
 
 
     /**
-     * @param $deviceId
+     * @param int $deviceId
      * @return string
-     * @throws InvalidConfigException
      * @throws Exception
      * @throws NotFoundHttpException
      */
-    public static function sendRequest($deviceId): string
+    public static function sendRequest(int $deviceId): string
     {
 
         $ws = self::findOne(['deviceId' => $deviceId, 'active' => self::STATUS_ACTIVE]);
@@ -63,17 +65,19 @@ class WsValues extends DbWsValues
                 'gradient_color' => Json::encode(self::convertHexString($ws->gradientColor)),
                 'mode_options' => $ws->modeOptions,
             ];
-            return (new EspRequest($device->host,'ws.lc', $params))->send();
+            $requestSenderFactory = new EspRequestSenderFactory();
+            $espRequest = $requestSenderFactory->createEspRequest($device->host,'ws.lc', $params);
+            return $espRequest->send();
         }
-        return 'error';
+        return EspRequest::RESPONSE_ERROR;
     }
 
     /**
      * Конвертируем строку из hex цветов и возвращаем массив с GRB цветками
-     * @param $hexString
+     * @param string $hexString
      * @return array
      */
-    public static function convertHexString($hexString): array
+    public static function convertHexString(string $hexString): array
     {
         $hexArray = explode(',', $hexString);
         $result = [];
@@ -85,10 +89,10 @@ class WsValues extends DbWsValues
 
     /**
      * Конвертирует hex в GRB для ws2812 nodemcu
-     * @param $hex
+     * @param string $hex
      * @return array
      */
-    public static function convertColor($hex): array
+    public static function convertColor(string $hex): array
     {
         $hex = trim($hex);
         list($r, $g, $b) = sscanf($hex, "#%02x%02x%02x");

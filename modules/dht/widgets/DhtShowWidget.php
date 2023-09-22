@@ -12,7 +12,10 @@ class DhtShowWidget extends Widget
     public $deviceId;
     public $mainPage;
 
-    public function run()
+    /**
+     * @return string
+     */
+    public function run(): string
     {
 
         $dhts = Dht::find()->where(['active' => Dht::STATUS_ACTIVE]);

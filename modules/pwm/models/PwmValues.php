@@ -3,6 +3,7 @@
 namespace app\modules\pwm\models;
 
 use app\components\EspRequest\EspRequest;
+use app\components\EspRequest\EspRequestSenderFactory;
 use app\models\Device;
 use yii\base\InvalidConfigException;
 use yii\db\ActiveQuery;
@@ -32,6 +33,9 @@ class PwmValues extends DbPwmValues
         $device = Device::getActiveDevice($deviceId);
         $params['clock'] = $pwmSettings->clock;
         $params['duty'] = $pwmSettings->duty;
-        return (new EspRequest($device->host,'gpio-pwm.lc', $params))->send();
+
+        $requestSenderFactory = new EspRequestSenderFactory();
+        $espRequest = $requestSenderFactory->createEspRequest($device->host,'gpio-pwm.lc', $params);
+        return $espRequest->send();
     }
 }
