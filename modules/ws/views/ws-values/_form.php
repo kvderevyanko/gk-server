@@ -27,7 +27,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'buffer')->textInput() ?>
 
-    <?= $form->field($model, 'mode')->dropDownList(\app\modules\ws\models\DbWsValues::$modeList) ?>
+    <?= $form->field($model, 'mode')->dropDownList(\app\modules\ws\models\WsValues::$modeList) ?>
 
     <?= $form->field($model, 'delay')->textInput() ?>
 

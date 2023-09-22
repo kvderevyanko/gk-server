@@ -48,7 +48,8 @@ class WsValues extends DbWsValues
      * @throws Exception
      * @throws NotFoundHttpException
      */
-    public static function sendRequest($deviceId) {
+    public static function sendRequest($deviceId): string
+    {
 
         $ws = self::findOne(['deviceId' => $deviceId, 'active' => self::STATUS_ACTIVE]);
         $device = Device::getActiveDevice($deviceId);
@@ -72,7 +73,8 @@ class WsValues extends DbWsValues
      * @param $hexString
      * @return array
      */
-    public static function convertHexString($hexString){
+    public static function convertHexString($hexString): array
+    {
         $hexArray = explode(',', $hexString);
         $result = [];
         foreach ($hexArray as $hex) {
@@ -86,7 +88,8 @@ class WsValues extends DbWsValues
      * @param $hex
      * @return array
      */
-    public static function convertColor($hex) {
+    public static function convertColor($hex): array
+    {
         $hex = trim($hex);
         list($r, $g, $b) = sscanf($hex, "#%02x%02x%02x");
         //echo "$hex -> $r $g $b";

@@ -10,30 +10,9 @@ use yii\helpers\ArrayHelper;
 use yii\httpclient\Exception;
 use yii\web\NotFoundHttpException;
 
-/**
- * This is the model class for table "pwm_values".
- *
- * @property int $id
- * @property int $deviceId
- * @property int $pinId
- * @property string $name
- * @property int|null $value
- * @property bool|null $active
- * @property bool|null $home
- *
- * @property Device getDevice()
- */
 class PwmValues extends DbPwmValues
 {
 
-
-    /**
-     * @return ActiveQuery
-     */
-    public function getSettings(): ActiveQuery
-    {
-        return $this->hasOne(PwmSettings::className(), ['deviceId' => 'deviceId']);
-    }
 
     /**
      * @param $deviceId

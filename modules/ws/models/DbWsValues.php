@@ -3,6 +3,8 @@
 namespace app\modules\ws\models;
 
 use app\models\Device;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "ws_values".
@@ -19,16 +21,17 @@ use app\models\Device;
  * @property string|null $gradientColor
  * @property string|null $modeOptions
  * @property bool|null $active
+ * @property-read ActiveQuery $device
  * @property bool|null $home
  */
-class DbWsValues extends \yii\db\ActiveRecord
+class DbWsValues extends ActiveRecord
 {
     const STATUS_ACTIVE = 1;
     const STATUS_NO_ACTIVE = 0;
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'ws_values';
     }
@@ -36,7 +39,7 @@ class DbWsValues extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['deviceId', 'defaultBuffer'], 'required'],
@@ -55,7 +58,7 @@ class DbWsValues extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -75,9 +78,10 @@ class DbWsValues extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getDevice(){
+    public function getDevice(): ActiveQuery
+    {
         return $this->hasOne(Device::className(), ['id' => 'deviceId']);
     }
 
