@@ -33,31 +33,6 @@ class GpioController extends Controller
         ];
     }
 
-
-    /**
-     * Получение запроса со значением пинов для  устройства
-     * @param int $deviceId
-     * @return string
-     * @throws Exception
-     * @throws InvalidConfigException
-     * @throws NotFoundHttpException
-     */
-    public function actionRequest(int $deviceId): string
-    {
-        $request = \Yii::$app->request->get();
-        $gpioList = Gpio::findAll(['deviceId' => $deviceId]);
-        if(!is_array($request)) {
-            return 'error';
-        }
-        foreach ($gpioList as $gpio) {
-            if(array_key_exists($gpio->id, $request)){
-                $gpio->value = $request[$gpio->id];
-                $gpio->save();
-            }
-        }
-        return Gpio::sendRequest($deviceId);
-    }
-
     /**
      * @return string
      */

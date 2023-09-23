@@ -15,7 +15,7 @@ class m200529_231931_create_pwm_values_table extends Migration
         $this->createTable('{{%pwm_values}}', [
             'id' => $this->primaryKey(),
             'deviceId' => $this->integer()->notNull(),
-            'pinId' => $this->integer()->notNull(),
+            'pin' => $this->integer()->notNull(),
             'name' => $this->string()->notNull(),
             'value' => $this->integer(),
             'active' => $this->boolean(),

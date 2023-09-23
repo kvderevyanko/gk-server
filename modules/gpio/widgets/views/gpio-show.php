@@ -1,6 +1,7 @@
 <?php
 
 use app\modules\gpio\models\Gpio;
+use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\View;
 
@@ -16,7 +17,7 @@ use yii\web\View;
 <?php foreach ($gpioValues as $gpio): ?>
 <label  class="checkBoxSwitch">
 
-    <?=\yii\helpers\Html::checkbox('', ($gpio->value?$gpio->value:0), [
+    <?= Html::checkbox('', ($gpio->value?$gpio->value:0), [
         'data-pin'=>$gpio->pin,
         'data-device'=>$gpio->deviceId,
         'data-id' => $gpio->id,
@@ -30,22 +31,20 @@ use yii\web\View;
 </div>
     </div>
 <script>
-    let urlCommandGpio = "<?=Url::to(['/gpio/gpio/request'])?>";
+    let urlCommandGpio = "<?=Url::to(['/gpio/request/set'])?>";
 </script>
 <?php
 $this->registerJs(<<<JS
-
-let gpioBlock = $("#gpioBlock");
 let blockGpioRequest;
 let waitGpioRequest;
 
 $(".gpioCheckbox").on('change', function() {
-    commandGpio($(this).data('device'))
+    commandGpio($(this).data('device'), $(this).data('pin'), $(this).prop('checked'))
 })
 
 let deviceRepeatGpio = 0;
 
-function commandGpio(deviceId) {
+function commandGpio(deviceId, pin, value) {
     
     if(deviceRepeatGpio === 0)
         deviceRepeatGpio = 1;
@@ -56,30 +55,25 @@ function commandGpio(deviceId) {
     }
     blockGpioRequest = true;
     waitGpioRequest = false;
-    
-    let request = {deviceId:deviceId};
-    $.each(gpioBlock.find('[data-device="'+deviceId+'"]'), function() {
-        request[$(this).data('id')] = $(this).prop('checked')?1:0;
-    })
+
     openWaitRequest(deviceId, deviceRepeatGpio);
-    $.get(urlCommandGpio, request, function(data) {
+    $.get(urlCommandGpio, {deviceId:deviceId, pin:pin, value:value}, function(data) {
         blockGpioRequest = false;
-      if(waitGpioRequest)
+        if(waitGpioRequest)
           commandGpio(waitGpioRequest)
-      hideWaitRequest(deviceId, deviceRepeatGpio);
-      deviceRepeatGpio = 0;
+        hideWaitRequest(deviceId, deviceRepeatGpio);
+        deviceRepeatGpio = 0;
     }).fail(function() {
         blockGpioRequest = false;
         waitGpioRequest = false;
         if(deviceRepeatGpio < 5) {
             deviceRepeatGpio++;
-            commandGpio(deviceId);
+            commandGpio(deviceId, pin, value);
         } else {
             hideWaitRequest(deviceId, deviceRepeatGpio)
             alert( "Ошибка отправки запроса после 5 попыток" );
             deviceRepeatGpio = 0;
         }
-        
     })
 }
 

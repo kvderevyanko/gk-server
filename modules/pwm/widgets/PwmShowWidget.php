@@ -4,7 +4,7 @@
 namespace app\modules\pwm\widgets;
 
 
-use app\modules\pwm\models\PwmValues;
+use app\modules\pwm\models\Pwm;
 use yii\base\Widget;
 
 class PwmShowWidget extends Widget
@@ -18,7 +18,7 @@ class PwmShowWidget extends Widget
      */
     public function run(): string
     {
-        $pwmValues = PwmValues::find()->where(['active' => PwmValues::STATUS_ACTIVE]);
+        $pwmValues = Pwm::find()->where(['active' => Pwm::STATUS_ACTIVE]);
         if($this->deviceId)
             $pwmValues->andWhere(['deviceId' => $this->deviceId]);
         if($this->mainPage)

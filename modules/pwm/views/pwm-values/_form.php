@@ -1,11 +1,11 @@
 <?php
 
-use app\modules\pwm\models\PwmValues;
+use app\modules\pwm\models\Pwm;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model PwmValues */
+/* @var $model Pwm */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
@@ -16,7 +16,7 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'deviceId')
         ->dropDownList(\app\models\Device::devicesList()) ?>
 
-    <?= $form->field($model, 'pinId')->textInput() ?>
+    <?= $form->field($model, 'pin')->textInput() ?>
     <?= $form->field($model, 'name')->textInput() ?>
 
     <?= $form->field($model, 'home')->checkbox() ?>

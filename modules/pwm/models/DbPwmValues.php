@@ -15,7 +15,7 @@ use yii\web\NotFoundHttpException;
  *
  * @property int $id
  * @property int $deviceId
- * @property int $pinId
+ * @property int $pin
  * @property string $name
  * @property int|null $value
  * @property bool|null $active
@@ -43,12 +43,12 @@ class DbPwmValues extends \yii\db\ActiveRecord
     public function rules(): array
     {
         return [
-            [['deviceId', 'pinId'], 'required'],
-            [['deviceId', 'pinId', 'value'], 'integer'],
+            [['deviceId', 'pin'], 'required'],
+            [['deviceId', 'pin', 'value'], 'integer'],
             [['active', 'home'], 'boolean'],
             [['name'], 'string'],
-            [['deviceId', 'pinId'], 'unique', 'targetAttribute' => ['deviceId', 'pinId']],
-            [['pinId'], 'integer', 'min' => 1, 'max' => 35],
+            [['deviceId', 'pin'], 'unique', 'targetAttribute' => ['deviceId', 'pin']],
+            [['pin'], 'integer', 'min' => 1, 'max' => 35],
         ];
     }
 
@@ -60,7 +60,7 @@ class DbPwmValues extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'deviceId' => 'Основное устройство',
-            'pinId' => 'Пин',
+            'pin' => 'Пин',
             'name' => 'Имя',
             'value' => 'Значение',
             'active' => 'Активно',

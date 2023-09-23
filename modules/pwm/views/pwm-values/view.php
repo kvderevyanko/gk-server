@@ -1,14 +1,14 @@
 <?php
 
 use app\models\Device;
-use app\modules\pwm\models\PwmValues;
+use app\modules\pwm\models\Pwm;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model PwmValues */
+/* @var $model Pwm */
 
-$this->title = $model->pinId;
+$this->title = $model->pin;
 $this->params['breadcrumbs'][] = ['label' => 'PWM пины', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -38,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     return Device::deviceName($data->deviceId);
                 }
             ],
-            'pinId',
+            'pin',
             'name',
             'value',
             'home:boolean',

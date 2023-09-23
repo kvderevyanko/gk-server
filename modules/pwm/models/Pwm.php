@@ -1,19 +1,21 @@
 <?php
 
-namespace app\modules\gpio\models;
+namespace app\modules\pwm\models;
 
 use app\components\EspRequest\EspRequest;
 use app\components\EspRequest\EspRequestSenderFactory;
 use app\models\Device;
 use yii\base\InvalidConfigException;
+use yii\db\ActiveQuery;
+use yii\helpers\ArrayHelper;
 use yii\httpclient\Exception;
 use yii\web\NotFoundHttpException;
 
-class Gpio extends DbGpio
+class Pwm extends DbPwmValues
 {
 
+
     /**
-     * Отправка запроса по GPIO
      * @param int $deviceId
      * @return string
      * @throws NotFoundHttpException
@@ -21,7 +23,8 @@ class Gpio extends DbGpio
      */
     public static function sendRequest(int $deviceId): string
     {
-        $gpioList = self::find()
+
+        $pwmList = self::find()
             ->leftJoin(Device::tableName(), Device::tableName().".id = ".self::tableName().".deviceId")
             ->andWhere([
                 Device::tableName().".active" => Device::STATUS_ACTIVE,
@@ -29,33 +32,25 @@ class Gpio extends DbGpio
                 self::tableName().'.active' => self::STATUS_ACTIVE
             ])
             ->all();
-
-        $params = [];
-        foreach ($gpioList as $gpio) {
-            if($gpio->negative) {
-                $params[$gpio->pin] = $gpio->value?0:1;
-            } else {
-                $params[$gpio->pin] = $gpio->value;
-            }
-        }
+        $params = ArrayHelper::map($pwmList, 'pin', 'value');
 
         $device = Device::getActiveDevice($deviceId);
 
+        $pwmSettings = PwmSettings::findOne(['deviceId' => $deviceId]);
+        if($pwmSettings === null)
+            throw new NotFoundHttpException("Настройки PWM не найдены");
+
+        $params['clock'] = $pwmSettings->clock;
+        $params['duty'] = $pwmSettings->duty;
+
         $requestSenderFactory = new EspRequestSenderFactory();
-        $espRequest = $requestSenderFactory->createEspRequest($device->host,'gpio.lc', $params);
+        $espRequest = $requestSenderFactory->createEspRequest($device->host,'gpio-pwm.lc', $params);
         return $espRequest->send();
     }
 
-    /**
-     * Запись значения GPIO в базу
-     * @param int $deviceId
-     * @param int $pin
-     * @param bool $value
-     * @return bool
-     */
-    public static function setStatus(int $deviceId, int $pin, bool $value): bool
+    public static function setStatus(int $deviceId, int $pin, int $value): bool
     {
-        $gpio = self::find()
+        $pwm = self::find()
             ->leftJoin(Device::tableName(), Device::tableName().".id = ".self::tableName().".deviceId")
             ->andWhere([
                 self::tableName().'.deviceId' => $deviceId,
@@ -65,11 +60,10 @@ class Gpio extends DbGpio
 
             ])
             ->one();
-        if($gpio) {
-            $gpio->value = $value;
-            return $gpio->save();
+        if($pwm) {
+            $pwm->value = $value;
+            return $pwm->save();
         }
         return false;
     }
-
 }

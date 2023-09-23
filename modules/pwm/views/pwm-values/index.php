@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     return \app\models\Device::deviceName($data->deviceId);
                 }
             ],
-            'pinId',
+            'pin',
             'name',
             'value',
             'home:boolean',
