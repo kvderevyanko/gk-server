@@ -23,7 +23,7 @@ class MotorController extends Controller
      *--  * * * * sleep 20; php  /var/www/html/yii device/motor
      * @throws \yii\web\NotFoundHttpException|\Throwable
      */
-    public function actionMotor()
+    public function actionMotor():void
     {
         $gpio = Gpio::find()
             ->where(['active' => Gpio::STATUS_ACTIVE, 'motor' => true])

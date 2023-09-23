@@ -3,7 +3,7 @@
 namespace app\modules\pwm\controllers;
 
 use app\models\Device;
-use app\modules\pwm\models\PwmValues;
+use app\modules\pwm\models\Pwm;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\StaleObjectException;
@@ -13,7 +13,7 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
- * PwmValuesController implements the CRUD actions for PwmValues model.
+ * PwmController implements the CRUD actions for Pwm model.
  */
 class PwmValuesController extends Controller
 {
@@ -38,8 +38,8 @@ class PwmValuesController extends Controller
     public function actionIndex(): string
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => PwmValues::find()
-                ->leftJoin(Device::tableName(), Device::tableName().".id = ".PwmValues::tableName().".deviceId")
+            'query' => Pwm::find()
+                ->leftJoin(Device::tableName(), Device::tableName().".id = ".Pwm::tableName().".deviceId")
                 ->andWhere([Device::tableName().".active" => Device::STATUS_ACTIVE]),
         ]);
 
@@ -65,7 +65,7 @@ class PwmValuesController extends Controller
      */
     public function actionCreate()
     {
-        $model = new PwmValues();
+        $model = new Pwm();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['index', 'id' => $model->id]);
@@ -110,12 +110,12 @@ class PwmValuesController extends Controller
 
     /**
      * @param int $id
-     * @return PwmValues|null
+     * @return Pwm|null
      * @throws NotFoundHttpException
      */
-    protected function findModel(int $id): PwmValues
+    protected function findModel(int $id): Pwm
     {
-        if (($model = PwmValues::findOne($id)) !== null) {
+        if (($model = Pwm::findOne($id)) !== null) {
             return $model;
         }
 

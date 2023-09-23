@@ -2,7 +2,6 @@
 namespace app\modules\pwm\controllers;
 
 use app\modules\pwm\models\Pwm;
-use yii\base\InvalidConfigException;
 use yii\httpclient\Exception;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
