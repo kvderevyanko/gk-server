@@ -3,9 +3,8 @@
 namespace app\commands;
 
 use app\models\Settings;
+use app\modules\gpio\models\Gpio;
 use app\widgets\SettingValueWidget;
-use modules\dht\models\DbDht;
-use modules\gpio\models\Gpio;
 use yii\console\Controller;
 
 /**
@@ -13,29 +12,22 @@ use yii\console\Controller;
  * Class DeviceController
  * @package app\commands
  */
-class DeviceController extends Controller
+class MotorController extends Controller
 {
 
-    /**
-     * Получение температуры
-     */
-    public function actionTemperature()
-    {
-        $dhts = DbDht::findAll(['active' => DbDht::STATUS_ACTIVE]);
-        foreach ($dhts as $dht){
-            DbDht::sendRequest($dht->deviceId);
-        }
-    }
+
 
     /**
      * Включение мотора на 20 секунд по крону
      *--  * * * * * php  /var/www/html/yii device/motor
      *--  * * * * sleep 20; php  /var/www/html/yii device/motor
-     * @throws \yii\web\NotFoundHttpException
+     * @throws \yii\web\NotFoundHttpException|\Throwable
      */
     public function actionMotor()
     {
-        $gpio = Gpio::findAll(['active' => Gpio::STATUS_ACTIVE, 'motor' => true]);
+        $gpio = Gpio::find()
+            ->where(['active' => Gpio::STATUS_ACTIVE, 'motor' => true])
+            ->all();
         $delay = SettingValueWidget::widget(['key' => Settings::MOTOR_INTERVAL]);
         if(!(int)$delay)
             $delay = 3;

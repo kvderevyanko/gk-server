@@ -35,14 +35,15 @@ class DhtController extends Controller
 
     /**
      * @param int $deviceId
+     * @param int $pin
      * @return string
      * @throws NotFoundHttpException
      * @throws InvalidConfigException
      * @throws Exception
      */
-    public function actionRequest(int $deviceId): string
+    public function actionRequest(int $deviceId, int $pin): string
     {
-        return Dht::sendRequest($deviceId);
+        return Dht::sendRequest($deviceId, $pin);
     }
 
     /**

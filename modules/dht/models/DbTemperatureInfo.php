@@ -2,16 +2,19 @@
 
 namespace app\modules\dht\models;
 
+use yii\db\ActiveRecord;
+
 /**
  * This is the model class for table "temperature_info".
  *
  * @property int $id
  * @property int $deviceId
+ * @property int $pin
  * @property float|null $temperature
  * @property float|null $humidity
  * @property int|null $datetime
  */
-class DbTemperatureInfo extends \yii\db\ActiveRecord
+class DbTemperatureInfo extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -27,8 +30,8 @@ class DbTemperatureInfo extends \yii\db\ActiveRecord
     public function rules(): array
     {
         return [
-            [['deviceId'], 'required'],
-            [['deviceId', 'datetime'], 'integer'],
+            [['deviceId', 'pin'], 'required'],
+            [['deviceId', 'datetime', 'pin'], 'integer'],
             [['temperature', 'humidity'], 'number'],
         ];
     }
@@ -41,6 +44,7 @@ class DbTemperatureInfo extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'deviceId' => 'Device ID',
+            'pin' => 'Pin',
             'temperature' => 'Temperature',
             'humidity' => 'Humidity',
             'datetime' => 'Datetime',

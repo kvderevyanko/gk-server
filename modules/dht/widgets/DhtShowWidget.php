@@ -4,6 +4,7 @@
 namespace app\modules\dht\widgets;
 
 
+use app\models\Device;
 use app\modules\dht\models\Dht;
 use yii\base\Widget;
 
@@ -18,17 +19,25 @@ class DhtShowWidget extends Widget
     public function run(): string
     {
 
-        $dhts = Dht::find()->where(['active' => Dht::STATUS_ACTIVE]);
+        $dhtList = Dht::find()
+            ->leftJoin([
+                Device::tableName(),
+                Dht::tableName().'.deviceId = '.Device::tableName().'.id'
+            ])
+            ->where([
+                Dht::tableName().'.active' => Dht::STATUS_ACTIVE,
+                Device::tableName().'.active' => Device::STATUS_ACTIVE,
+            ]);
         if($this->deviceId)
-            $dhts->andWhere(['deviceId' => $this->deviceId]);
+            $dhtList->andWhere([Dht::tableName().'.deviceId' => $this->deviceId]);
         if($this->mainPage)
-            $dhts->andWhere(['home' => true]);
+            $dhtList->andWhere([Dht::tableName().'.home' => true]);
 
-        $dhts = $dhts->all();
+        $dhtList = $dhtList->all();
 
-        if(count($dhts) < 1)
+        if(count($dhtList) < 1)
             return '';
 
-        return $this->render('dht-show', ['dhts' => $dhts]);
+        return $this->render('dht-show', ['dhtList' => $dhtList]);
     }
 }

@@ -41,6 +41,7 @@ class DbGpio extends ActiveRecord
         return [
             [['deviceId', 'pin'], 'required'],
             [['deviceId', 'pin'], 'integer'],
+            [['deviceId', 'pin'], 'unique', 'targetAttribute' => ['deviceId', 'pin']],
             [['value', 'active', 'home', 'motor', 'negative'], 'boolean'],
             [['name'], 'string', 'max' => 255],
         ];
