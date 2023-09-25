@@ -14,7 +14,7 @@ class CommandController extends Controller
 
 
     /**
-     * Базовая команда
+     * Базовая команда - считает параметры из настроек и за ё
      * @return void
      */
     public function actionIndex()

@@ -6,6 +6,7 @@ use app\models\Settings;
 use app\modules\gpio\models\Gpio;
 use app\widgets\SettingValueWidget;
 use yii\console\Controller;
+use yii\web\NotFoundHttpException;
 
 /**
  * Установка параметров по крону
@@ -21,7 +22,7 @@ class MotorController extends Controller
      * Включение мотора на 20 секунд по крону
      *--  * * * * * php  /var/www/html/yii device/motor
      *--  * * * * sleep 20; php  /var/www/html/yii device/motor
-     * @throws \yii\web\NotFoundHttpException|\Throwable
+     * @throws NotFoundHttpException|\Throwable
      */
     public function actionMotor():void
     {

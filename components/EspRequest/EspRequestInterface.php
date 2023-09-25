@@ -1,9 +1,11 @@
 <?php
 namespace app\components\EspRequest;
+use yii\base\ViewContextInterface;
+
 /**
  * Отправка запроса на микроконтроллер
  */
-interface EspRequestInterface{
+interface EspRequestInterface {
     /**
      * Отправка запроса на esp
      * @return string
