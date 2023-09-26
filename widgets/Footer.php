@@ -1,0 +1,65 @@
+<?php
+
+
+namespace app\widgets;
+
+use Yii;
+use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\bootstrap\Nav;
+use yii\base\InvalidParamException;
+/**
+ * This is just an example.
+ */
+class Footer extends  \yii\base\Widget
+{
+	/**
+	 * Text for displaying in the footer
+	*/
+	public $footer;
+
+	/**
+	 * Optional footer links
+	 * Array with label; and url
+	*/
+	public $links = [];
+
+
+	public function init()
+	{
+		parent::init();
+
+		if(!isset($this->footer))
+			$this->footer = Yii::powered();
+	}
+
+	
+    public function run()
+    {
+        $widget = Html::beginTag('footer', ['class'=>'footer']);
+        $widget.= Html::beginTag('div', ['class'=>'container-fluid']);
+        $widget.= Html::beginTag('nav', ['class'=>'pull-left']);
+        //if there be links add them
+        if(count($this->links)>0)
+        {
+            $widget.= Html::beginTag('ul');
+            
+            foreach($this->links as $link)
+            {
+                $widget.= Html::beginTag('li');
+                $widget.= Html::a($link['label'], $link['url'], isset($link['options']) ? $link['options'] : []);
+                $widget.= Html::endTag('li');
+            }
+            
+            $widget.= Html::endTag('ul');
+        }
+        $widget.= Html::endTag('nav');
+        
+        $widget.= Html::tag('p', $this->footer, ['class'=>'copyright pull-right']); 
+        $widget.= Html::endTag('div');
+        $widget.= Html::endTag('footer');
+        
+        return $widget;
+    }
+}
+

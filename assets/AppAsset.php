@@ -20,11 +20,16 @@ class AppAsset extends AssetBundle
     public $sourcePath = '@app/assets/';
 
     public $css = [
-        'css/main.css',
+        'css/pe-icon-7-stroke.css',
+        'css/light-bootstrap-dashboard.css',
+        'css/widget.css',
     ];
+
     public $js = [
+        'js/light-bootstrap-dashboard.js',
         'js/main.js',
     ];
+
     public $depends = [
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',

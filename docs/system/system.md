@@ -11,6 +11,9 @@
     sudo apt install apache2 php git php8.1-zip php8.1-intl php8.1-mbstring  sqlite3 libsqlite3-dev php-sqlite3 curl php8.1-curl \
     php8.1-xml php8.1-gd php8.1-imagick  libapache2-mod-php
 
+
+
+
 Проставляем права и устанавливаем composer
 
     sudo su

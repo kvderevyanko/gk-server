@@ -53,6 +53,9 @@ $config = [
         ],
         'assetManager' => [
             'linkAssets' => true,
+            'bundles' => [
+                'deyraka\materialdashboard\web\MaterialDashboardAsset',
+            ],
         ],
     ],
     'modules' => [
