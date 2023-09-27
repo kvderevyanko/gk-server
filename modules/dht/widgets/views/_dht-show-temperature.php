@@ -10,7 +10,7 @@ use yii\web\View;
 ?>
 <?php
 if ($lastTemperature) {
-    echo date('d/m H:i:s', $lastTemperature->datetime);
+    echo \app\components\CustomHelper::formatDateTime($lastTemperature->datetime);
     if ($lastTemperature->temperature)
         echo ' Температура: ' . $lastTemperature->temperature . ', ';
 

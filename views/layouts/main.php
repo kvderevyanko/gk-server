@@ -36,9 +36,7 @@ AppAsset::register($this);
                 'title'=>SettingValueWidget::widget(['key' => Settings::SITE_NAME]),
                 'url'=>['/']
             ],
-            'links'=>[
-                ['title'=>'Some URL', 'url'=>['/controller/action'], 'icon'=>'users']
-            ]
+            'links'=> \app\models\Device::menuList()
         ]) ?>
 
         <div class="main-panel">
@@ -50,7 +48,6 @@ AppAsset::register($this);
                 'title' => $this->title,
                 'links'=>[
                     ['label' => 'Главная', 'url' => ['/site/index']],
-                    ['label' => 'Справка', 'url' => ['/help/index']],
                     [
                         'label' => 'Настройки',
                         'url' => '#',
@@ -71,6 +68,8 @@ AppAsset::register($this);
                             //['label' => 'Джойстик', 'url' => ['/gamepad/index']],
                         ]
                     ],
+                    ['label' => 'Справка', 'url' => ['/help/index']],
+
                 ],
             ]) ?>
 

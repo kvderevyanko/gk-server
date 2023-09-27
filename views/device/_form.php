@@ -18,6 +18,7 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'type')
         ->dropDownList(\app\models\Device::typeList(), ['class' => 'form-control']) ?>
 
+    <?= $form->field($model, 'icon')->textInput(['maxlength' => true]) ?>
     <?= $form->field($model, 'class')->dropDownList(\app\models\Device::btnClass()) ?>
     <?= $form->field($model, 'home')->checkbox() ?>
     <?= $form->field($model, 'active')->checkbox() ?>

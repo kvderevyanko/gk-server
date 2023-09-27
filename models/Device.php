@@ -11,85 +11,9 @@ use yii\db\StaleObjectException;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 
-/**
- * This is the model class for table "device".
- *
- * @property int $id
- * @property string|null $name
- * @property string $host
- * @property string $class
- * @property bool|null $active
- * @property bool|null $home
- * @property string $type
- */
-class Device extends \yii\db\ActiveRecord
+
+class Device extends DbDevice
 {
-
-    const STATUS_ACTIVE = 1;
-    const STATUS_NO_ACTIVE = 0;
-
-    const TYPE_ESP_8266 = "ESP8266";
-    const TYPE_ESP_32 = "ESP32";
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function tableName(): string
-    {
-        return 'device';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function rules(): array
-    {
-        return [
-            [['host'], 'required'],
-            [['active', 'home'], 'boolean'],
-            [['name', 'host', 'class', 'type'], 'string', 'max' => 255],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function attributeLabels(): array
-    {
-        return [
-            'id' => 'ID',
-            'name' => 'Имя',
-            'host' => 'Хост',
-            'type' => 'Тип',
-            'active' => 'Активно',
-            'class' => 'Класс кнопки',
-            'home' => 'На главной',
-        ];
-    }
-
-    public static function btnClass(): array
-    {
-        return [
-            'btn-default' => 'btn-default',
-            'btn-primary' => 'btn-primary',
-            'btn-success' => 'btn-success',
-            'btn-info' => 'btn-info',
-            'btn-warning' => 'btn-warning',
-            'btn-danger' => 'btn-danger',
-            'btn-link' => 'btn-link',
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public static function typeList(): array
-    {
-        return [
-            self::TYPE_ESP_8266 => self::TYPE_ESP_8266,
-            //self::TYPE_ESP_32 => self::TYPE_ESP_32,
-        ];
-    }
 
     /**
      * Получение активного устройства
@@ -106,12 +30,42 @@ class Device extends \yii\db\ActiveRecord
     }
 
     /**
+     * @return Device[]
+     */
+    public static function getActiveDevices(): array
+    {
+        return self::findAll(['active' => self::STATUS_ACTIVE]);
+    }
+
+
+    /**
      * @return array
      */
     public static function devicesList(): array
     {
-        $devices = self::findAll(['active' => self::STATUS_ACTIVE]);
+        $devices = self::getActiveDevices();
         return ArrayHelper::map($devices, 'id', 'name');
+    }
+
+
+    /**
+     * Генерация пунктов для меню
+     * @return array
+     */
+    public static function menuList(): array
+    {
+        $devices = self::getActiveDevices();
+        $menuList = [];
+        foreach ($devices as $device) {
+            $menuList[] = [
+                'title'=>$device->name,
+                'url'=>['/device/control/', 'device' => $device->id],
+                'icon'=>$device->icon,
+
+            ];
+        }
+
+        return $menuList;
     }
 
     /**
@@ -127,35 +81,4 @@ class Device extends \yii\db\ActiveRecord
         return 'АХТУНГ!!! Основное устройство не найдено';
     }
 
-    /**
-     * @return void
-     * @throws StaleObjectException
-     * @throws \Throwable
-     */
-    public function afterDelete(): void
-    {
-        $pwmSettings = DbPwmSettings::findAll(['deviceId' => $this->id]);
-        foreach ($pwmSettings as $settings)
-            $settings->delete();
-
-        $pwmValues = DbPwmValues::findAll(['deviceId' => $this->id]);
-        foreach ($pwmValues as $values)
-            $values->delete();
-
-        $wsValues = DbWsValues::findAll(['deviceId' => $this->id]);
-        foreach ($wsValues as $ws)
-            $ws->delete();
-
-        $gpioValues = DbGpio::findAll(['deviceId' => $this->id]);
-        foreach ($gpioValues as $gpio)
-            $gpio->delete();
-
-        $dhtDevices = DbDht::findAll(['deviceId' => $this->id]);
-        foreach ($dhtDevices as $dht)
-            $dht->delete();
-
-        DbTemperatureInfo::deleteAll(['deviceId' => $this->id]);
-
-        parent::afterDelete();
-    }
 }

@@ -27,6 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'host',
             'type',
+            'icon',
             'home:boolean',
             'active:boolean',
 

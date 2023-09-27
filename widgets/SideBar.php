@@ -75,6 +75,7 @@ class SideBar extends \yii\base\Widget
 		return $header;
 	}
 
+
     public function run()
     {
 
@@ -82,7 +83,7 @@ class SideBar extends \yii\base\Widget
 
         $content.= $this->buildHeader();
 
-        $content = $content.Html::beginTag('ul', ['class'=>'nav']);
+        $content = $content.Html::beginTag('ul', ['class'=>'nav ']);
 
         //add links
         foreach ($this->links as $link)

@@ -4,7 +4,8 @@
 namespace app\modules\dht\widgets;
 
 
-use app\assets\ChartJsAsset;
+
+use app\assets\DhtAsset;
 use app\models\Device;
 use app\modules\dht\models\Dht;
 use yii\base\Widget;
@@ -21,7 +22,7 @@ class DhtShowWidget extends Widget
     public function run(): string
     {
 
-        ChartJsAsset::register($this->getView());
+        DhtAsset::register($this->getView());
         $dhtList = Dht::find()
             ->leftJoin([
                 Device::tableName(),
