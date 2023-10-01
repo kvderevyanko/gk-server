@@ -2,16 +2,14 @@
 
 namespace app\modules\gpio\controllers;
 
-use app\models\Commands;
+use app\models\base\DbCommands;
 use app\models\Device;
 use app\modules\gpio\models\Gpio;
 use Yii;
-use yii\base\InvalidConfigException;
 use yii\data\ActiveDataProvider;
 use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
 use yii\helpers\Json;
-use yii\httpclient\Exception;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -34,14 +32,18 @@ class GpioController extends Controller
     }
 
     /**
+     * @param int $deviceId
      * @return string
      */
-    public function actionIndex(): string
+    public function actionIndex(int $deviceId): string
     {
         $dataProvider = new ActiveDataProvider([
             'query' => Gpio::find()
                 ->leftJoin(Device::tableName(), Device::tableName().".id = ".Gpio::tableName().".deviceId")
-                ->andWhere([Device::tableName().".active" => Device::STATUS_ACTIVE])
+                ->andWhere([
+                    Device::tableName().".active" => Device::STATUS_ACTIVE,
+                    Device::tableName().".id" => $deviceId,
+                ])
         ]);
 
         return $this->render('index', [
@@ -87,17 +89,17 @@ class GpioController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Commands::deleteAll(['deviceId' => $model->deviceId, 'pin' => $model->pin]);
+            DbCommands::deleteAll(['deviceId' => $model->deviceId, 'pin' => $model->pin]);
             $commands = Yii::$app->request->post('Commands');
 
             if($commands && is_array($commands) && array_key_exists('conditionType', $commands) &&
                 is_array($commands['conditionType'])) {
                 $i = 0;
                 foreach ($commands['conditionType'] as $key => $conditionType) {
-                    $command = new Commands();
+                    $command = new DbCommands();
                     $command->deviceId = $model->deviceId;
                     $command->pin = $model->pin;
-                    $command->pinType = Commands::PIN_TYPE_GPIO;
+                    $command->pinType = DbCommands::PIN_TYPE_GPIO;
                     $command->conditionType = $conditionType;
 
                     if(array_key_exists('conditionFrom', $commands) && is_array($commands['conditionFrom']) &&
@@ -129,7 +131,7 @@ class GpioController extends Controller
             return $this->redirect(['index', 'id' => $model->id]);
         }
 
-        $commands = Commands::find()
+        $commands = DbCommands::find()
             ->where(['deviceId' => $model->deviceId, 'pin' => $model->pin])
             ->orderBy(['conditionSort' => SORT_ASC])->all();
 

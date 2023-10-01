@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\DeviceSettings;
 use Yii;
 use app\models\Device;
 use yii\data\ActiveDataProvider;
@@ -36,13 +37,16 @@ class DeviceController extends Controller
      */
     public function actionIndex(): string
     {
-        $dataProvider = new ActiveDataProvider([
+        $devices = Device::find()->all();
+        return $this->render('index', ['devices' => $devices]);
+        /*$dataProvider = new ActiveDataProvider([
             'query' => Device::find(),
         ]);
 
+
         return $this->render('index', [
             'dataProvider' => $dataProvider,
-        ]);
+        ]);*/
     }
 
     /**
@@ -79,7 +83,7 @@ class DeviceController extends Controller
         $model = new Device();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index', 'id' => $model->id]);
+            return $this->redirect(['update', 'id' => $model->id]);
         }
 
         return $this->render('create', [
@@ -97,7 +101,9 @@ class DeviceController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index', 'id' => $model->id]);
+            $settings = Yii::$app->request->post('Settings');
+            DeviceSettings::saveDeviceSettings($model->id, (is_array($settings)?$settings:[]));
+            return $this->redirect(['index']);
         }
 
         return $this->render('update', [

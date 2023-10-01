@@ -1,11 +1,13 @@
 <?php
 
+use app\models\DeviceSettings;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Device */
 /* @var $form yii\widgets\ActiveForm */
+
 ?>
 
 <div class="device-form">
@@ -23,6 +25,16 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'home')->checkbox() ?>
     <?= $form->field($model, 'active')->checkbox() ?>
 
+    <?php if(!$model->isNewRecord): ?>
+    <div class="row">
+    <?php foreach (DeviceSettings::settingsList() as $key=>$name): ?>
+        <div class="col-sm-3 col-xs-6">
+            <?=Html::checkbox("Settings[$key]", DeviceSettings::checkDeviceSetting($model->id, $key), ['label' => $name])?>
+        </div>
+    <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
+<hr>
     <div class="form-group">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
     </div>

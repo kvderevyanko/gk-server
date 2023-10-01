@@ -2,7 +2,7 @@
 
 namespace app\commands;
 
-use app\models\Commands;
+use app\models\base\DbCommands;
 use app\models\Device;
 use app\modules\gpio\models\Gpio;
 use yii\console\Controller;
@@ -19,9 +19,9 @@ class CommandController extends Controller
      */
     public function actionIndex()
     {
-        $commands = Commands::find()->where([Commands::tableName().'.active' => true])
-            ->orderBy([Commands::tableName().'.conditionSort' => SORT_ASC])
-            ->leftJoin(Device::tableName(), Device::tableName().".id = ".Commands::tableName().".deviceId")
+        $commands = DbCommands::find()->where([DbCommands::tableName().'.active' => true])
+            ->orderBy([DbCommands::tableName().'.conditionSort' => SORT_ASC])
+            ->leftJoin(Device::tableName(), Device::tableName().".id = ".DbCommands::tableName().".deviceId")
             ->andWhere([Device::tableName().".active" => Device::STATUS_ACTIVE])
             ->all();
         $commands = ArrayHelper::toArray($commands);
@@ -63,7 +63,7 @@ class CommandController extends Controller
 
         //Разбили по структуре  pinType => deviceId => pin, теперь начинаем высчитывать условия
         foreach ($result as $pinType => $device){
-            if($pinType === Commands::PIN_TYPE_GPIO) {
+            if($pinType === DbCommands::PIN_TYPE_GPIO) {
                 foreach ($device as $deviceId => $pins) {
                     foreach ($pins as $pin => $pinValues){
                         $gpio = Gpio::findOne(['deviceId' => $deviceId, 'pin' => $pin, 'active' => Gpio::STATUS_ACTIVE]);

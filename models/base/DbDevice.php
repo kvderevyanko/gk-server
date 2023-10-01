@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace app\models\base;
 use app\modules\dht\models\DbDht;
 use app\modules\dht\models\DbTemperatureInfo;
 use app\modules\gpio\models\DbGpio;
@@ -26,11 +26,6 @@ use yii\web\NotFoundHttpException;
 class DbDevice extends \yii\db\ActiveRecord
 {
 
-    const STATUS_ACTIVE = 1;
-    const STATUS_NO_ACTIVE = 0;
-
-    const TYPE_ESP_8266 = "ESP8266";
-    const TYPE_ESP_32 = "ESP32";
 
     /**
      * {@inheritdoc}
@@ -82,16 +77,6 @@ class DbDevice extends \yii\db\ActiveRecord
         ];
     }
 
-    /**
-     * @return array
-     */
-    public static function typeList(): array
-    {
-        return [
-            self::TYPE_ESP_8266 => self::TYPE_ESP_8266,
-            //self::TYPE_ESP_32 => self::TYPE_ESP_32,
-        ];
-    }
 
     /**
      * @return void

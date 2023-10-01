@@ -1,19 +1,30 @@
 <?php
-
 namespace app\models;
-use app\modules\dht\models\DbDht;
-use app\modules\dht\models\DbTemperatureInfo;
-use app\modules\gpio\models\DbGpio;
-use app\modules\pwm\models\DbPwmSettings;
-use app\modules\pwm\models\DbPwmValues;
-use app\modules\ws\models\DbWsValues;
-use yii\db\StaleObjectException;
+
+use app\models\base\DbDevice;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 
 
 class Device extends DbDevice
 {
+
+    const STATUS_ACTIVE = 1;
+    const STATUS_NO_ACTIVE = 0;
+    const TYPE_ESP_8266 = "ESP8266";
+    const TYPE_ESP_32 = "ESP32";
+
+
+    /**
+     * @return array
+     */
+    public static function typeList(): array
+    {
+        return [
+            self::TYPE_ESP_8266 => self::TYPE_ESP_8266,
+            //self::TYPE_ESP_32 => self::TYPE_ESP_32,
+        ];
+    }
 
     /**
      * Получение активного устройства
