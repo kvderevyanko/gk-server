@@ -6,21 +6,20 @@ namespace app\components\CommandsSettings;
 interface CommandsSettingsInterface {
     /**
      * Установка команды
-     * @return string
+     * @param int $deviceId
+     * @param int $pin
+     * @param array $commands
+     * @return bool
      */
-    function set():string;
+    static function set(int $deviceId, int $pin, array $commands):bool;
 
     /**
-     * Обновление команды
-     * @return string
+     * Получение команд для пина
+     * @param int $deviceId
+     * @param int $pin
+     * @return array
      */
-    function update():string;
-
-    /**
-     * Удаление команды
-     * @return string
-     */
-    function delete():string;
+    static function get(int $deviceId, int $pin):array;
 
     /**
      * Получение результата выполнения команды

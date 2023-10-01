@@ -2,9 +2,12 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\web\View;
+use yii\data\ActiveDataProvider;
 
-/* @var $this yii\web\View */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $this View */
+/* @var $dataProvider ActiveDataProvider */
+/* @var $deviceId integer */
 
 $this->title = 'GPIO';
 $this->params['breadcrumbs'][] = $this->title;
@@ -14,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Добавить GPIO', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Добавить GPIO', ['create', 'deviceId' => $deviceId], ['class' => 'btn btn-success']) ?>
     </p>
 
 

@@ -11,7 +11,8 @@ use yii\web\NotFoundHttpException;
 
 class Gpio extends DbGpio
 {
-
+    const STATUS_ACTIVE = 1;
+    const STATUS_NO_ACTIVE = 0;
     /**
      * Отправка запроса по GPIO
      * @param int $deviceId

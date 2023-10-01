@@ -5,6 +5,7 @@ use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model Gpio */
+/* @var $deviceId integer */
 
 $this->title = 'Добавить GPIO';
 $this->params['breadcrumbs'][] = ['label' => 'GPIO', 'url' => ['index']];
@@ -16,6 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $this->render('_form', [
         'model' => $model,
+        'deviceId' => $deviceId,
     ]) ?>
 
 </div>

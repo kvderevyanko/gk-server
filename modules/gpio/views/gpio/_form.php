@@ -1,6 +1,7 @@
 <?php
 
 use app\models\Commands;
+use app\models\Device;
 use app\modules\gpio\models\Gpio;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -8,6 +9,7 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model Gpio */
 /* @var $form yii\widgets\ActiveForm */
+/* @var $deviceId integer */
 ?>
 
 <div class="gpio-form">
@@ -15,8 +17,7 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin(); ?>
     <div class="row">
         <div class="col-sm-12">
-            <?= $form->field($model, 'deviceId')
-                ->dropDownList(\app\models\Device::devicesList()) ?>
+            <h4>Устройство - <?= Device::deviceName($deviceId) ?></h4>
         </div>
         <div class="col-sm-6">
             <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>

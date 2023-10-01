@@ -7,6 +7,7 @@ use yii\helpers\Json;
 /* @var $this yii\web\View */
 /* @var $model Gpio */
 /* @var $commands Json */
+/* @var $deviceId int */
 
 $this->title = 'Изменить GPIO: ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'GPIO', 'url' => ['index']];
@@ -19,6 +20,7 @@ $this->params['breadcrumbs'][] = 'Изменить';
 
     <?= $this->render('_form', [
         'model' => $model,
+        'deviceId' => $deviceId,
     ]) ?>
 
 </div>

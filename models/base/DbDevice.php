@@ -107,6 +107,8 @@ class DbDevice extends \yii\db\ActiveRecord
 
         DbTemperatureInfo::deleteAll(['deviceId' => $this->id]);
 
+        DbCommands::deleteAll(['deviceId' => $this->id]);
+
         parent::afterDelete();
     }
 }

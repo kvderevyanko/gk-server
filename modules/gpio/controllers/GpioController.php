@@ -2,7 +2,8 @@
 
 namespace app\modules\gpio\controllers;
 
-use app\models\base\DbCommands;
+use app\components\CommandsSettings\CommandsGpioSettings;
+use app\models\Commands;
 use app\models\Device;
 use app\modules\gpio\models\Gpio;
 use Yii;
@@ -39,43 +40,37 @@ class GpioController extends Controller
     {
         $dataProvider = new ActiveDataProvider([
             'query' => Gpio::find()
-                ->leftJoin(Device::tableName(), Device::tableName().".id = ".Gpio::tableName().".deviceId")
+                ->leftJoin(Device::tableName(), Device::tableName() . ".id = " . Gpio::tableName() . ".deviceId")
                 ->andWhere([
-                    Device::tableName().".active" => Device::STATUS_ACTIVE,
-                    Device::tableName().".id" => $deviceId,
+                    Device::tableName() . ".active" => Device::STATUS_ACTIVE,
+                    Device::tableName() . ".id" => $deviceId,
                 ])
         ]);
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
+            'deviceId' => $deviceId,
         ]);
     }
 
     /**
-     * @param int $id
-     * @return string
-     * @throws NotFoundHttpException
+     * @param int $deviceId
+     * @return Response|string
      */
-    public function actionView(int $id): string
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
-    /**
-     * @return string|Response
-     */
-    public function actionCreate(): string
+    public function actionCreate(int $deviceId)
     {
         $model = new Gpio();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->deviceId = $deviceId;
+            if ($model->save()) {
+                $this->saveCommands($model);
+                return $this->redirect(['index', 'deviceId' => $model->deviceId]);
+            }
         }
 
         return $this->render('create', [
             'model' => $model,
+            'deviceId' => $deviceId
         ]);
     }
 
@@ -87,59 +82,31 @@ class GpioController extends Controller
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
-
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            DbCommands::deleteAll(['deviceId' => $model->deviceId, 'pin' => $model->pin]);
-            $commands = Yii::$app->request->post('Commands');
-
-            if($commands && is_array($commands) && array_key_exists('conditionType', $commands) &&
-                is_array($commands['conditionType'])) {
-                $i = 0;
-                foreach ($commands['conditionType'] as $key => $conditionType) {
-                    $command = new DbCommands();
-                    $command->deviceId = $model->deviceId;
-                    $command->pin = $model->pin;
-                    $command->pinType = DbCommands::PIN_TYPE_GPIO;
-                    $command->conditionType = $conditionType;
-
-                    if(array_key_exists('conditionFrom', $commands) && is_array($commands['conditionFrom']) &&
-                        array_key_exists($key, $commands['conditionFrom'])) {
-                        $command->conditionFrom = $commands['conditionFrom'][$key];
-                    }
-
-                    if(array_key_exists('conditionTo', $commands) && is_array($commands['conditionTo']) &&
-                        array_key_exists($key, $commands['conditionTo'])) {
-                        $command->conditionTo = $commands['conditionTo'][$key];
-                    }
-
-                    if(array_key_exists('pinValue', $commands) && is_array($commands['pinValue']) &&
-                        array_key_exists($key, $commands['pinValue'])) {
-                        $command->pinValue = $commands['pinValue'][$key];
-                    }
-
-                    if(array_key_exists('active', $commands) && is_array($commands['active']) &&
-                        array_key_exists($key, $commands['active'])) {
-                        $command->active = $commands['active'][$key];
-                    }
-                    $command->conditionSort = $i;
-                    $command->save();
-                    $i++;
-                }
-
-
-            }
-            return $this->redirect(['index', 'id' => $model->id]);
+            $this->saveCommands($model);
+            return $this->redirect(['index', 'deviceId' => $model->deviceId]);
         }
-
-        $commands = DbCommands::find()
-            ->where(['deviceId' => $model->deviceId, 'pin' => $model->pin])
-            ->orderBy(['conditionSort' => SORT_ASC])->all();
-
+        $commands = CommandsGpioSettings::get($model->deviceId, $model->pin);
         return $this->render('update', [
             'model' => $model,
-            'commands' => Json::encode($commands)
+            'commands' => Json::encode($commands),
+            'deviceId' => $model->deviceId
         ]);
     }
+
+    /**
+     * Сохранение команд GPIO
+     * @param Gpio $model
+     * @return void
+     */
+    private function saveCommands(Gpio $model): void
+    {
+        $commands = Yii::$app->request->post('Commands');
+        if (!is_array($commands))
+            $commands = [];
+        CommandsGpioSettings::set($model->deviceId, $model->pin, $commands);
+    }
+
 
     /**
      * @param int $id

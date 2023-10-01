@@ -1,5 +1,7 @@
 <?php
 namespace app\components\CommandsSettings;
+use app\models\Commands;
+use app\modules\gpio\models\Gpio;
 use yii\base\View;
 
 /**
@@ -7,20 +9,52 @@ use yii\base\View;
  */
 class CommandsGpioSettings implements CommandsSettingsInterface {
 
-    function set(): string
+
+    static function set(int $deviceId, int $pin, array $commands): bool
     {
-        // TODO: Implement set() method.
+        Commands::deleteAll(['deviceId' => $deviceId, 'pin' => $pin, 'pinType' => Commands::PIN_TYPE_GPIO]);
+        if(array_key_exists('conditionType', $commands) && is_array($commands['conditionType'])) {
+            $i = 0;
+            foreach ($commands['conditionType'] as $key => $conditionType) {
+                $command = new Commands();
+                $command->deviceId = $deviceId;
+                $command->pin = $pin;
+                $command->pinType = Commands::PIN_TYPE_GPIO;
+                $command->conditionType = $conditionType;
+
+                if(array_key_exists('conditionFrom', $commands) && is_array($commands['conditionFrom']) &&
+                    array_key_exists($key, $commands['conditionFrom'])) {
+                    $command->conditionFrom = $commands['conditionFrom'][$key];
+                }
+
+                if(array_key_exists('conditionTo', $commands) && is_array($commands['conditionTo']) &&
+                    array_key_exists($key, $commands['conditionTo'])) {
+                    $command->conditionTo = $commands['conditionTo'][$key];
+                }
+
+                if(array_key_exists('pinValue', $commands) && is_array($commands['pinValue']) &&
+                    array_key_exists($key, $commands['pinValue'])) {
+                    $command->pinValue = $commands['pinValue'][$key];
+                }
+
+                if(array_key_exists('active', $commands) && is_array($commands['active']) &&
+                    array_key_exists($key, $commands['active'])) {
+                    $command->active = $commands['active'][$key];
+                }
+                $command->conditionSort = $i;
+                $command->save();
+                $i++;
+            }
+        }
+        return true;
     }
 
-    function update(): string
+    static function get(int $deviceId, int $pin): array
     {
-
-        // TODO: Implement update() method.
-    }
-
-    function delete(): string
-    {
-        // TODO: Implement delete() method.
+        $commands = Commands::find()
+            ->where(['deviceId' => $deviceId, 'pin' => $pin, 'pinType' => Commands::PIN_TYPE_GPIO])
+            ->orderBy(['conditionSort' => SORT_ASC])->all();
+        return $commands;
     }
 
     function getResult(): string
