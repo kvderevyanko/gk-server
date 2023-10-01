@@ -29,4 +29,9 @@ interface CommandsSettingsInterface {
     function getResult():string;
 
 
+    /**
+     * Выполнение команды
+     * @return string
+     */
+    function runCommand():string;
 }

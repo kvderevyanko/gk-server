@@ -25,4 +25,8 @@ class CommandsPwmSettings implements CommandsSettingsInterface {
         // TODO: Implement getResult() method.
     }
 
+    function runCommand():string
+    {
+        // TODO: Implement runCommand() method.
+    }
 }
