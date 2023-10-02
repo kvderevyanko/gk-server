@@ -15,39 +15,34 @@ $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id
 $this->params['breadcrumbs'][] = 'Изменить';
 ?>
 <div class="gpio-update">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <?= $this->render('_form', [
         'model' => $model,
         'deviceId' => $deviceId,
     ]) ?>
-
 </div>
 <?php
 $this->registerJs(<<<JS
 
-let commands = JSON.parse('$commands');
+let commands = JSON.parse('$commands')
 
 $.each(commands, function (i, item){
-    cl(item)
-    let template = $("#conditionTemplate").html();
-    template = template.replaceAll('[]', '['+i+']');
-    template = $(template);
+    let template = $('#conditionTemplate').html()
+    template = template.replaceAll('[]', '['+i+']')
+    template = $(template)
     template.find('[name="Commands[conditionType]['+i+']"]').val(item['conditionType'])
     template.find('[name="Commands[conditionFrom]['+i+']"]').val(item['conditionFrom'])
     template.find('[name="Commands[conditionTo]['+i+']"]').val(item['conditionTo'])
     
     if(item['pinValue']) 
-        template.find('.pinValue').prop('checked', true);
+        template.find('.pinValue').prop('checked', true)
     
     if(item['active']) 
-        template.find('.active').prop('checked', true);
+        template.find('.active').prop('checked', true)
     
-    $("#conditionBlock").append(template);
+    $('#conditionBlock').append(template)
 })
 
-updateSortable($("#conditionBlock"));
+updateSortable($('#conditionBlock'))
 
 JS
 );

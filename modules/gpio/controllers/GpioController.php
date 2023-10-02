@@ -117,9 +117,10 @@ class GpioController extends Controller
      */
     public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $model->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['index', 'deviceId' => $model->deviceId]);
     }
 
     /**

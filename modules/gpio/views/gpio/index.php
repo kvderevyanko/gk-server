@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Device;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\web\View;
@@ -14,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="gpio-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h3><?= Html::encode($this->title) ?> - <?= Device::deviceName($deviceId) ?></h3>
 
     <p>
         <?= Html::a('Добавить GPIO', ['create', 'deviceId' => $deviceId], ['class' => 'btn btn-success']) ?>
@@ -29,18 +30,18 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'deviceId',
                 'value' => function($data) {
-                    return \app\models\Device::deviceName($data->deviceId);
+                    return Device::deviceName($data->deviceId);
                 }
             ],
             'name',
             'pin',
-            'value:boolean',
+            //'value:boolean',
             'active:boolean',
             'home:boolean',
             'motor:boolean',
             'negative:boolean',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn', 'template' => '{update} &nbsp {delete}'],
         ],
     ]); ?>
 

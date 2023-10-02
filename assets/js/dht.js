@@ -51,7 +51,6 @@ function graphDht(deviceId, pin) {
         data:{}
       });
     }
-    cl(chart)
     updateChart(chart, data)
   })
 }
@@ -92,12 +91,11 @@ function commandDht(deviceId, pin) {
   dhtInfo.text('Получаем данные')
   let request = {deviceId:deviceId, pin:pin}
   openWaitRequest(deviceId, deviceRepeatDht)
-  $.get(urlCommandDht, request, function(deviceId,pin) {
+  $.get(urlCommandDht, request, function(data) {
     blockDhtRequest = false
     /*if(waitDhtRequest) {
       commandDht(waitDhtRequest,pin)
     }*/
-
     data = JSON.parse(data)
     if(data['status'] === 'ok') {
       hideWaitRequest(deviceId, deviceRepeatDht);

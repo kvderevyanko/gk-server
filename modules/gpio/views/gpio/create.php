@@ -12,9 +12,6 @@ $this->params['breadcrumbs'][] = ['label' => 'GPIO', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="gpio-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <?= $this->render('_form', [
         'model' => $model,
         'deviceId' => $deviceId,
