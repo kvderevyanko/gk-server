@@ -5,28 +5,12 @@ namespace app\components\CommandsSettings;
  */
 class CommandsPwmSettings implements CommandsSettingsInterface {
 
-    function set(): string
+    static function set(int $deviceId, int $pin, array $commands): bool
     {
-        // TODO: Implement set() method.
+
     }
 
-    function update(): string
-    {
-        // TODO: Implement update() method.
-    }
+    static function get(int $deviceId, int $pin):array {
 
-    function delete(): string
-    {
-        // TODO: Implement delete() method.
-    }
-
-    function getResult(): string
-    {
-        // TODO: Implement getResult() method.
-    }
-
-    function runCommand():string
-    {
-        // TODO: Implement runCommand() method.
     }
 }

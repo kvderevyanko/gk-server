@@ -51,19 +51,9 @@ class CommandsGpioSettings implements CommandsSettingsInterface {
 
     static function get(int $deviceId, int $pin): array
     {
-        $commands = Commands::find()
+        return Commands::find()
             ->where(['deviceId' => $deviceId, 'pin' => $pin, 'pinType' => Commands::PIN_TYPE_GPIO])
             ->orderBy(['conditionSort' => SORT_ASC])->all();
-        return $commands;
     }
 
-    function getResult(): string
-    {
-        // TODO: Implement getResult() method.
-    }
-
-    function runCommand():string
-    {
-        // TODO: Implement runCommand() method.
-    }
 }

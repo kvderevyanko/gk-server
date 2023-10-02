@@ -21,16 +21,4 @@ interface CommandsSettingsInterface {
      */
     static function get(int $deviceId, int $pin):array;
 
-    /**
-     * Получение результата выполнения команды
-     * @return string
-     */
-    function getResult():string;
-
-
-    /**
-     * Выполнение команды
-     * @return string
-     */
-    function runCommand():string;
 }
