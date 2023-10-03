@@ -1,9 +1,9 @@
 <?php
-namespace app\components\CommandsSettings;
+namespace app\components\CommandsSettings\set;
 /**
  * Работа с командами пинов
  */
-interface CommandsSettingsInterface {
+interface CommandsSetSettingsInterface {
     /**
      * Установка команды
      * @param int $deviceId
@@ -13,12 +13,5 @@ interface CommandsSettingsInterface {
      */
     static function set(int $deviceId, int $pin, array $commands):bool;
 
-    /**
-     * Получение команд для пина
-     * @param int $deviceId
-     * @param int $pin
-     * @return array
-     */
-    static function get(int $deviceId, int $pin):array;
 
 }

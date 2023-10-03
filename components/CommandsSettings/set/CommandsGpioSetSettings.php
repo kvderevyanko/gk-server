@@ -1,13 +1,11 @@
 <?php
-namespace app\components\CommandsSettings;
+namespace app\components\CommandsSettings\set;
 use app\models\Commands;
-use app\modules\gpio\models\Gpio;
-use yii\base\View;
 
 /**
  * Работа с командами для GPIO
  */
-class CommandsGpioSettings implements CommandsSettingsInterface {
+class CommandsGpioSetSettings implements CommandsSetSettingsInterface {
 
 
     static function set(int $deviceId, int $pin, array $commands): bool
@@ -48,12 +46,4 @@ class CommandsGpioSettings implements CommandsSettingsInterface {
         }
         return true;
     }
-
-    static function get(int $deviceId, int $pin): array
-    {
-        return Commands::find()
-            ->where(['deviceId' => $deviceId, 'pin' => $pin, 'pinType' => Commands::PIN_TYPE_GPIO])
-            ->orderBy(['conditionSort' => SORT_ASC])->all();
-    }
-
 }

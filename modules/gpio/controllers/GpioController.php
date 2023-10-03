@@ -2,8 +2,8 @@
 
 namespace app\modules\gpio\controllers;
 
-use app\components\CommandsSettings\CommandsGpioSettings;
-use app\models\Commands;
+use app\components\CommandsSettings\get\CommandsGpioGetSettings;
+use app\components\CommandsSettings\set\CommandsGpioSetSettings;
 use app\models\Device;
 use app\modules\gpio\models\Gpio;
 use Yii;
@@ -86,7 +86,7 @@ class GpioController extends Controller
             $this->saveCommands($model);
             return $this->redirect(['index', 'deviceId' => $model->deviceId]);
         }
-        $commands = CommandsGpioSettings::get($model->deviceId, $model->pin);
+        $commands = CommandsGpioGetSettings::get($model->deviceId, $model->pin);
         return $this->render('update', [
             'model' => $model,
             'commands' => Json::encode($commands),
@@ -104,7 +104,7 @@ class GpioController extends Controller
         $commands = Yii::$app->request->post('Commands');
         if (!is_array($commands))
             $commands = [];
-        CommandsGpioSettings::set($model->deviceId, $model->pin, $commands);
+        CommandsGpioSetSettings::set($model->deviceId, $model->pin, $commands);
     }
 
 
