@@ -29,6 +29,8 @@ if (conf.wifi.mode == wifi.STATION) or (conf.wifi.mode == wifi.STATIONAP) then
     conf.wifi.station.pwd =  "katerina25"                -- Password for the WiFi network
 end
 
+
+
 --[[
 
 -- mDNS, applies if you compiled the mdns module in your firmware.
