@@ -15,16 +15,15 @@ end
 
 local serverFiles = {
    'ws.lua',
+   'ws2.lua',
    'ws-effect.lua',
+   'ws-effect2.lua',
    'request.lua',
    'server.lua',
    'wi-fi.lua',
    'restart.lua',
-   'gpio-pwm.lua',
-   'gpio.lua',
    'config.lua',
    'json.lua',
-   'dht.lua',
 }
 
 for i, f in ipairs(serverFiles) do compileAndRemoveIfNeeded(f) end

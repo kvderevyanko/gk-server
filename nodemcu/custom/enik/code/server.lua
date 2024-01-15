@@ -8,11 +8,11 @@ srv:listen(conf.general.port, function(conn)
             _, _, method, path = string.find(request, "([A-Z]+) (.+) HTTP");
         end
         if vars then
-            print(vars);
+            --print(vars);
         end
 
       if path then
-            print(path);
+            --print(path);
         end
 
         local req;
@@ -38,8 +38,8 @@ srv:listen(conf.general.port, function(conn)
                 else
                     answer = dofile(f)(nil);
                 end
-                print("answer");
-                print(answer);
+                --print("answer");
+                --print(answer);
                 if answer == "" then answer = '{"status":"ok",  "message":"Not answer"}'; end;
 
                 client:send("HTTP/1.0 200 OK\r\nContent-Type: application/json\r\n\r\n" .. answer);

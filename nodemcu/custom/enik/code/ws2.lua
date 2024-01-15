@@ -1,11 +1,11 @@
 --Восстанавливаем настройки WS после перезагрузки и инициализирует таймер ws
-function openWsJson()
-    _G.wsTimer = tmr.create();
-    if file.open("json/ws-action.json") then
+function openWsJson2()
+    _G.wsTimer2 = tmr.create();
+    if file.open("json/ws-action2.json") then
         local str = file.read();
         if str then
             local rd = sjson.decode(str)
-            actionRequest(rd)
+            actionRequest2(rd)
         end
         file.close()
         return true
@@ -24,29 +24,21 @@ function uri_decode(input)
 end
 
 -- Основная функция для работы с ws 2812
-function actionRequest(rd)
+function actionRequest2(rd)
 
     if rd['buffer'] == nil then
         return
     end
-    wsTimer:stop();
+    wsTimer2:stop();
     local buffer = tonumber(rd['buffer'])
 
     if buffer < 1 then buffer = 1 end;
-    if buffer > 330 then buffer = 330 end;
 
     local delay = 100;
     local bright = 100;
     local single_color = { 0, 0, 0 };
     local mode_options = 1;
 
-    --Для синего 04pin диода
-    local blink = 0;
-    local blueBright = 0;
-    local blueMinBright = 0;
-    local blueMaxBright = 0;
-    local blueSpeed = 0;
-    local blueStep = 1;
 
 
     for name, value in pairs(rd) do
@@ -63,36 +55,18 @@ function actionRequest(rd)
         if name == "mode_options" and value then
             mode_options = tonumber(value);
         end
-        if name == "blink" and value then
-            blink = tonumber(value);
-        end
-        if name == "blueBright" and value then
-            blueBright = tonumber(value);
-        end
-        if name == "blueMinBright" and value then
-            blueMinBright = tonumber(value);
-        end
-        if name == "blueMaxBright" and value then
-            blueMaxBright = tonumber(value);
-        end
-        if name == "blueSpeed" and value then
-            blueSpeed = tonumber(value);
-        end
-        if name == "blueStep" and value then
-            blueStep = tonumber(value);
-        end
+
     end
 
     local mode = tostring(rd['mode']);
 
-    local wsEffect = dofile("ws-effect.lc");
+    local wsEffect = dofile("ws-effect2.lc");
 
-    if delay < 20 then delay = 20 end;
+    if delay < 10 then delay = 10 end;
     if bright < 1 then bright = 1 end;
 
     if mode == "off" then
         wsEffOff(buffer);
-        blueDiode(blink, blueBright, blueMinBright, blueMaxBright, blueSpeed, blueStep);
     elseif mode == "static" then
         wsEffStatic(buffer, single_color, bright);
     elseif mode == "static-soft-blink" then
@@ -115,18 +89,18 @@ function actionRequest(rd)
 
     --Сохраняем файл под временным именем, удаляем файл с конфигом, переименовывем в нужный
     local json = sjson.encode(rd)
-    file.open("json/ws-action.json-tmp", "w");
+    file.open("json/ws-action2.json-tmp", "w");
     file.write(json);
     file.flush();
     file.close();
 
-    file.remove("json/ws-action.json");
+    file.remove("json/ws-action2.json");
     file.flush();
     file.close();
-    file.rename("json/ws-action.json-tmp", "json/ws-action.json");
+    file.rename("json/ws-action2.json-tmp", "json/ws-action2.json");
     file.flush();
     file.close();
-    file.remove("json/ws-action.json-tmp");
+    file.remove("json/ws-action2.json-tmp");
     file.flush();
     file.close();
 
@@ -140,12 +114,6 @@ function actionRequest(rd)
     single_color = nil;
     mode_options = nil;
 
-    blink = nil;
-    blueBright = nil;
-    blueMinBright = nil;
-    blueMaxBright = nil;
-    blueSpeed = nil;
-    blueStep = nil;
 
     collectgarbage()
     return true;
@@ -159,10 +127,10 @@ return function(args)
             tableVar[a] = b;
         end
     end
-    actionRequest(tableVar);
+    actionRequest2(tableVar);
 
     tableVar = nil;
     args = nil;
     collectgarbage();
-    return '{"status":"ok",  "message":"11111"}';
+    return '';
 end

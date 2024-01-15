@@ -1,0 +1,11 @@
+<!DOCTYPE html><html lang="ru-RU"><head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/x-icon" href="favicon.ico">
+    <title>Управление WS2</title></head><link href="style.css" rel="stylesheet"><link href="ws-pwm.css" rel="stylesheet"><body>
+<label>Режим<select class="form-control" name="mode" id="modeList" onchange="prepareRequest()"></select></label>
+<div id="wsBlock"><div id="rangeList"></div>
+    <label><div class="label-name">Одиночный цвет</div><input name="single_color" id="single_color" type="color" value="[123,44,0]"  onchange="setVal(this.value)" ></label>
+</div>
+<script  src="ws-pwm-main-function2.min.js"></script>
+<script  src="ws-pwm-function2.min.js"></script>
+<script  src="ws-pwm2.min.js"></script>
+</body></html>
