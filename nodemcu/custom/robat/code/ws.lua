@@ -30,7 +30,7 @@ function actionRequest(rd)
         return
     end
     wsTimer:stop();
-    local buffer = tonumber(rd['buffer'])
+    local buffer = 28;
 
     if buffer < 1 then buffer = 1 end;
 

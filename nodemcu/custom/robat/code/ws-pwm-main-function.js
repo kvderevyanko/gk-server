@@ -1,8 +1,7 @@
 function cl(str) {console.log(str);}
 function prepareRequest(){
     let str = [
-      "mode="+gi('modeList').value,
-       "buffer=64"
+      "mode="+gi('modeList').value
     ];
     let inputs = document.getElementsByTagName('input');
     Object.keys(inputs).forEach(function(key) {
