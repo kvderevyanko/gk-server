@@ -18,18 +18,22 @@ class AppController extends Controller
      */
     public function actionStart()
     {
-        chmod(\Yii::getAlias('@app')."/runtime", 0777);
-        chmod(\Yii::getAlias('@app')."/web/assets", 0777);
-        chmod(\Yii::getAlias('@app')."/db", 0777);
+        chmod(\Yii::getAlias('@app')."/runtime", 0775);
+        chmod(\Yii::getAlias('@app')."/web/assets", 0775);
+        chmod(\Yii::getAlias('@app')."/db", 0775);
 
         $fileDb= \Yii::getAlias('@app')."/db/sqlite.db";
         if(!file_exists($fileDb)) {
             touch($fileDb);
-            chmod($fileDb, 0777);
-            $this->stdout("Выполни!!!!!!  \nsudo chown -R www-data ".$fileDb."\n");
+            chmod($fileDb, 0664);
+            $this->stdout(
+                "Назначьте каталогу db и SQLite-файлу владельца/группу веб-процесса.\n"
+            );
         }
 
-        $this->stdout("Добавь команду в крон (crontab -e)\n");
-        $this->stdout("* * * * * php  ".\Yii::getAlias('@app')."/yii command\n");
+        $this->stdout(
+            "Добавляйте cron только для используемых функций; актуальные команды "
+            ."описаны в docs/project/operations.md.\n"
+        );
     }
 }
