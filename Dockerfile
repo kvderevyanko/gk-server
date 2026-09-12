@@ -1,7 +1,7 @@
 FROM php:8.1-apache
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends cron git unzip \
+    && apt-get install -y --no-install-recommends cron git libsqlite3-dev pkg-config unzip \
     && docker-php-ext-install pdo_sqlite \
     && a2enmod rewrite \
     && rm -rf /var/lib/apt/lists/*
