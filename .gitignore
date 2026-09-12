@@ -37,7 +37,6 @@ task.php
 
 # Local workspace metadata and infrastructure notes.  These can contain
 # hostnames, deployment paths and SSH configuration.
-/.agents/
 /.codex/
 /.local/
 
