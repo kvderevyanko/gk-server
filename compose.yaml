@@ -10,9 +10,9 @@ services:
     ports:
       - "127.0.0.1:${HTTP_PORT:-8080}:80"
     volumes:
-      - ./db:/var/www/html/db
-      - ./runtime:/var/www/html/runtime
-      - ./web/assets:/var/www/html/web/assets
+      - ${DB_DIR:-./db}:/var/www/html/db
+      - ${RUNTIME_DIR:-./runtime}:/var/www/html/runtime
+      - ${ASSETS_DIR:-./web/assets}:/var/www/html/web/assets
     restart: unless-stopped
 
   scheduler:
@@ -24,7 +24,7 @@ services:
       YII_DEBUG: "0"
     command: ["cron", "-f"]
     volumes:
-      - ./db:/var/www/html/db
-      - ./runtime:/var/www/html/runtime
-      - ./web/assets:/var/www/html/web/assets
+      - ${DB_DIR:-./db}:/var/www/html/db
+      - ${RUNTIME_DIR:-./runtime}:/var/www/html/runtime
+      - ${ASSETS_DIR:-./web/assets}:/var/www/html/web/assets
     restart: unless-stopped
