@@ -1,0 +1,6 @@
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+* * * * * www-data cd /var/www/html && /usr/local/bin/php yii command/index >> /var/www/html/runtime/cron-command.log 2>&1
+*/10 * * * * www-data cd /var/www/html && /usr/local/bin/php yii dht/index >> /var/www/html/runtime/cron-dht.log 2>&1
+* * * * * www-data cd /var/www/html && /usr/local/bin/php yii motor/motor >> /var/www/html/runtime/cron-motor.log 2>&1

@@ -3,6 +3,13 @@
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 $urlManager = require __DIR__ . '/_urlManager.php';
+$cookieValidationKey = getenv('COOKIE_VALIDATION_KEY');
+
+if ($cookieValidationKey === false || $cookieValidationKey === '') {
+    throw new \RuntimeException(
+        'COOKIE_VALIDATION_KEY must be set outside the repository.'
+    );
+}
 
 $config = [
     'id' => 'basic',
@@ -16,8 +23,7 @@ $config = [
     ],
     'components' => [
         'request' => [
-            // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => 'KLWD74JRl9MVnVt02AgZq2O7Ic5F7pK2',
+            'cookieValidationKey' => $cookieValidationKey,
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',

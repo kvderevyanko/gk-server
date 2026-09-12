@@ -1,0 +1,30 @@
+services:
+  web:
+    build: .
+    image: gk-server:local
+    env_file:
+      - .env
+    environment:
+      YII_ENV: prod
+      YII_DEBUG: "0"
+    ports:
+      - "127.0.0.1:${HTTP_PORT:-8080}:80"
+    volumes:
+      - ./db:/var/www/html/db
+      - ./runtime:/var/www/html/runtime
+      - ./web/assets:/var/www/html/web/assets
+    restart: unless-stopped
+
+  scheduler:
+    image: gk-server:local
+    env_file:
+      - .env
+    environment:
+      YII_ENV: prod
+      YII_DEBUG: "0"
+    command: ["cron", "-f"]
+    volumes:
+      - ./db:/var/www/html/db
+      - ./runtime:/var/www/html/runtime
+      - ./web/assets:/var/www/html/web/assets
+    restart: unless-stopped

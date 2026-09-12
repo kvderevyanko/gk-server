@@ -1,0 +1,11 @@
+.git
+.agents
+.codex
+.local
+.env
+.env.*
+vendor
+db
+runtime
+web/assets
+tests

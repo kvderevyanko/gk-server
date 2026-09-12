@@ -15,9 +15,8 @@ Thumbs.db
 # composer vendor dir
 /vendor
 
-# composer itself is not needed
+# Composer executable downloaded for local use
 composer.phar
-composer.lock
 
 # Mac DS_Store Files
 .DS_Store
@@ -34,5 +33,38 @@ tests/_support/_generated
 /.vagrant
 
 .ag.sh
-composer.lock
 task.php
+
+# Local workspace metadata and infrastructure notes.  These can contain
+# hostnames, deployment paths and SSH configuration.
+/.agents/
+/.codex/
+/.local/
+
+# Environment-specific configuration and credentials.
+/.env
+/.env.*
+!/.env.example
+/config/local.php
+/config/*-local.php
+/config/*-local.json
+/config/*-local.ini
+/.ssh/
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Generated or local-only application data.
+/db/*.db
+/db/*.sqlite
+/db/*.sqlite3
+/db/*.sqlite-*
+/runtime/*
+!/runtime/.gitignore
+/web/assets/*
+!/web/assets/.gitignore
+/tests/_output/*
+!/tests/_output/.gitignore
+*.log
+/backups/
