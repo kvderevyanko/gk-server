@@ -5,6 +5,7 @@ namespace app\modules\pwm\widgets;
 
 
 use app\modules\pwm\models\Pwm;
+use app\modules\pwm\models\PwmSettings;
 use yii\base\Widget;
 
 class PwmShowWidget extends Widget
@@ -29,6 +30,15 @@ class PwmShowWidget extends Widget
         if(count($pwmValues) < 1)
             return '';
 
-        return $this->render('pwm-show', ['pwmValues' => $pwmValues]);
+        $deviceIds = [];
+        foreach ($pwmValues as $pwmValue) {
+            $deviceIds[] = (int) $pwmValue->deviceId;
+        }
+        $settingsByDevice = [];
+        foreach (PwmSettings::find()->where(['deviceId' => array_unique($deviceIds)])->all() as $settings) {
+            $settingsByDevice[(int) $settings->deviceId] = $settings;
+        }
+
+        return $this->render('pwm-show', compact('pwmValues', 'settingsByDevice'));
     }
 }

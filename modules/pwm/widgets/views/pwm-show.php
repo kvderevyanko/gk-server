@@ -8,12 +8,13 @@ use yii\helpers\Html;
     <div class="pwm-grid">
         <?php foreach ($pwmValues as $pwm): ?>
             <?php $id = 'pwm-control-' . $pwm->id; ?>
-            <article class="pwm-card" data-pwm-card>
+            <?php $configured = isset($settingsByDevice[$pwm->deviceId]); ?>
+            <article class="pwm-card<?= $configured ? '' : ' is-unconfigured' ?>" data-pwm-card>
                 <p class="control-card__device"><?= Html::encode($pwm->device->name) ?></p>
                 <h3 class="control-card__title"><?= Html::encode($pwm->name ?: 'PWM ' . $pwm->pin) ?></h3>
                 <p class="control-card__meta">Пин <?= Html::encode($pwm->pin) ?></p>
-                <div class="pwm-card__range"><input id="<?= $id ?>" class="pwm-control" type="range" min="0" max="1023" step="1" value="<?= (int) $pwm->value ?>" data-url="<?= \yii\helpers\Url::to(['/pwm/request/set']) ?>" data-device="<?= $pwm->deviceId ?>" data-pin="<?= $pwm->pin ?>" aria-describedby="<?= $id ?>-status"><output data-pwm-value for="<?= $id ?>"><?= (int) $pwm->value ?></output></div>
-                <p id="<?= $id ?>-status" class="control-card__status" data-pwm-status aria-live="polite">Текущее состояние сохранено</p>
+                <div class="pwm-card__range"><input id="<?= $id ?>" class="pwm-control" type="range" min="0" max="1023" step="1" value="<?= (int) $pwm->value ?>" data-url="<?= \yii\helpers\Url::to(['/pwm/request/set']) ?>" data-device="<?= $pwm->deviceId ?>" data-pin="<?= $pwm->pin ?>" aria-describedby="<?= $id ?>-status"<?= $configured ? '' : ' disabled' ?>><output data-pwm-value for="<?= $id ?>"><?= (int) $pwm->value ?></output></div>
+                <p id="<?= $id ?>-status" class="control-card__status" data-pwm-status aria-live="polite"><?php if ($configured): ?>Текущее состояние сохранено<?php else: ?>Сначала <?= \yii\helpers\Html::a('задайте параметры PWM', ['/pwm/pwm-settings/create']) ?><?php endif; ?></p>
             </article>
         <?php endforeach; ?>
     </div>
