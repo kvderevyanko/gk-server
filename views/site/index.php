@@ -80,3 +80,4 @@ $this->title = 'Главная';
 <?php endif; ?>
 
 <?= \app\modules\gpio\widgets\GpioShowWidget::widget(['mainPage' => true]) ?>
+<?= \app\modules\pwm\widgets\PwmShowWidget::widget(['mainPage' => true]) ?>
