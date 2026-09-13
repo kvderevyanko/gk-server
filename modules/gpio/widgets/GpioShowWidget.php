@@ -17,13 +17,17 @@ class GpioShowWidget extends Widget
      */
     public function run(): string
     {
-        $gpioValues = Gpio::find()->where(['active' => Gpio::STATUS_ACTIVE]);
+        $gpioValues = Gpio::find()
+            ->with('device')
+            ->where(['active' => Gpio::STATUS_ACTIVE]);
         if($this->deviceId)
             $gpioValues->andWhere(['deviceId' => $this->deviceId]);
         if($this->mainPage)
             $gpioValues->andWhere(['home' => true]);
 
-        $gpioValues = $gpioValues->all();
+        $gpioValues = $gpioValues
+            ->orderBy(['deviceId' => SORT_ASC, 'pin' => SORT_ASC])
+            ->all();
 
         if(count($gpioValues) < 1)
             return '';

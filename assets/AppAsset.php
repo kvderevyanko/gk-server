@@ -23,6 +23,7 @@ class AppAsset extends AssetBundle
         'css/pe-icon-7-stroke.css',
         'css/light-bootstrap-dashboard.css',
         'css/widget.css',
+        'css/app-shell.css',
     ];
 
     public $js = [

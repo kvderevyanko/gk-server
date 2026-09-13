@@ -6,10 +6,7 @@
 use app\assets\AppAsset;
 use app\models\Settings;
 use app\widgets\SettingValueWidget;
-use yii\bootstrap\Nav;
-use yii\bootstrap\NavBar;
 use yii\helpers\Html;
-use yii\widgets\Breadcrumbs;
 
 AppAsset::register($this);
 ?>
@@ -24,69 +21,43 @@ AppAsset::register($this);
         <title><?= Html::encode($this->title) ?></title>
         <?php $this->head() ?>
     </head>
-    <body>
+    <body class="app-body">
     <?php $this->beginBody() ?>
-
-
-    <div class="wrapper">
-
-        <?= app\widgets\SideBar::widget([
-            //'bgImage'=>'@web/img/sidebar-5.jpg', //Don't define it if there is none
-            'header'=>[
-                'title'=>SettingValueWidget::widget(['key' => Settings::SITE_NAME]),
-                'url'=>['/']
-            ],
-            'links'=> \app\models\Device::menuList()
-        ]) ?>
-
-        <div class="main-panel">
-            <?= app\widgets\NavBar::widget([
-                'theme'=>'red',
-                'brand'=>[
-                   // 'label'=>'Nasafiri'
-                ],
-                'title' => $this->title,
-                'links'=>[
-                    ['label' => 'Главная', 'url' => ['/site/index']],
-                    [
-                        'label' => 'Настройки',
-                        'url' => '#',
-                        'items' => [
-                            ['label' => 'Устройства', 'url' => ['/device/index']],
-                            [
-                                'label' => 'PWM',
-                                'items' => [
-                                    ['label' => 'Установка PWM', 'url' => ['/pwm/pwm-settings/index']],
-                                    ['label' => 'Настройка PWM пинов', 'url' => ['/pwm/pwm-values/index']],
-                                ]
-                            ],
-                            ['label' => 'Настройка WS', 'url' => ['/ws/ws-values/index']],
-                            ['label' => 'Настройка GPIO', 'url' => ['/gpio/gpio/index']],
-                            ['label' => 'Настройка Термометра', 'url' => ['/dht/dht/index']],
-                            //['label' => 'Управление SSD 1306', 'url' => ['/ssd1306/default/index']],
-                            ['label' => 'Дополнительные настройки', 'url' => ['/settings/index']],
-                            //['label' => 'Джойстик', 'url' => ['/gamepad/index']],
-                        ]
-                    ],
-                    ['label' => 'Справка', 'url' => ['/help/index']],
-
-                ],
-            ]) ?>
-
-            <div class="content">
-                <div class="container-fluid">
-                    <?= $content ?>
-                </div>
+    <a class="skip-link" href="#main-content">Перейти к содержимому</a>
+    <div class="app-shell">
+        <aside class="app-sidebar" id="primary-navigation" aria-label="Основная навигация">
+            <div class="app-brand">
+                <?= Html::a(Html::encode(SettingValueWidget::widget(['key' => Settings::SITE_NAME])), ['/site/index'], ['class' => 'app-brand__link']) ?>
+                <span class="app-brand__caption">Панель управления домом</span>
             </div>
-
-            <footer class="footer">
-                <div class="container-fluid">
-
+            <nav class="app-nav" aria-label="Разделы">
+                <?= Html::a('Обзор', ['/site/index'], ['class' => 'app-nav__link']) ?>
+                <span class="app-nav__heading">Устройства</span>
+                <?php foreach (\app\models\Device::getActiveDevices() as $navigationDevice): ?>
+                    <?= Html::a(Html::encode($navigationDevice->name), ['/device/control', 'device' => $navigationDevice->id], ['class' => 'app-nav__link app-nav__link--device']) ?>
+                <?php endforeach; ?>
+                <span class="app-nav__heading">Система</span>
+                <?= Html::a('Настройки', ['/device/index'], ['class' => 'app-nav__link']) ?>
+                <?= Html::a('Справка', ['/help/index'], ['class' => 'app-nav__link']) ?>
+            </nav>
+        </aside>
+        <div class="app-workspace">
+            <header class="app-header">
+                <button class="app-menu-button" type="button" aria-controls="primary-navigation" aria-expanded="false">
+                    <span class="app-menu-button__icon" aria-hidden="true"></span>
+                    <span class="sr-only">Открыть навигацию</span>
+                </button>
+                <div>
+                    <p class="app-header__eyebrow">ESP Home</p>
+                    <h1 class="app-header__title"><?= Html::encode($this->title) ?></h1>
                 </div>
-            </footer>
-
+            </header>
+            <main class="app-content" id="main-content" tabindex="-1">
+                <?= $content ?>
+            </main>
         </div>
     </div>
+    <?= $this->render('_wait_request') ?>
 
     <?php $this->endBody() ?>
     </body>

@@ -2,80 +2,42 @@
 
 use app\modules\gpio\models\Gpio;
 use yii\helpers\Html;
-use yii\helpers\Url;
 use yii\web\View;
 
 /* @var $this View */
-/* @var $gpioValues array */
-/* @var $gpio Gpio */
-
-
+/* @var $gpioValues Gpio[] */
 ?>
-    <div class="col-sm-6">
-<h4>GPIO</h4>
-<div id="gpioBlock">
-<?php foreach ($gpioValues as $gpio): ?>
-<label  class="checkBoxSwitch">
-
-    <?= Html::checkbox('', ($gpio->value?$gpio->value:0), [
-        'data-pin'=>$gpio->pin,
-        'data-device'=>$gpio->deviceId,
-        'data-id' => $gpio->id,
-        'class' => 'gpioCheckbox'
-    ])?>
-    <span class="checkBoxSlider round"></span>
-   </label>  <?=$gpio->name?> / <?=$gpio->device->name?>
-    <br>
-
-<?php endforeach; ?>
-</div>
+<section class="control-panel gpio-panel" aria-labelledby="gpio-title">
+    <header class="control-panel__header">
+        <div>
+            <p class="control-panel__eyebrow">Быстрое управление</p>
+            <h2 id="gpio-title" class="control-panel__title">Переключатели</h2>
+        </div>
+        <p class="control-panel__hint">Изменения отправляются на устройство и показывают результат доставки.</p>
+    </header>
+    <div class="control-grid">
+        <?php foreach ($gpioValues as $gpio): ?>
+            <?php $controlId = 'gpio-control-' . $gpio->id; ?>
+            <article class="control-card" data-gpio-card>
+                <div class="control-card__content">
+                    <p class="control-card__device"><?= Html::encode($gpio->device->name) ?></p>
+                    <h3 class="control-card__title"><?= Html::encode($gpio->name ?: 'GPIO ' . $gpio->pin) ?></h3>
+                    <p class="control-card__meta">Пин <?= Html::encode($gpio->pin) ?></p>
+                    <p class="control-card__status" data-gpio-status aria-live="polite">Текущее состояние сохранено</p>
+                </div>
+                <div class="control-card__action">
+                    <?= Html::checkbox('', (bool) $gpio->value, [
+                        'id' => $controlId,
+                        'class' => 'gpio-control',
+                        'data-url' => \yii\helpers\Url::to(['/gpio/request/set']),
+                        'data-pin' => $gpio->pin,
+                        'data-device' => $gpio->deviceId,
+                        'aria-describedby' => $controlId . '-state',
+                    ]) ?>
+                    <?= Html::label('<span class="gpio-control__track" aria-hidden="true"></span><span class="sr-only">Переключить ' . Html::encode($gpio->name ?: 'GPIO ' . $gpio->pin) . '</span>', $controlId, ['class' => 'gpio-control__label', 'encode' => false]) ?>
+                    <span class="control-card__state" id="<?= $controlId ?>-state" data-gpio-state><?= $gpio->value ? 'Включено' : 'Выключено' ?></span>
+                </div>
+            </article>
+        <?php endforeach; ?>
     </div>
-<script>
-    let urlCommandGpio = "<?=Url::to(['/gpio/request/set'])?>";
-</script>
-<?php
-$this->registerJs(<<<JS
-let blockGpioRequest;
-let waitGpioRequest;
-
-$(".gpioCheckbox").on('change', function() {
-    commandGpio($(this).data('device'), $(this).data('pin'), $(this).prop('checked'))
-})
-
-let deviceRepeatGpio = 0;
-
-function commandGpio(deviceId, pin, value) {
-    
-    if(deviceRepeatGpio === 0)
-        deviceRepeatGpio = 1;
-    
-    if(blockGpioRequest) {
-        waitGpioRequest = deviceId;
-        return false;
-    }
-    blockGpioRequest = true;
-    waitGpioRequest = false;
-
-    openWaitRequest(deviceId, deviceRepeatGpio);
-    $.get(urlCommandGpio, {deviceId:deviceId, pin:pin, value:value}, function(data) {
-        blockGpioRequest = false;
-        if(waitGpioRequest)
-          commandGpio(waitGpioRequest)
-        hideWaitRequest(deviceId, deviceRepeatGpio);
-        deviceRepeatGpio = 0;
-    }).fail(function() {
-        blockGpioRequest = false;
-        waitGpioRequest = false;
-        if(deviceRepeatGpio < 5) {
-            deviceRepeatGpio++;
-            commandGpio(deviceId, pin, value);
-        } else {
-            hideWaitRequest(deviceId, deviceRepeatGpio)
-            alert( "Ошибка отправки запроса после 5 попыток" );
-            deviceRepeatGpio = 0;
-        }
-    })
-}
-
-JS
-);
+</section>
