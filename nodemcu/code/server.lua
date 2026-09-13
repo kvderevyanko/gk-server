@@ -1,10 +1,12 @@
 local conf = dofile("_config.lc")
 local parseRequest = dofile("request.lc")
+-- Keep handlers in memory. Loading bytecode for every request caused avoidable
+-- heap pressure, especially while WS2812 effects were active.
 local handlers = {
-    ["gpio.lc"] = true,
-    ["gpio-pwm.lc"] = true,
-    ["dht.lc"] = true,
-    ["ws.lc"] = true,
+    ["gpio.lc"] = dofile("gpio.lc"),
+    ["gpio-pwm.lc"] = dofile("gpio-pwm.lc"),
+    ["dht.lc"] = dofile("dht.lc"),
+    ["ws.lc"] = dofile("ws.lc"),
 }
 
 local function sendJson(client, code, answer)
@@ -50,7 +52,7 @@ srv:listen(conf.general.port, function(conn)
         if not filename then
             sendJson(client, "400 Bad Request", '{"status":"error","message":"invalid path"}')
         elseif handlers[filename] then
-            local answer = dofile(filename)(req.query)
+            local answer = handlers[filename](req.query)
             if not answer or answer == "" then
                 answer = '{"status":"error","message":"empty module response"}'
             end
