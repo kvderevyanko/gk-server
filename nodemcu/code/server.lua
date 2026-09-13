@@ -1,117 +1,70 @@
-local conf = dofile("_config.lc");
+local conf = dofile("_config.lc")
+local parseRequest = dofile("request.lc")
+local handlers = {
+    ["gpio.lc"] = true,
+    ["gpio-pwm.lc"] = true,
+    ["dht.lc"] = true,
+    ["ws.lc"] = true,
+}
+
+local function sendJson(client, code, answer)
+    client:send("HTTP/1.0 " .. code .. "\r\nContent-Type: application/json\r\nConnection: close\r\n\r\n" .. answer)
+end
+
+local function contentType(filename)
+    if string.sub(filename, -5) == ".html" then return "text/html" end
+    if string.sub(filename, -4) == ".css" then return "text/css" end
+    if string.sub(filename, -3) == ".js" then return "application/javascript" end
+    if string.sub(filename, -4) == ".ico" then return "image/x-icon" end
+    if string.sub(filename, -5) == ".json" then return "application/json" end
+    return "text/plain"
+end
+
+local function sendFile(client, filename)
+    local stat = file.stat(filename)
+    if not stat then return false end
+    client:send("HTTP/1.0 200 OK\r\nContent-Type: " .. contentType(filename) .. "\r\nConnection: close\r\n\r\n")
+    if not file.open(filename) then return false end
+    local remaining = stat.size
+    while remaining > 0 do
+        local chunk = file.read(math.min(1000, remaining))
+        if not chunk then break end
+        client:send(chunk)
+        remaining = remaining - string.len(chunk)
+    end
+    file.close()
+    return true
+end
 
 srv = net.createServer(net.TCP)
 srv:listen(conf.general.port, function(conn)
     conn:on("receive", function(client, request)
-        local _, _, method, path, vars = string.find(request, "([A-Z]+) (.+)?(.+) HTTP");
-        if (method == nil) then
-            _, _, method, path = string.find(request, "([A-Z]+) (.+) HTTP");
-        end
-        if vars then
-            print(vars);
+        local method, target = string.match(request, "^(%u+)%s+([^%s]+)%s+HTTP/")
+        if method ~= "GET" or not target then
+            sendJson(client, "400 Bad Request", '{"status":"error","message":"GET request expected"}')
+            return
         end
 
-      if path then
-            print(path);
-        end
-
-        local req;
-        if vars then
-            req = dofile("request.lc")(path .. '?' .. vars);
-        else
-            req = dofile("request.lc")(path);
-        end
-
-        local answer = "";
-
-        local f = req['file'];
-
-        if f == "" or f == "/" then f = "index.html"; end;
-
-        if f and file.exists(f) then
-
-            if string.sub(f, -3) == ".lc" then
-                --answer = '{"status":"ok",  "message":"File "}';
-                local r;
-                if vars then
-                    answer = dofile(f)(vars);
-                else
-                    answer = dofile(f)(nil);
-                end
-                print("answer");
-                print(answer);
-                if answer == "" then answer = '{"status":"ok",  "message":"Not answer"}'; end;
-
-                client:send("HTTP/1.0 200 OK\r\nContent-Type: application/json\r\n\r\n" .. answer);
-            elseif string.sub(f, -5) == ".json" then
-                client:send("HTTP/1.0 200 OK\r\nContent-Type: application/json\r\n\r\n");
-                if file.open(f) then
-                    client:send(file.read());
-                    file.close()
-                end
-            else
-                local contentType = "text/plain"
-                if string.sub(f, -5) == ".html" then
-                    contentType = "text/html"
-                elseif string.sub(f, -4) == ".css" then
-                    contentType = "text/css"
-                elseif string.sub(f, -3) == ".js" then
-                    contentType = "application/javascript"
-                elseif string.sub(f, -4) == ".ico" then
-                    contentType = "image/x-icon"
-                end
-                client:send("HTTP/1.0 200 OK\r\nContent-Type: " .. contentType .. "\r\n\r\n")
-                --Получаем длину файла, считаем количество отрезков по 1000 байт и отдаём честями
-                local stat = file.stat(f);
-                --Считаем количество отрезков по 800 байт
-                local statSize = (stat.size / 1000 + 1);
-
-                local bigFile = "";
-
-                --Задаём ограничения
-                if stat.size < 1000 then statSize = 1; end;
-                if statSize > 5 then statSize = 5; bigFile = "----Big File----"; end;
-
-                if statSize == 1 then
-                    --Если размер файла меньше 1000 байт, возвращаем как есть
-                    if file.open(f) then
-                        client:send(file.read());
-                        file.close()
-                    end
-                else
-                    --выплёвываем по 1000 байт
-                    for i = 1, statSize, 1 do
-                        if file.open(f) then
-                            file.seek("set", ((i - 1) * 1000))
-                            local textFile = file.read(1000);
-                            file.close();
-                            client:send(textFile);
-                            textFile = nil;
-                            collectgarbage();
-                        end
-                    end
-                end
-
-                if bigFile ~= "" then client:send(bigFile); end;
-
-                bigFile = nil;
-                statSize = nil;
-                collectgarbage();
+        local req = parseRequest(target)
+        local filename = req.file
+        if not filename then
+            sendJson(client, "400 Bad Request", '{"status":"error","message":"invalid path"}')
+        elseif handlers[filename] then
+            local answer = dofile(filename)(req.query)
+            if not answer or answer == "" then
+                answer = '{"status":"error","message":"empty module response"}'
             end
+            sendJson(client, "200 OK", answer)
+        elseif string.sub(filename, -3) == ".lc" then
+            sendJson(client, "404 Not Found", '{"status":"error","message":"module not found"}')
+        elseif file.exists(filename) and sendFile(client, filename) then
+            -- The file was queued in chunks and is closed by the sent callback.
         else
-            answer = '{"status":"error",  "message":"not found file"}';
-            client:send("HTTP/1.0 200 OK\r\nContent-Type: application/json\r\n\r\n" .. answer)
+            sendJson(client, "404 Not Found", '{"status":"error","message":"file not found"}')
         end
-        answer = nil
-        req = nil
-        f = nil
-        method = nil
-        path = nil
-        vars = nil
-        collectgarbage();
+        collectgarbage()
     end)
-    conn:on("sent", function(sck)
-        sck:close()
+    conn:on("sent", function(socket)
+        socket:close()
     end)
-    collectgarbage();
 end)

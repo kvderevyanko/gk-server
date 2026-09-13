@@ -1,43 +1,43 @@
-function actionRequest(rd)
- local pin = tonumber(rd['pin'])
+local function response(status, message, pin, temperature, humidity)
+    local result = {status = status, message = message}
+    if pin then result.pin = pin end
+    if temperature then result.temperature = temperature end
+    if humidity then result.humidity = humidity end
+    return sjson.encode(result)
+end
 
-    local status, temp, humi, temp_dec, humi_dec = dht.read(pin)
-    local message = "";
-    if status == dht.OK then
-        -- Integer firmware using this example
-        message = (string.format('{"status":"ok","temperature":"%d.%03d","humidity":"%d.%03d"}',
-                math.floor(temp),
-                temp_dec,
-                math.floor(humi),
-                humi_dec
-        ))
-    elseif status == dht.ERROR_CHECKSUM then
-        message = '{"status":"error","message":"DHT error"}'
-    elseif status == dht.ERROR_TIMEOUT then
-        message =  '{"status":"error","message":"DHT timeout"}'
+local function parseArgs(args)
+    local request = {}
+    if not args then return request end
+    for pair in string.gmatch(args, "([^&]+)") do
+        local name, value = string.match(pair, "([^=]+)=(.*)")
+        if name then request[name] = value end
     end
-    rd = nil
-    pin = nil
-    status = nil
-    temp = nil
-    humi = nil
-    temp_dec = nil
-    humi_dec = nil
-    collectgarbage()
-    return message;
+    return request
 end
 
 return function(args)
-    local tableVar = {};
-    if args then
-        for kv in args.gmatch(args, "%s*&?([^=]+=[^&]+)") do
-            local name, value = string.match(kv, "(.*)=(.*)");
-            tableVar[name] = value;
-        end
+    local request = parseArgs(args)
+    local pin = tonumber(request.pin)
+    if not pin or pin % 1 ~= 0 or pin < 0 or pin > 9 then
+        return response("error", "pin must be an integer from 0 to 9")
     end
-    local answer = actionRequest(tableVar);
-    tableVar = nil;
-    args = nil;
-    collectgarbage();
-    return answer;
+
+    local status, temp, humi, tempDec, humiDec = dht.read(pin)
+    if status == dht.OK then
+        return response(
+            "ok",
+            "DHT reading received",
+            pin,
+            string.format("%d.%03d", math.floor(temp), tempDec),
+            string.format("%d.%03d", math.floor(humi), humiDec)
+        )
+    end
+    if status == dht.ERROR_CHECKSUM then
+        return response("error", "DHT checksum error", pin)
+    end
+    if status == dht.ERROR_TIMEOUT then
+        return response("error", "DHT timeout", pin)
+    end
+    return response("error", "DHT read failed", pin)
 end

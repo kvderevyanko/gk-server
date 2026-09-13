@@ -1,168 +1,150 @@
---Восстанавливаем настройки WS после перезагрузки и инициализирует таймер ws
-function openWsJson()
-    _G.wsTimer = tmr.create();
-    if file.open("json/ws-action.json") then
-        local str = file.read();
-        if str then
-            local rd = sjson.decode(str)
-            actionRequest(rd)
-        end
-        file.close()
-        return true
-    else
-        return false
-    end
+local allowedModes = {
+    off = true,
+    static = true,
+    ["static-soft-blink"] = true,
+    ["static-soft-random-blink"] = true,
+    ["round-random"] = true,
+    ["round-static"] = true,
+    rainbow = true,
+    ["rainbow-circle"] = true,
+}
+
+local function response(status, message, values, rejected)
+    local result = {status = status, message = message}
+    if values then result.values = values end
+    if rejected then result.rejected = rejected end
+    return sjson.encode(result)
 end
 
-local function hex_to_char(x)
-    return string.char(tonumber(x, 16))
+local function parseArgs(args)
+    local request = {}
+    if not args then return request end
+    for pair in string.gmatch(args, "([^&]+)") do
+        local name, value = string.match(pair, "([^=]+)=(.*)")
+        if name then request[name] = value end
+    end
+    return request
 end
 
-function uri_decode(input)
-    print(input)
-    return input:gsub("%+", " "):gsub("%%(%x%x)", hex_to_char)
+local function hexToChar(value)
+    return string.char(tonumber(value, 16))
 end
 
--- Основная функция для работы с ws 2812
-function actionRequest(rd)
+local function uriDecode(value)
+    return value:gsub("%+", " "):gsub("%%(%x%x)", hexToChar)
+end
 
-    if rd['buffer'] == nil then
-        return
+local function integer(value, default, minimum, maximum, name, rejected)
+    if value == nil then return default end
+    local number = tonumber(value)
+    if not number or number % 1 ~= 0 or number < minimum or number > maximum then
+        rejected[name] = name .. " must be an integer from " .. minimum .. " to " .. maximum
+        return default
     end
-    wsTimer:stop();
-    local buffer = tonumber(rd['buffer'])
+    return number
+end
 
-    if buffer < 1 then buffer = 1 end;
-    if buffer > 330 then buffer = 330 end;
-
-    local delay = 100;
-    local bright = 100;
-    local single_color = { 0, 0, 0 };
-    local mode_options = 1;
-
-    --Для синего 04pin диода
-    local blink = 0;
-    local blueBright = 0;
-    local blueMinBright = 0;
-    local blueMaxBright = 0;
-    local blueSpeed = 0;
-    local blueStep = 1;
-
-
-    for name, value in pairs(rd) do
-        if name == "delay" and tonumber(value) then
-            delay = tonumber(value);
+local function decodeColor(value, rejected)
+    if value == nil then return {0, 0, 0}, "[0,0,0]" end
+    if type(value) == "table" then
+        local color = value
+        for i = 1, 3 do
+            if type(color[i]) ~= "number" or color[i] % 1 ~= 0 or color[i] < 0 or color[i] > 255 then
+                rejected.single_color = "single_color must contain three integers from 0 to 255"
+                return {0, 0, 0}, "[0,0,0]"
+            end
         end
-        if name == "bright" and tonumber(value) then
-            bright = tonumber(value);
-        end
-        if name == "single_color" and value then
-            value = uri_decode(value);
-            single_color = sjson.decode(value);
-        end
-        if name == "mode_options" and value then
-            mode_options = tonumber(value);
-        end
-        if name == "blink" and value then
-            blink = tonumber(value);
-        end
-        if name == "blueBright" and value then
-            blueBright = tonumber(value);
-        end
-        if name == "blueMinBright" and value then
-            blueMinBright = tonumber(value);
-        end
-        if name == "blueMaxBright" and value then
-            blueMaxBright = tonumber(value);
-        end
-        if name == "blueSpeed" and value then
-            blueSpeed = tonumber(value);
-        end
-        if name == "blueStep" and value then
-            blueStep = tonumber(value);
-        end
+        return color, sjson.encode(color)
     end
 
-    local mode = tostring(rd['mode']);
+    local ok, color = pcall(sjson.decode, uriDecode(value))
+    if not ok or type(color) ~= "table" then
+        rejected.single_color = "single_color must be a JSON RGB array"
+        return {0, 0, 0}, "[0,0,0]"
+    end
+    for i = 1, 3 do
+        if type(color[i]) ~= "number" or color[i] % 1 ~= 0 or color[i] < 0 or color[i] > 255 then
+            rejected.single_color = "single_color must contain three integers from 0 to 255"
+            return {0, 0, 0}, "[0,0,0]"
+        end
+    end
+    return color, sjson.encode(color)
+end
 
-    local wsEffect = dofile("ws-effect.lc");
+local function saveState(state)
+    file.open("json/ws-action.json-tmp", "w")
+    file.write(sjson.encode(state))
+    file.close()
+    file.remove("json/ws-action.json")
+    file.rename("json/ws-action.json-tmp", "json/ws-action.json")
+end
 
-    if delay < 20 then delay = 20 end;
-    if bright < 1 then bright = 1 end;
+local function applyRequest(request)
+    local rejected = {}
+    local buffer = integer(request.buffer, nil, 1, 330, "buffer", rejected)
+    local mode = request.mode and tostring(request.mode) or nil
+    if not buffer then rejected.buffer = "buffer is required" end
+    if not mode or not allowedModes[mode] then rejected.mode = "unsupported WS2812 mode" end
+
+    local delay = integer(request.delay, 100, 20, 10000, "delay", rejected)
+    local bright = integer(request.bright, 100, 1, 255, "bright", rejected)
+    local modeOptions = integer(request.mode_options, 1, 1, 255, "mode_options", rejected)
+    local blink = integer(request.blink, 0, 0, 1, "blink", rejected)
+    local blueBright = integer(request.blueBright, 0, 0, 225, "blueBright", rejected)
+    local blueMinBright = integer(request.blueMinBright, 0, 0, 225, "blueMinBright", rejected)
+    local blueMaxBright = integer(request.blueMaxBright, 0, 0, 225, "blueMaxBright", rejected)
+    local blueSpeed = integer(request.blueSpeed, 5, 5, 1000, "blueSpeed", rejected)
+    local blueStep = integer(request.blueStep, 1, 1, 20, "blueStep", rejected)
+    local color, colorJson = decodeColor(request.single_color, rejected)
+
+    if next(rejected) then return response("error", "WS2812 request rejected", nil, rejected) end
+    if not wsTimer then _G.wsTimer = tmr.create() end
+    wsTimer:stop()
+    dofile("ws-effect.lc")
 
     if mode == "off" then
-        wsEffOff(buffer);
-        blueDiode(blink, blueBright, blueMinBright, blueMaxBright, blueSpeed, blueStep);
+        wsEffOff(buffer)
+        blueDiode(blink, blueBright, blueMinBright, blueMaxBright, blueSpeed, blueStep)
     elseif mode == "static" then
-        wsEffStatic(buffer, single_color, bright);
+        wsEffStatic(buffer, color, bright)
     elseif mode == "static-soft-blink" then
-        wsEffStaticSoftBlink(buffer, single_color, bright, delay, mode_options);
+        wsEffStaticSoftBlink(buffer, color, bright, delay, modeOptions)
     elseif mode == "static-soft-random-blink" then
-        wsEffStaticSoftRandomBlink(buffer, single_color, bright, delay, mode_options);
+        wsEffStaticSoftRandomBlink(buffer, color, bright, delay, modeOptions)
     elseif mode == "round-random" then
-        wsEffRoundRandom(buffer, single_color, bright, delay, mode_options);
+        wsEffRoundRandom(buffer, color, bright, delay, modeOptions)
     elseif mode == "round-static" then
-        wsEffRoundStatic(buffer, single_color, bright, delay, mode_options);
+        wsEffRoundStatic(buffer, color, bright, delay, modeOptions)
     elseif mode == "rainbow" then
-        wsEffRainbow(buffer, single_color, bright, delay, mode_options);
+        wsEffRainbow(buffer, color, bright, delay, modeOptions)
     elseif mode == "rainbow-circle" then
-        wsEffRainbowCircle(buffer, single_color, bright, delay, mode_options);
-    elseif mode == "scanner" then
-        wsScanner(buffer, single_color, bright, delay, mode_options);
-    end ;
+        wsEffRainbowCircle(buffer, color, bright, delay, modeOptions)
+    end
 
-
-
-    --Сохраняем файл под временным именем, удаляем файл с конфигом, переименовывем в нужный
-    local json = sjson.encode(rd)
-    file.open("json/ws-action.json-tmp", "w");
-    file.write(json);
-    file.flush();
-    file.close();
-
-    file.remove("json/ws-action.json");
-    file.flush();
-    file.close();
-    file.rename("json/ws-action.json-tmp", "json/ws-action.json");
-    file.flush();
-    file.close();
-    file.remove("json/ws-action.json-tmp");
-    file.flush();
-    file.close();
-
-    wsEffect = nil;
-    mode = nil;
-    rd = nil;
-    buffer = nil;
-    json = nil;
-    delay = nil;
-    bright = nil;
-    single_color = nil;
-    mode_options = nil;
-
-    blink = nil;
-    blueBright = nil;
-    blueMinBright = nil;
-    blueMaxBright = nil;
-    blueSpeed = nil;
-    blueStep = nil;
-
+    local state = {
+        buffer = buffer, mode = mode, delay = delay, bright = bright,
+        mode_options = modeOptions, blink = blink, blueBright = blueBright,
+        blueMinBright = blueMinBright, blueMaxBright = blueMaxBright,
+        blueSpeed = blueSpeed, blueStep = blueStep, single_color = colorJson,
+    }
+    saveState(state)
     collectgarbage()
-    return true;
+    return response("ok", "WS2812 command accepted", state)
+end
+
+-- Restores the last accepted state and prepares the shared effect timer.
+function openWsJson()
+    _G.wsTimer = tmr.create()
+    if not file.open("json/ws-action.json") then return false end
+    local encoded = file.read()
+    file.close()
+    if not encoded then return false end
+    local ok, state = pcall(sjson.decode, encoded)
+    if not ok or type(state) ~= "table" then return false end
+    applyRequest(state)
+    return true
 end
 
 return function(args)
-    local tableVar = {};
-    if args then
-        for kv in args.gmatch(args, "%s*&?([^=]+=[^&]+)") do
-            local a, b = string.match(kv, "(.*)=(.*)");
-            tableVar[a] = b;
-        end
-    end
-    actionRequest(tableVar);
-
-    tableVar = nil;
-    args = nil;
-    collectgarbage();
-    return '{"status":"ok",  "message":"11111"}';
+    return applyRequest(parseArgs(args))
 end

@@ -1,4 +1,11 @@
 local conf = dofile("_config.lc");
+local serverStarted = false
+
+local function startServer()
+    if serverStarted then return end
+    serverStarted = true
+    dofile("server.lc")
+end
 
 wifi.setmode(conf.wifi.mode)
 
@@ -26,8 +33,7 @@ if (wifi.getmode() == wifi.STATION) or (wifi.getmode() == wifi.STATIONAP) then
 
     wifi.eventmon.register(wifi.eventmon.STA_GOT_IP, function(args)
         print("Connected to WiFi Access Point. Got IP: " .. args["IP"])
-        --start server
-        dofile("server.lc");
+        startServer()
         wifi.eventmon.register(wifi.eventmon.STA_DISCONNECTED, function(args)
             print("Lost connectivity! Restarting...")
             node.restart()
@@ -51,9 +57,8 @@ if (wifi.getmode() == wifi.STATION) or (wifi.getmode() == wifi.STATIONAP) then
 else
     print("Server created")
     print("ssid: "..conf.wifi.accessPoint.config.ssid)
-    print("Password: "..conf.wifi.accessPoint.config.pwd)
     print("IP: "..conf.wifi.accessPoint.net.ip)
-    dofile("server.lc");
+    startServer()
 end
 
 conf = nil
