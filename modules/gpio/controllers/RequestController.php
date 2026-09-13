@@ -34,21 +34,31 @@ class RequestController extends Controller
 
     /**
      * Получение запроса со значением пинов для  устройства
-     * @param int $deviceId
-     * @param int $pin
-     * @param mixed $value
      * @return array
      * @throws Exception
      * @throws NotFoundHttpException
      */
-    public function actionSet(int $deviceId, int $pin, $value): array
+    public function actionSet(): array
     {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $deviceId = filter_var(Yii::$app->request->post('deviceId'), FILTER_VALIDATE_INT, [
+            'options' => ['min_range' => 1],
+        ]);
+        $pin = filter_var(Yii::$app->request->post('pin'), FILTER_VALIDATE_INT, [
+            'options' => ['min_range' => 0],
+        ]);
+        $value = Yii::$app->request->post('value');
+
+        if ($deviceId === false || $pin === false) {
+            throw new BadRequestHttpException('deviceId и pin должны быть целыми числами.');
+        }
+
         if (!in_array($value, [true, false, 1, 0, '1', '0', 'true', 'false'], true)) {
             throw new BadRequestHttpException('Значение GPIO должно быть true или false.');
         }
 
         $value = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-        Yii::$app->response->format = Response::FORMAT_JSON;
         if (!Gpio::setStatus($deviceId, $pin, $value)) {
             throw new NotFoundHttpException('Активный GPIO не найден.');
         }
