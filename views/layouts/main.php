@@ -37,7 +37,13 @@ AppAsset::register($this);
                     <?= Html::a(Html::encode($navigationDevice->name), ['/device/control', 'device' => $navigationDevice->id], ['class' => 'app-nav__link app-nav__link--device']) ?>
                 <?php endforeach; ?>
                 <span class="app-nav__heading">Система</span>
-                <?= Html::a('Настройки', ['/device/index'], ['class' => 'app-nav__link']) ?>
+                <?= Html::a('Устройства', ['/device/index'], ['class' => 'app-nav__link']) ?>
+                <span class="app-nav__heading">Настройка периферии</span>
+                <?= Html::a('PWM: параметры', ['/pwm/pwm-settings/index'], ['class' => 'app-nav__link app-nav__link--device']) ?>
+                <?= Html::a('PWM: каналы', ['/pwm/pwm-values/index'], ['class' => 'app-nav__link app-nav__link--device']) ?>
+                <?= Html::a('GPIO', ['/gpio/gpio/index'], ['class' => 'app-nav__link app-nav__link--device']) ?>
+                <?= Html::a('DHT', ['/dht/dht/index'], ['class' => 'app-nav__link app-nav__link--device']) ?>
+                <?= Html::a('WS2812', ['/ws/ws-values/index'], ['class' => 'app-nav__link app-nav__link--device']) ?>
                 <?= Html::a('Справка', ['/help/index'], ['class' => 'app-nav__link']) ?>
             </nav>
         </aside>
