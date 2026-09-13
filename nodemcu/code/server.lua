@@ -1,4 +1,4 @@
-local conf = dofile("config.lc");
+local conf = dofile("_config.lc");
 
 srv = net.createServer(net.TCP)
 srv:listen(conf.general.port, function(conn)
@@ -50,7 +50,17 @@ srv:listen(conf.general.port, function(conn)
                     file.close()
                 end
             else
-              --  client:send("HTTP/1.0 200 OK\r\nContent-Type: text/html \r\n\r\n")
+                local contentType = "text/plain"
+                if string.sub(f, -5) == ".html" then
+                    contentType = "text/html"
+                elseif string.sub(f, -4) == ".css" then
+                    contentType = "text/css"
+                elseif string.sub(f, -3) == ".js" then
+                    contentType = "application/javascript"
+                elseif string.sub(f, -4) == ".ico" then
+                    contentType = "image/x-icon"
+                end
+                client:send("HTTP/1.0 200 OK\r\nContent-Type: " .. contentType .. "\r\n\r\n")
                 --Получаем длину файла, считаем количество отрезков по 1000 байт и отдаём честями
                 local stat = file.stat(f);
                 --Считаем количество отрезков по 800 байт
@@ -105,4 +115,3 @@ srv:listen(conf.general.port, function(conn)
     end)
     collectgarbage();
 end)
-

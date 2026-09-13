@@ -1,68 +1,106 @@
---Восстанавливаем настройки PWM после перезагрузки
+-- Restores GPIO settings after a restart.
 function openGpioJson()
     if file.open("json/gpio-action.json") then
-        local str = file.read();
-        if str then
-            local rd = sjson.decode(str)
-            actionRequest(rd)
-        end
+        local stored = file.read()
         file.close()
+        if stored then
+            local state = sjson.decode(stored)
+            actionRequest(state)
+        end
         return true
-    else
+    end
+    return false
+end
+
+local function encodeResponse(status, message, pins, rejected)
+    local response = {
+        status = status,
+        message = message,
+    }
+
+    if pins then
+        response.pins = pins
+    end
+    if rejected then
+        response.rejected = rejected
+    end
+
+    return sjson.encode(response)
+end
+
+local function validateRequest(request)
+    local pins = {}
+    local rejected = {}
+    local count = 0
+
+    for pin, value in pairs(request) do
+        local numericPin = tonumber(pin)
+        local numericValue = tonumber(value)
+
+        if numericPin == nil or numericPin % 1 ~= 0 or numericPin < 0 or numericPin > 9 then
+            rejected[tostring(pin)] = "pin must be an integer from 0 to 9"
+        elseif numericValue ~= 0 and numericValue ~= 1 then
+            rejected[tostring(pin)] = "value must be 0 or 1"
+        else
+            pins[tostring(numericPin)] = numericValue
+            count = count + 1
+        end
+    end
+
+    if count == 0 then
+        rejected.request = "at least one GPIO value is required"
+    end
+
+    return pins, rejected
+end
+
+local function saveState(pins)
+    local encoded = sjson.encode(pins)
+    if not file.open("json/gpio-action.json-tmp", "w") then
         return false
     end
+
+    file.write(encoded)
+    file.close()
+    file.remove("json/gpio-action.json")
+    file.rename("json/gpio-action.json-tmp", "json/gpio-action.json")
+    return true
 end
 
---Функция для работы с PWM
-function actionRequest(rd)
-    for pin, value in pairs(rd) do
-        pin = tonumber(pin);
-        value = tonumber(value);
-        if  pin ~= nil and pin >= 0 and pin < 10  then --Проверяем, что бы ключи были числа в нужных пределах
-            gpio.mode(pin, gpio.OUTPUT)
-            if value == 1 then
-                gpio.write(pin, gpio.HIGH)
-            else
-                gpio.write(pin, gpio.LOW)
-            end
-        end;
+-- Applies a complete, validated GPIO request and persists the commanded state.
+function actionRequest(request)
+    local pins, rejected = validateRequest(request)
+    if next(rejected) ~= nil then
+        return encodeResponse("error", "GPIO request rejected", nil, rejected)
     end
 
-    local json = sjson.encode(rd)
-    file.open("json/gpio-action.json-tmp", "w");
-    file.write(json);
-    file.flush();
-    file.close();
+    for pin, value in pairs(pins) do
+        local numericPin = tonumber(pin)
+        gpio.mode(numericPin, gpio.OUTPUT)
+        gpio.write(numericPin, value == 1 and gpio.HIGH or gpio.LOW)
+    end
 
-    file.remove("json/gpio-action.json");
-    file.flush();
-    file.close();
-    file.rename("json/gpio-action.json-tmp", "json/gpio-action.json");
-    file.flush();
-    file.close();
-    file.remove("json/gpio-action.json-tmp");
-    file.flush();
-    file.close();
+    if not saveState(pins) then
+        return encodeResponse("error", "GPIO state was applied but could not be persisted", pins)
+    end
 
-    json = nil;
-    rd = nil
-    collectgarbage()
-    return '{"status":"ok", "message":"gpio ok"}'
+    return encodeResponse("ok", "GPIO command accepted", pins)
 end
-
 
 return function(args)
-    local tableVar = {};
+    local request = {}
     if args then
-        for kv in args.gmatch(args, "%s*&?([^=]+=[^&]+)") do
-            local name, value = string.match(kv, "(.*)=(.*)");
-            tableVar[name] = value;
+        for pair in string.gmatch(args, "([^&]+)") do
+            local pin, value = string.match(pair, "^([^=]+)=([^=]+)$")
+            if pin then
+                request[pin] = value
+            else
+                request[pair] = ""
+            end
         end
     end
-    actionRequest(tableVar);
 
-    tableVar = nil;
-    args = nil;
-    collectgarbage();
-    return '{"status":"ok",  "message":"11111"}';
+    local response = actionRequest(request)
+    collectgarbage()
+    return response
 end

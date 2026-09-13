@@ -1,4 +1,3 @@
-
 local conf = {}
 
 -- General server configuration.
@@ -10,7 +9,7 @@ conf.general.port = 80
 conf.wifi = {}
 -- Can be wifi.STATION, wifi.SOFTAP, or wifi.STATIONAP
 conf.wifi.mode = wifi.SOFTAP
--- Theses apply only when configured as Access Point (wifi.SOFTAP or wifi.STATIONAP)
+-- These apply only when configured as Access Point (wifi.SOFTAP or wifi.STATIONAP)
 if (conf.wifi.mode == wifi.SOFTAP) or (conf.wifi.mode == wifi.STATIONAP) then
     conf.wifi.accessPoint = {}
     conf.wifi.accessPoint.config = {}
@@ -25,7 +24,11 @@ end
 if (conf.wifi.mode == wifi.STATION) or (conf.wifi.mode == wifi.STATIONAP) then
     conf.wifi.station = {}
     conf.wifi.station.ssid = ""        -- Name of the WiFi network you want to join
-    conf.wifi.station.pwd =  ""                -- Password for the WiFi network
+    conf.wifi.station.pwd =  ""        -- Password for the WiFi network
+    -- Optional static IP for the station connection.
+    -- conf.wifi.station.ip = "192.168.1.250"
+    -- conf.wifi.station.netmask = "255.255.255.0"
+    -- conf.wifi.station.gateway = "192.168.1.1"
 end
 
 --[[

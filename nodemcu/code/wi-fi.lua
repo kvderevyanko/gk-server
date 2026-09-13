@@ -1,4 +1,4 @@
-local conf = dofile("config.lc");
+local conf = dofile("_config.lc");
 
 wifi.setmode(conf.wifi.mode)
 
@@ -11,6 +11,13 @@ end
 if (conf.wifi.mode == wifi.STATION) or (conf.wifi.mode == wifi.STATIONAP) then
     print('Client MAC: ', wifi.sta.getmac())
     wifi.sta.config(conf.wifi.station)
+    if conf.wifi.station.ip then
+        wifi.sta.setip({
+            ip = conf.wifi.station.ip,
+            netmask = conf.wifi.station.netmask,
+            gateway = conf.wifi.station.gateway,
+        })
+    end
 end
 
 

@@ -22,7 +22,7 @@ local serverFiles = {
    'restart.lua',
    'gpio-pwm.lua',
    'gpio.lua',
-   'config.lua',
+   '_config.lua',
    'json.lua',
    'dht.lua',
 }

@@ -63,6 +63,9 @@ task.php
 !/runtime/.gitignore
 /web/assets/*
 !/web/assets/.gitignore
+/.tools/
+/tools/__pycache__/
+/nodemcu/code/_config.lua
 /tests/_output/*
 !/tests/_output/.gitignore
 *.log
