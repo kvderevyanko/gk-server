@@ -9,7 +9,10 @@ abstract class EspRequest implements EspRequestInterface
     protected array $params;
 
     const RESPONSE_ERROR = 'error';
-    const TIMEOUT = 2;
+    // An ESP8266 may need a little longer immediately after boot while Lua
+    // restores state. Five seconds still bounds unavailable-device requests
+    // while avoiding false failures for a valid first command.
+    const TIMEOUT = 5;
 
     /**
      * @param string $host
