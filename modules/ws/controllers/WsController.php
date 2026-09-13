@@ -3,6 +3,7 @@
 namespace app\modules\ws\controllers;
 
 
+use app\models\CommandDelivery;
 use app\modules\ws\models\WsValues;
 use Yii;
 use yii\filters\VerbFilter;
@@ -62,19 +63,31 @@ class WsController extends Controller
         try {
             $result = Json::decode(WsValues::sendRequest($deviceId));
         } catch (\Throwable $exception) {
-            return $this->errorResponse(502, 'Не удалось связаться с устройством. Параметры сохранены, но не подтверждены.');
+            $message = 'Не удалось связаться с устройством. Параметры сохранены, но не подтверждены.';
+            CommandDelivery::record($deviceId, 'ws', CommandDelivery::STATUS_ERROR, $message, null, $this->deliveryPayload($ws));
+
+            return $this->errorResponse(502, $message);
         }
 
         if (is_array($result) && ($result['status'] ?? null) === 'ok') {
+            CommandDelivery::record(
+                $deviceId,
+                'ws',
+                CommandDelivery::STATUS_CONFIRMED,
+                $result['message'] ?? 'Параметры WS2812 подтверждены устройством.',
+                null,
+                $this->deliveryPayload($ws)
+            );
+
             return $result;
         }
 
-        return $this->errorResponse(
-            502,
-            is_array($result) && !empty($result['message'])
-                ? $result['message']
-                : 'Устройство не подтвердило параметры WS2812.'
-        );
+        $message = is_array($result) && !empty($result['message'])
+            ? $result['message']
+            : 'Устройство не подтвердило параметры WS2812.';
+        CommandDelivery::record($deviceId, 'ws', CommandDelivery::STATUS_ERROR, $message, null, $this->deliveryPayload($ws));
+
+        return $this->errorResponse(502, $message);
     }
 
     public function actionSaveAnimation(): array
@@ -126,6 +139,18 @@ class WsController extends Controller
         }
 
         return $response;
+    }
+
+    private function deliveryPayload(WsValues $ws): array
+    {
+        return [
+            'buffer' => $ws->buffer,
+            'mode' => $ws->mode,
+            'delay' => $ws->delay,
+            'bright' => $ws->bright,
+            'singleColor' => $ws->singleColor,
+            'modeOptions' => $ws->modeOptions,
+        ];
     }
 
 }

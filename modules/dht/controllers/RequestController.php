@@ -3,6 +3,7 @@
 namespace app\modules\dht\controllers;
 
 use app\components\CustomHelper;
+use app\models\CommandDelivery;
 use app\modules\dht\models\Dht;
 use app\modules\dht\models\TemperatureInfo;
 use Yii;
@@ -50,6 +51,7 @@ class RequestController extends Controller
             $result = Json::decode(Dht::sendRequest($deviceId, $pin));
         } catch (\Throwable $exception) {
             Yii::$app->response->statusCode = 502;
+            CommandDelivery::record($deviceId, 'dht', CommandDelivery::STATUS_ERROR, 'Не удалось получить показания от устройства.', $pin);
 
             return [
                 'status' => 'error',
@@ -58,16 +60,30 @@ class RequestController extends Controller
         }
 
         if (is_array($result) && ($result['status'] ?? null) === 'ok') {
+            CommandDelivery::record(
+                $deviceId,
+                'dht',
+                CommandDelivery::STATUS_CONFIRMED,
+                $result['message'] ?? 'Показания получены и сохранены.',
+                $pin,
+                [
+                    'temperature' => $result['temperature'] ?? null,
+                    'humidity' => $result['humidity'] ?? null,
+                ]
+            );
+
             return $result;
         }
 
         Yii::$app->response->statusCode = 502;
+        $message = is_array($result) && !empty($result['message'])
+            ? $result['message']
+            : 'Устройство не подтвердило получение показаний.';
+        CommandDelivery::record($deviceId, 'dht', CommandDelivery::STATUS_ERROR, $message, $pin);
 
         return [
             'status' => 'error',
-            'message' => is_array($result) && !empty($result['message'])
-                ? $result['message']
-                : 'Устройство не подтвердило получение показаний.',
+            'message' => $message,
         ];
     }
 

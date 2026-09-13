@@ -2,6 +2,7 @@
 
 namespace app\modules\gpio\controllers;
 
+use app\models\CommandDelivery;
 use app\modules\gpio\models\Gpio;
 use Yii;
 use yii\httpclient\Exception;
@@ -68,6 +69,14 @@ class RequestController extends Controller
         } catch (\Throwable $exception) {
             Yii::error($exception, __METHOD__);
             Yii::$app->response->statusCode = 502;
+            CommandDelivery::record(
+                $deviceId,
+                'gpio',
+                CommandDelivery::STATUS_ERROR,
+                'Не удалось связаться с устройством. Состояние сохранено, но не подтверждено.',
+                $pin,
+                ['value' => $value]
+            );
 
             return [
                 'status' => 'error',
@@ -78,6 +87,14 @@ class RequestController extends Controller
         $decodedResponse = json_decode($espResponse, true);
         if (!is_array($decodedResponse) || ($decodedResponse['status'] ?? null) !== 'ok') {
             Yii::$app->response->statusCode = 502;
+            CommandDelivery::record(
+                $deviceId,
+                'gpio',
+                CommandDelivery::STATUS_ERROR,
+                'Устройство не подтвердило команду. Состояние сохранено, но не подтверждено.',
+                $pin,
+                ['value' => $value]
+            );
 
             return [
                 'status' => 'error',
@@ -85,9 +102,19 @@ class RequestController extends Controller
             ];
         }
 
+        $message = 'Команда подтверждена устройством.';
+        CommandDelivery::record(
+            $deviceId,
+            'gpio',
+            CommandDelivery::STATUS_CONFIRMED,
+            $message,
+            $pin,
+            ['value' => $value]
+        );
+
         return [
             'status' => 'ok',
-            'message' => 'Команда подтверждена устройством.',
+            'message' => $message,
             'value' => $value,
         ];
     }

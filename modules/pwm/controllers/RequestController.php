@@ -1,6 +1,7 @@
 <?php
 namespace app\modules\pwm\controllers;
 
+use app\models\CommandDelivery;
 use app\modules\pwm\models\Pwm;
 use Yii;
 use yii\httpclient\Exception;
@@ -33,9 +34,11 @@ class RequestController extends Controller
         $value = filter_var(Yii::$app->request->post('value'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 0, 'max_range' => 1023]]);
         if ($deviceId === false || $pin === false || $value === false) throw new BadRequestHttpException('Параметры PWM некорректны.');
         if (!Pwm::setStatus($deviceId, $pin, $value)) throw new NotFoundHttpException('Активный PWM не найден.');
-        try { $result = Pwm::sendRequest($deviceId); } catch (\Throwable $e) { Yii::error($e, __METHOD__); Yii::$app->response->statusCode = 502; return ['status' => 'error', 'message' => 'Не удалось связаться с устройством. Значение не подтверждено.']; }
+        try { $result = Pwm::sendRequest($deviceId); } catch (\Throwable $e) { Yii::error($e, __METHOD__); Yii::$app->response->statusCode = 502; CommandDelivery::record($deviceId, 'pwm', CommandDelivery::STATUS_ERROR, 'Не удалось связаться с устройством. Значение не подтверждено.', $pin, ['value' => $value]); return ['status' => 'error', 'message' => 'Не удалось связаться с устройством. Значение не подтверждено.']; }
         $decoded = json_decode($result, true);
-        if (!is_array($decoded) || ($decoded['status'] ?? null) !== 'ok') { Yii::$app->response->statusCode = 502; return ['status' => 'error', 'message' => 'Устройство не подтвердило значение PWM.']; }
-        return ['status' => 'ok', 'message' => 'Значение PWM подтверждено устройством.', 'value' => $value];
+        if (!is_array($decoded) || ($decoded['status'] ?? null) !== 'ok') { Yii::$app->response->statusCode = 502; CommandDelivery::record($deviceId, 'pwm', CommandDelivery::STATUS_ERROR, 'Устройство не подтвердило значение PWM.', $pin, ['value' => $value]); return ['status' => 'error', 'message' => 'Устройство не подтвердило значение PWM.']; }
+        $message = 'Значение PWM подтверждено устройством.';
+        CommandDelivery::record($deviceId, 'pwm', CommandDelivery::STATUS_CONFIRMED, $message, $pin, ['value' => $value]);
+        return ['status' => 'ok', 'message' => $message, 'value' => $value];
     }
 }
