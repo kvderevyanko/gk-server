@@ -41,6 +41,12 @@ class SiteController extends Controller
         return $this->render('index', $this->overviewData());
     }
 
+    /** @return string */
+    public function actionSettings(): string
+    {
+        return $this->render('settings');
+    }
+
     /**
      * Builds the dashboard from saved data only. The overview must not poll or
      * otherwise contact ESP devices merely because a page was opened.
