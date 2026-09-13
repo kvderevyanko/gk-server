@@ -14,6 +14,7 @@ WORKDIR /var/www/html
 COPY . .
 
 RUN chmod 0644 /etc/cron.d/gk-server \
+    && chmod -R a+rX . \
     && composer install --no-dev --prefer-dist --no-interaction --no-progress \
         --no-scripts --optimize-autoloader \
     && mkdir -p db runtime web/assets \
