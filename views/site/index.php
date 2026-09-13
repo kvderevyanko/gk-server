@@ -3,6 +3,8 @@
 /* @var $this yii\web\View */
 /* @var $deviceCards array */
 /* @var $sensors array */
+/* @var $deliveries \app\models\CommandDelivery[] */
+/* @var $devicesById \app\models\Device[] */
 
 $this->title = 'Главная';
 ?>
@@ -74,6 +76,38 @@ $this->title = 'Главная';
                         <p class="sensor-card__time">Сохранено <?= date('d.m H:i', (int) $reading->datetime) ?></p>
                     <?php endif; ?>
                 </article>
+            <?php endforeach; ?>
+        </div>
+    </section>
+<?php endif; ?>
+
+<?php if ($deliveries !== []): ?>
+    <section class="overview-section activity-summary" aria-labelledby="activity-title">
+        <div class="overview-section__header">
+            <div>
+                <p class="overview-section__eyebrow">Результат доставки</p>
+                <h2 id="activity-title" class="overview-section__title">Последние действия</h2>
+            </div>
+            <p class="overview-section__hint">Подтверждение означает, что ESP ответил на команду, а не измеренное состояние вывода.</p>
+        </div>
+        <div class="activity-summary__grid">
+            <?php foreach ($deliveries as $delivery): ?>
+                <?php
+                $device = $devicesById[(int) $delivery->deviceId] ?? null;
+                $confirmed = $delivery->status === \app\models\CommandDelivery::STATUS_CONFIRMED;
+                ?>
+                <?php if ($device): ?>
+                    <?= \yii\helpers\Html::a(
+                        '<article class="activity-card' . ($confirmed ? ' is-confirmed' : ' is-error') . '">'
+                        . '<p class="activity-card__device">' . \yii\helpers\Html::encode($device->name) . '</p>'
+                        . '<h3 class="activity-card__title">' . \yii\helpers\Html::encode(\app\models\CommandDelivery::typeLabel($delivery->type)) . ($delivery->pin === null ? '' : ' · пин ' . (int) $delivery->pin) . '</h3>'
+                        . '<p class="activity-card__message">' . \yii\helpers\Html::encode($delivery->message) . '</p>'
+                        . '<span class="activity-card__result">' . ($confirmed ? 'Подтверждено' : 'Не подтверждено') . ' · ' . date('d.m H:i', (int) $delivery->createdAt) . '</span>'
+                        . '</article>',
+                        ['/device/control', 'device' => $device->id],
+                        ['class' => 'activity-card__anchor']
+                    ) ?>
+                <?php endif; ?>
             <?php endforeach; ?>
         </div>
     </section>

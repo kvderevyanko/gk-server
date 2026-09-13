@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\CommandDelivery;
 use app\models\Device;
 use app\modules\dht\models\Dht;
 use app\modules\dht\models\TemperatureInfo;
@@ -64,7 +65,7 @@ class SiteController extends Controller
         }, $devices);
 
         if ($deviceIds === []) {
-            return ['deviceCards' => [], 'sensors' => []];
+            return ['deviceCards' => [], 'sensors' => [], 'deliveries' => []];
         }
 
         $gpioCounts = [];
@@ -120,7 +121,23 @@ class SiteController extends Controller
             ];
         }
 
-        return compact('deviceCards', 'sensors');
+        $devicesById = [];
+        foreach ($devices as $device) {
+            $devicesById[(int) $device->id] = $device;
+        }
+
+        try {
+            $deliveries = CommandDelivery::find()
+                ->where(['deviceId' => $deviceIds])
+                ->orderBy(['id' => SORT_DESC])
+                ->limit(6)
+                ->all();
+        } catch (\Throwable $exception) {
+            Yii::warning($exception, __METHOD__);
+            $deliveries = [];
+        }
+
+        return compact('deviceCards', 'sensors', 'deliveries', 'devicesById');
     }
 
 
