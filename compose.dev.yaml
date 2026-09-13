@@ -1,0 +1,20 @@
+# Local development overlay. It deliberately mounts only application source:
+# dependencies remain from the image, while SQLite, runtime and published assets
+# keep using the writable volumes defined in compose.yaml.
+services:
+  web:
+    volumes:
+      - ./assets:/var/www/html/assets:ro
+      - ./commands:/var/www/html/commands:ro
+      - ./components:/var/www/html/components:ro
+      - ./config:/var/www/html/config:ro
+      - ./controllers:/var/www/html/controllers:ro
+      - ./mail:/var/www/html/mail:ro
+      - ./migrations:/var/www/html/migrations:ro
+      - ./models:/var/www/html/models:ro
+      - ./modules:/var/www/html/modules:ro
+      - ./views:/var/www/html/views:ro
+      - ./widgets:/var/www/html/widgets:ro
+      - ./web/index.php:/var/www/html/web/index.php:ro
+      - ./web/index-test.php:/var/www/html/web/index-test.php:ro
+      - ./web/robots.txt:/var/www/html/web/robots.txt:ro

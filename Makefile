@@ -1,12 +1,15 @@
 COMPOSE ?= docker compose
+DEV_COMPOSE ?= $(COMPOSE) -f compose.yaml -f compose.dev.yaml
 .DEFAULT_GOAL := help
 
-.PHONY: help init permissions up up-all down ps logs build migrate lint
+.PHONY: help init permissions up up-all dev-up dev-stop dev-logs down ps logs build migrate lint
 
 help:
 	@echo "make init    Initialise local SQLite and permissions"
 	@echo "make up      Start only the web UI"
 	@echo "make up-all  Start web UI and scheduler"
+	@echo "make dev-up  Start web UI with live-mounted source"
+	@echo "make dev-stop Stop the live-development web UI"
 	@echo "make ps      Show container status"
 	@echo "make logs    Follow web logs"
 	@echo "make down    Stop the local stack"
@@ -28,6 +31,16 @@ up:
 ## Start the complete production-like stack, including the scheduler.
 up-all:
 	$(COMPOSE) up -d
+
+## Start the web UI with source mounted from the working tree.
+dev-up:
+	$(DEV_COMPOSE) up -d web
+
+dev-stop:
+	$(DEV_COMPOSE) stop web
+
+dev-logs:
+	$(DEV_COMPOSE) logs --follow --tail=100 web
 
 down:
 	$(COMPOSE) down
