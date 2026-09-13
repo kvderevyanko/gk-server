@@ -57,7 +57,11 @@ local function decodeColor(value, rejected)
         return color, sjson.encode(color)
     end
 
-    local ok, color = pcall(sjson.decode, uriDecode(value))
+    -- string.gsub returns both the resulting string and replacement count.
+    -- Keep only the string: passing both values to sjson.decode rejects an
+    -- otherwise valid URL-encoded RGB array on NodeMCU.
+    local decodedValue = uriDecode(value)
+    local ok, color = pcall(sjson.decode, decodedValue)
     if not ok or type(color) ~= "table" then
         rejected.single_color = "single_color must be a JSON RGB array"
         return {0, 0, 0}, "[0,0,0]"
@@ -100,7 +104,11 @@ local function applyRequest(request)
     if next(rejected) then return response("error", "WS2812 request rejected", nil, rejected) end
     if not wsTimer then _G.wsTimer = tmr.create() end
     wsTimer:stop()
-    dofile("ws-effect.lc")
+    if mode == "static" then
+        dofile("ws-effect-basic.lc")
+    else
+        dofile("ws-effect.lc")
+    end
 
     if mode == "off" then
         wsEffOff(buffer)

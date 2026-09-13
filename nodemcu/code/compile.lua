@@ -15,6 +15,7 @@ end
 
 local serverFiles = {
    'ws.lua',
+   'ws-effect-basic.lua',
    'ws-effect.lua',
    'request.lua',
    'server.lua',
