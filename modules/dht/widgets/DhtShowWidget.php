@@ -24,20 +24,18 @@ class DhtShowWidget extends Widget
 
         DhtAsset::register($this->getView());
         $dhtList = Dht::find()
-            ->leftJoin([
-                Device::tableName(),
-                Dht::tableName().'.deviceId = '.Device::tableName().'.id'
-            ])
+            ->innerJoinWith('device')
             ->where([
                 Dht::tableName().'.active' => Dht::STATUS_ACTIVE,
                 Device::tableName().'.active' => Device::STATUS_ACTIVE,
-            ]);
+            ])
+            ->orderBy([Dht::tableName() . '.id' => SORT_ASC]);
         if($this->deviceId)
             $dhtList->andWhere([Dht::tableName().'.deviceId' => $this->deviceId]);
         if($this->mainPage)
             $dhtList->andWhere([Dht::tableName().'.home' => true]);
 
-        $dhtList = $dhtList->all();
+        $dhtList = $dhtList->with('device')->all();
 
         if(count($dhtList) < 1)
             return '';

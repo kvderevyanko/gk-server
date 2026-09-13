@@ -5,31 +5,70 @@ namespace app\modules\dht\controllers;
 use app\components\CustomHelper;
 use app\modules\dht\models\Dht;
 use app\modules\dht\models\TemperatureInfo;
-use app\modules\gpio\models\Gpio;
 use Yii;
-use yii\base\InvalidConfigException;
-use yii\data\ActiveDataProvider;
 use yii\filters\VerbFilter;
-use yii\httpclient\Exception;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
 use yii\web\Response;
+use yii\web\Controller;
+use yii\helpers\Json;
 
 
 class RequestController extends Controller
 {
+    public function behaviors(): array
+    {
+        return [
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'get-temperature' => ['POST'],
+                ],
+            ],
+        ];
+    }
 
     /**
-     * Получение значения температуры
-     * @param int $deviceId
-     * @param int $pin
-     * @return string
-     * @throws Exception
-     * @throws NotFoundHttpException
+     * Запрашивает и сохраняет показания одного активного DHT-датчика.
      */
-    public function actionGetTemperature(int $deviceId, int $pin): string
+    public function actionGetTemperature(): array
     {
-        return Dht::sendRequest($deviceId, $pin);
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $request = Yii::$app->request;
+        $deviceId = filter_var($request->post('deviceId'), FILTER_VALIDATE_INT);
+        $pin = filter_var($request->post('pin'), FILTER_VALIDATE_INT);
+
+        if ($deviceId === false || $deviceId === null || $deviceId < 1 || $pin === false || $pin === null || $pin < 1) {
+            Yii::$app->response->statusCode = 400;
+
+            return [
+                'status' => 'error',
+                'message' => 'Укажите корректные deviceId и pin.',
+            ];
+        }
+
+        try {
+            $result = Json::decode(Dht::sendRequest($deviceId, $pin));
+        } catch (\Throwable $exception) {
+            Yii::$app->response->statusCode = 502;
+
+            return [
+                'status' => 'error',
+                'message' => 'Не удалось получить показания от устройства.',
+            ];
+        }
+
+        if (is_array($result) && ($result['status'] ?? null) === 'ok') {
+            return $result;
+        }
+
+        Yii::$app->response->statusCode = 502;
+
+        return [
+            'status' => 'error',
+            'message' => is_array($result) && !empty($result['message'])
+                ? $result['message']
+                : 'Устройство не подтвердило получение показаний.',
+        ];
     }
 
     /**
