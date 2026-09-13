@@ -1,75 +1,20 @@
 <?php
-
-use app\modules\pwm\models\DbPwmValues;
-use yii\helpers\Url;
-use yii\web\View;
-
-/* @var $this View */
-/* @var $pwmValues array */
-/* @var $pwm DbPwmValues */
-
+use app\modules\pwm\models\Pwm;
+use yii\helpers\Html;
+/* @var $pwmValues Pwm[] */
 ?>
-<div class="col-sm-6">
-    <h4>PWM</h4>
-    <div id="pwmBlock">
-    <?php foreach ($pwmValues as $pwm): ?>
-    <label><?=$pwm->name?> / <?=$pwm->device->name?></label>
-            <input
-                    type="range"
-                    min="0"
-                    max="1020"
-                    step="5"
-                    value="<?=$pwm->value?$pwm->value:0?>"
-                    data-pin="<?=$pwm->pin?>"
-                    data-device="<?=$pwm->deviceId?>"
-                    data-id="<?=$pwm->id?>"
-                    class="slider sliderPwm"
-    <br>
-
-    <?php endforeach; ?>
+<section class="control-panel pwm-panel" aria-labelledby="pwm-title">
+    <header class="control-panel__header"><div><p class="control-panel__eyebrow">Яркость и мощность</p><h2 id="pwm-title" class="control-panel__title">PWM</h2></div><p class="control-panel__hint">Значение применяется после отпускания ползунка и требует подтверждения устройства.</p></header>
+    <div class="pwm-grid">
+        <?php foreach ($pwmValues as $pwm): ?>
+            <?php $id = 'pwm-control-' . $pwm->id; ?>
+            <article class="pwm-card" data-pwm-card>
+                <p class="control-card__device"><?= Html::encode($pwm->device->name) ?></p>
+                <h3 class="control-card__title"><?= Html::encode($pwm->name ?: 'PWM ' . $pwm->pin) ?></h3>
+                <p class="control-card__meta">Пин <?= Html::encode($pwm->pin) ?></p>
+                <div class="pwm-card__range"><input id="<?= $id ?>" class="pwm-control" type="range" min="0" max="1023" step="1" value="<?= (int) $pwm->value ?>" data-url="<?= \yii\helpers\Url::to(['/pwm/request/set']) ?>" data-device="<?= $pwm->deviceId ?>" data-pin="<?= $pwm->pin ?>" aria-describedby="<?= $id ?>-status"><output data-pwm-value for="<?= $id ?>"><?= (int) $pwm->value ?></output></div>
+                <p id="<?= $id ?>-status" class="control-card__status" data-pwm-status aria-live="polite">Текущее состояние сохранено</p>
+            </article>
+        <?php endforeach; ?>
     </div>
-</div>
-<script>
-    let urlCommandPwm = "<?=Url::to(['/pwm/request/set'])?>";
-</script>
-<?php
-$this->registerJs(<<<JS
-let blockPwmRequest
-let waitPwmRequest
-$('.sliderPwm').on('change', function() {
-    commandPwm($(this).data('device'), $(this).data('pin'), $(this).val())
-})
-let deviceRepeatPwm = 0
-function commandPwm(deviceId, pin, value) {
-    
-    if(deviceRepeatPwm === 0)
-        deviceRepeatPwm = 1
-    if(blockPwmRequest) {
-        waitPwmRequest = deviceId
-        return false
-    }
-    blockPwmRequest = true
-    waitPwmRequest = false
-    openWaitRequest(deviceId, deviceRepeatPwm)
-    $.get(urlCommandPwm, {deviceId:deviceId, pin:pin, value:value}, function(data) {
-        blockPwmRequest = false
-      if(waitPwmRequest)
-          commandPwm(waitPwmRequest)
-      hideWaitRequest(deviceId, deviceRepeatPwm)
-      deviceRepeatPwm = 0
-    }).fail(function() {
-        blockPwmRequest = false
-        waitPwmRequest = false
-        if(deviceRepeatPwm < 5) {
-            deviceRepeatPwm++
-            commandPwm(deviceId, pin, value)
-        } else {
-            hideWaitRequest(deviceId, deviceRepeatPwm)
-            alert( 'Ошибка отправки запроса после 5 попыток' )
-            deviceRepeatPwm = 0
-        }
-        
-    })
-}
-JS
-);
+</section>

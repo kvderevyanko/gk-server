@@ -108,3 +108,14 @@ function updateSortable(div){
         }
     });
 }(jQuery));
+
+(function ($) {
+    function feedback($card, state, message) { $card.removeClass('is-pending is-confirmed is-error').addClass('is-' + state); $card.find('[data-pwm-status]').text(message); }
+    $(document).on('input', '.pwm-control', function () { $(this).closest('[data-pwm-card]').find('[data-pwm-value]').text(this.value); });
+    $(document).on('change', '.pwm-control', function () {
+        var $control = $(this), $card = $control.closest('[data-pwm-card]'), data = {deviceId: $control.data('device'), pin: $control.data('pin'), value: $control.val()};
+        var param = $('meta[name="csrf-param"]').attr('content'), token = $('meta[name="csrf-token"]').attr('content'); if (param && token) data[param] = token;
+        $control.prop('disabled', true); feedback($card, 'pending', 'Значение отправляется на устройство…');
+        $.ajax({url: $control.data('url'), method: 'POST', data: data, dataType: 'json'}).done(function (response) { feedback($card, response && response.status === 'ok' ? 'confirmed' : 'error', (response && response.message) || 'Устройство не подтвердило значение PWM.'); }).fail(function (xhr) { feedback($card, 'error', (xhr.responseJSON || {}).message || 'Не удалось связаться с устройством. Значение не подтверждено.'); }).always(function () { $control.prop('disabled', false); });
+    });
+}(jQuery));

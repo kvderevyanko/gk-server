@@ -18,13 +18,13 @@ class PwmShowWidget extends Widget
      */
     public function run(): string
     {
-        $pwmValues = Pwm::find()->where(['active' => Pwm::STATUS_ACTIVE]);
+        $pwmValues = Pwm::find()->with('device')->where(['active' => Pwm::STATUS_ACTIVE]);
         if($this->deviceId)
             $pwmValues->andWhere(['deviceId' => $this->deviceId]);
         if($this->mainPage)
             $pwmValues->andWhere(['home' => true]);
 
-        $pwmValues = $pwmValues->all();
+        $pwmValues = $pwmValues->orderBy(['deviceId' => SORT_ASC, 'pin' => SORT_ASC])->all();
 
         if(count($pwmValues) < 1)
             return '';

@@ -425,6 +425,10 @@
     gap: 12px;
     padding: 16px;
 }
+.pwm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; padding: 16px; }
+.pwm-card { min-height: 180px; padding: 20px; border: 1px solid var(--app-border); border-radius: 14px; background: var(--app-surface); }
+.pwm-card.is-pending { border-color: #d59c28; }.pwm-card.is-error { border-color: #e48b93; }.pwm-card.is-confirmed .control-card__status { color: var(--app-success); }.pwm-card.is-error .control-card__status { color: var(--app-danger); }
+.pwm-card__range { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 14px; margin-top: 22px; }.pwm-control { width: 100%; accent-color: var(--app-brand); }.pwm-card output { min-width: 42px; color: var(--app-text); font-weight: 750; text-align: right; }
 
 .control-card {
     display: flex;
