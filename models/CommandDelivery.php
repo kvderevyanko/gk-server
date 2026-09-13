@@ -69,4 +69,101 @@ class CommandDelivery extends ActiveRecord
 
         return $labels[$type] ?? $type;
     }
+
+    /**
+     * Converts stored payload into a short, operator-facing description.
+     * The payload is advisory: malformed historic records stay readable.
+     */
+    public static function description(self $delivery): array
+    {
+        $payload = self::payloadData($delivery->payload);
+        $pin = $delivery->pin === null ? null : 'Пин ' . $delivery->pin;
+
+        switch ($delivery->type) {
+            case 'gpio':
+                return [
+                    'category' => 'Переключатель',
+                    'target' => $pin ?: 'GPIO',
+                    'command' => array_key_exists('value', $payload) && (bool) $payload['value']
+                        ? 'Включить'
+                        : 'Выключить',
+                ];
+            case 'pwm':
+                return [
+                    'category' => 'Яркость и мощность',
+                    'target' => $pin ?: 'PWM',
+                    'command' => array_key_exists('value', $payload)
+                        ? 'Установить ' . (int) $payload['value'] . ' из 1023'
+                        : 'Изменить значение PWM',
+                ];
+            case 'dht':
+                $readings = [];
+                if (array_key_exists('temperature', $payload) && $payload['temperature'] !== null) {
+                    $readings[] = 'Температура ' . $payload['temperature'] . '°C';
+                }
+                if (array_key_exists('humidity', $payload) && $payload['humidity'] !== null) {
+                    $readings[] = 'Влажность ' . $payload['humidity'] . '%';
+                }
+
+                return [
+                    'category' => 'Датчик климата',
+                    'target' => $pin ?: 'DHT',
+                    'command' => $readings ? implode(' · ', $readings) : 'Получить показания',
+                ];
+            case 'ws':
+                $details = [];
+                if (!empty($payload['mode'])) {
+                    $details[] = self::wsModeLabel((string) $payload['mode']);
+                }
+                if (array_key_exists('buffer', $payload)) {
+                    $details[] = (int) $payload['buffer'] . ' LED';
+                }
+                if (array_key_exists('bright', $payload)) {
+                    $details[] = 'яркость ' . (int) $payload['bright'];
+                }
+
+                return [
+                    'category' => 'Адресная лента',
+                    'target' => 'WS2812',
+                    'command' => $details ? implode(' · ', $details) : 'Изменить эффект ленты',
+                ];
+            default:
+                return [
+                    'category' => self::typeLabel($delivery->type),
+                    'target' => $pin ?: self::typeLabel($delivery->type),
+                    'command' => 'Отправить команду',
+                ];
+        }
+    }
+
+    private static function payloadData(?string $payload): array
+    {
+        if (!$payload) {
+            return [];
+        }
+
+        try {
+            $data = Json::decode($payload);
+        } catch (\Throwable $exception) {
+            return [];
+        }
+
+        return is_array($data) ? $data : [];
+    }
+
+    private static function wsModeLabel(string $mode): string
+    {
+        $labels = [
+            'off' => 'Выключить',
+            'static' => 'Статичный свет',
+            'static-soft-blink' => 'Мягкое мигание',
+            'static-soft-random-blink' => 'Случайное мигание',
+            'round-static' => 'Статичный круг',
+            'round-random' => 'Случайный круг',
+            'rainbow' => 'Радуга',
+            'rainbow-circle' => 'Радуга по кругу',
+        ];
+
+        return $labels[$mode] ?? $mode;
+    }
 }

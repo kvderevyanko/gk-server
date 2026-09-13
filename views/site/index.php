@@ -95,13 +95,14 @@ $this->title = 'Главная';
                 <?php
                 $device = $devicesById[(int) $delivery->deviceId] ?? null;
                 $confirmed = $delivery->status === \app\models\CommandDelivery::STATUS_CONFIRMED;
+                $description = \app\models\CommandDelivery::description($delivery);
                 ?>
                 <?php if ($device): ?>
                     <?= \yii\helpers\Html::a(
                         '<article class="activity-card' . ($confirmed ? ' is-confirmed' : ' is-error') . '">'
                         . '<p class="activity-card__device">' . \yii\helpers\Html::encode($device->name) . '</p>'
-                        . '<h3 class="activity-card__title">' . \yii\helpers\Html::encode(\app\models\CommandDelivery::typeLabel($delivery->type)) . ($delivery->pin === null ? '' : ' · пин ' . (int) $delivery->pin) . '</h3>'
-                        . '<p class="activity-card__message">' . \yii\helpers\Html::encode($delivery->message) . '</p>'
+                        . '<h3 class="activity-card__title">' . \yii\helpers\Html::encode($description['target']) . '</h3>'
+                        . '<p class="activity-card__message">' . \yii\helpers\Html::encode($description['command']) . '</p>'
                         . '<span class="activity-card__result">' . ($confirmed ? 'Подтверждено' : 'Не подтверждено') . ' · ' . date('d.m H:i', (int) $delivery->createdAt) . '</span>'
                         . '</article>',
                         ['/device/control', 'device' => $device->id],

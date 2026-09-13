@@ -19,14 +19,18 @@ use yii\helpers\Html;
     <?php else: ?>
         <ol class="delivery-list">
             <?php foreach ($deliveries as $delivery): ?>
-                <?php $confirmed = $delivery->status === CommandDelivery::STATUS_CONFIRMED; ?>
+                <?php
+                $confirmed = $delivery->status === CommandDelivery::STATUS_CONFIRMED;
+                $description = CommandDelivery::description($delivery);
+                ?>
                 <li class="delivery-list__item<?= $confirmed ? ' is-confirmed' : ' is-error' ?>">
                     <div>
-                        <p class="delivery-list__meta">
-                            <?= Html::encode(CommandDelivery::typeLabel($delivery->type)) ?>
-                            <?= $delivery->pin === null ? '' : ' · пин ' . Html::encode($delivery->pin) ?>
-                        </p>
-                        <p class="delivery-list__message"><?= Html::encode($delivery->message) ?></p>
+                        <p class="delivery-list__meta"><?= Html::encode($description['category']) ?></p>
+                        <h3 class="delivery-list__target"><?= Html::encode($description['target']) ?></h3>
+                        <p class="delivery-list__command"><?= Html::encode($description['command']) ?></p>
+                        <?php if (!$confirmed): ?>
+                            <p class="delivery-list__message"><?= Html::encode($delivery->message) ?></p>
+                        <?php endif; ?>
                     </div>
                     <div class="delivery-list__result">
                         <strong><?= $confirmed ? 'Подтверждено' : 'Не подтверждено' ?></strong>
