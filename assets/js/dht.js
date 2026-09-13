@@ -68,6 +68,10 @@
 
         $button.prop('disabled', true);
         feedback($card, 'pending', 'Запрашиваем показания у устройства…');
+        var requestToken = window.beginDeviceRequest({
+            action: 'Получаем показания DHT',
+            device: $card.find('.control-card__device').text()
+        });
 
         $.ajax({
             url: $panel.data('command-url'),
@@ -86,6 +90,7 @@
             feedback($card, 'error', (xhr.responseJSON || {}).message || 'Не удалось связаться с устройством. Показания не обновлены.');
         }).always(function () {
             $button.prop('disabled', false);
+            window.endDeviceRequest(requestToken);
         });
     });
 

@@ -24,6 +24,10 @@
 
         $card.find('[data-ws-field]').prop('disabled', true);
         feedback($card, 'pending', 'Параметры отправляются на устройство…');
+        var requestToken = window.beginDeviceRequest({
+            action: 'Настраиваем WS2812',
+            device: $card.find('.control-card__device').text()
+        });
 
         $.ajax({
             url: $panel.data('command-url'),
@@ -41,6 +45,7 @@
             feedback($card, 'error', (xhr.responseJSON || {}).message || 'Не удалось связаться с устройством. Параметры сохранены, но не подтверждены.');
         }).always(function () {
             $card.find('[data-ws-field]').prop('disabled', false);
+            window.endDeviceRequest(requestToken);
         });
     }
 

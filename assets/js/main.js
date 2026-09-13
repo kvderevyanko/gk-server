@@ -1,32 +1,43 @@
-function cl(str) {
-    console.log(str);
-}
+/**
+ * A single, non-technical indicator for in-flight physical commands. Multiple
+ * cards may be waiting at once; the most recent command stays visible until
+ * it completes, then the previous one is restored if necessary.
+ */
+(function ($) {
+    var activeRequests = {};
+    var requestSequence = 0;
 
-let waitRequest = $("#waitRequest");
-let waitRequestId = $("#waitRequestId");
-let requestRepeat = $("#requestRepeat");
-function openWaitRequest(id, repeat, message) {
-    //wait_request.show();
-    if(repeat) {
-        requestRepeat.show();
-        requestRepeat.find('span').text(repeat);
-    } else {
-        requestRepeat.hide();
-    }
-    waitRequestId.text(id);
-    waitRequest.slideDown();
-}
+    function renderRequestToast() {
+        var tokens = Object.keys(activeRequests);
+        var $toast = $('#waitRequest');
 
-function hideWaitRequest(id, repeat, message) {
-    if(repeat) {
-        requestRepeat.show();
-        requestRepeat.find('span').text(repeat);
-    } else {
-        requestRepeat.hide();
+        if (!tokens.length) {
+            $toast.prop('hidden', true);
+            return;
+        }
+
+        var request = activeRequests[tokens[tokens.length - 1]];
+        $toast.find('[data-request-title]').text(request.action || 'Команда отправляется');
+        $toast.find('[data-request-message]').text(request.device
+            ? 'Устройство «' + request.device + '»: ожидаем подтверждение ESP.'
+            : 'Ожидаем подтверждение устройства.');
+        $toast.prop('hidden', false);
     }
-    waitRequestId.text(id);
-    waitRequest.slideUp();
-}
+
+    window.beginDeviceRequest = function (options) {
+        requestSequence += 1;
+        var token = 'device-request-' + requestSequence;
+        activeRequests[token] = options || {};
+        renderRequestToast();
+
+        return token;
+    };
+
+    window.endDeviceRequest = function (token) {
+        delete activeRequests[token];
+        renderRequestToast();
+    };
+}(jQuery));
 
 function updateSortable(div){
     div.sortable();
@@ -72,6 +83,10 @@ function updateSortable(div){
 
         $control.prop('disabled', true);
         setGpioFeedback($card, $control, 'pending', 'Команда отправляется на устройство…');
+        var requestToken = window.beginDeviceRequest({
+            action: 'Изменяем переключатель',
+            device: $card.find('.control-card__device').text()
+        });
 
         $.ajax({
             url: $control.data('url'),
@@ -90,6 +105,7 @@ function updateSortable(div){
             setGpioFeedback($card, $control, 'error', response.message || 'Не удалось связаться с устройством. Состояние сохранено, но не подтверждено.');
         }).always(function () {
             $control.prop('disabled', false);
+            window.endDeviceRequest(requestToken);
         });
     });
 
@@ -116,6 +132,7 @@ function updateSortable(div){
         var $control = $(this), $card = $control.closest('[data-pwm-card]'), data = {deviceId: $control.data('device'), pin: $control.data('pin'), value: $control.val()};
         var param = $('meta[name="csrf-param"]').attr('content'), token = $('meta[name="csrf-token"]').attr('content'); if (param && token) data[param] = token;
         $control.prop('disabled', true); feedback($card, 'pending', 'Значение отправляется на устройство…');
-        $.ajax({url: $control.data('url'), method: 'POST', data: data, dataType: 'json'}).done(function (response) { feedback($card, response && response.status === 'ok' ? 'confirmed' : 'error', (response && response.message) || 'Устройство не подтвердило значение PWM.'); }).fail(function (xhr) { feedback($card, 'error', (xhr.responseJSON || {}).message || 'Не удалось связаться с устройством. Значение не подтверждено.'); }).always(function () { $control.prop('disabled', false); });
+        var requestToken = window.beginDeviceRequest({action: 'Изменяем значение PWM', device: $card.find('.control-card__device').text()});
+        $.ajax({url: $control.data('url'), method: 'POST', data: data, dataType: 'json'}).done(function (response) { feedback($card, response && response.status === 'ok' ? 'confirmed' : 'error', (response && response.message) || 'Устройство не подтвердило значение PWM.'); }).fail(function (xhr) { feedback($card, 'error', (xhr.responseJSON || {}).message || 'Не удалось связаться с устройством. Значение не подтверждено.'); }).always(function () { $control.prop('disabled', false); window.endDeviceRequest(requestToken); });
     });
 }(jQuery));
