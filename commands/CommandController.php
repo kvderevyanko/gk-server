@@ -3,6 +3,7 @@
 namespace app\commands;
 
 use app\models\base\DbCommands;
+use app\models\Commands;
 use app\models\Device;
 use app\modules\gpio\models\Gpio;
 use yii\console\Controller;
@@ -63,7 +64,7 @@ class CommandController extends Controller
 
         //Разбили по структуре  pinType => deviceId => pin, теперь начинаем высчитывать условия
         foreach ($result as $pinType => $device){
-            if($pinType === DbCommands::PIN_TYPE_GPIO) {
+            if($pinType === Commands::PIN_TYPE_GPIO) {
                 foreach ($device as $deviceId => $pins) {
                     foreach ($pins as $pin => $pinValues){
                         $gpio = Gpio::findOne(['deviceId' => $deviceId, 'pin' => $pin, 'active' => Gpio::STATUS_ACTIVE]);
