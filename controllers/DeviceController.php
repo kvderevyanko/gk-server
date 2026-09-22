@@ -120,7 +120,21 @@ class DeviceController extends Controller
      */
     public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->delete();
+        $transaction = Yii::$app->db->beginTransaction();
+
+        try {
+            if ($this->findModel($id)->delete() === false) {
+                throw new \RuntimeException('Не удалось удалить устройство.');
+            }
+
+            $transaction->commit();
+        } catch (\Throwable $exception) {
+            if ($transaction->isActive) {
+                $transaction->rollBack();
+            }
+
+            throw $exception;
+        }
 
         return $this->redirect(['index']);
     }

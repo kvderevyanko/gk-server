@@ -41,6 +41,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="management-card__actions">
                         <?= Html::a('Открыть управление', ['/device/control', 'device' => $device->id], ['class' => 'btn btn-default']) ?>
                         <?= Html::a('Изменить', ['update', 'id' => $device->id], ['class' => 'btn btn-primary']) ?>
+                        <?= Html::a('Удалить', ['delete', 'id' => $device->id], [
+                            'class' => 'btn btn-danger',
+                            'data' => [
+                                'confirm' => 'Удалить устройство вместе с его настройками, периферией, историей и журналом команд? Это действие нельзя отменить.',
+                                'method' => 'post',
+                            ],
+                        ]) ?>
                     </div>
                 </article>
             <?php endforeach; ?>

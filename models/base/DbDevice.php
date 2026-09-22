@@ -1,6 +1,8 @@
 <?php
 
 namespace app\models\base;
+use app\models\CommandDelivery;
+use app\models\DeviceSettings;
 use app\modules\dht\models\DbDht;
 use app\modules\dht\models\DbTemperatureInfo;
 use app\modules\gpio\models\DbGpio;
@@ -108,6 +110,10 @@ class DbDevice extends \yii\db\ActiveRecord
         DbTemperatureInfo::deleteAll(['deviceId' => $this->id]);
 
         DbCommands::deleteAll(['deviceId' => $this->id]);
+
+        DeviceSettings::deleteAll(['deviceId' => $this->id]);
+
+        CommandDelivery::deleteAll(['deviceId' => $this->id]);
 
         parent::afterDelete();
     }
