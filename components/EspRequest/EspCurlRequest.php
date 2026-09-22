@@ -23,6 +23,7 @@ class EspCurlRequest extends EspRequest
             ->setMethod('GET')
             ->setUrl($this->host.$this->file)
             ->setData($this->params)
+            ->addHeaders($this->requestHeaders())
             ->setOptions([
                 'timeout' => self::TIMEOUT,
             ])

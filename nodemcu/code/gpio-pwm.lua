@@ -23,15 +23,13 @@ local function validInteger(value)
 end
 
 local function saveState(state)
-    local encoded = sjson.encode(state)
-    file.open("json/pwm-action.json-tmp", "w")
-    file.write(encoded)
-    file.close()
-    file.remove("json/pwm-action.json")
-    file.rename("json/pwm-action.json-tmp", "json/pwm-action.json")
+    return saveStateFile("json/pwm-action.json", sjson.encode(state))
 end
 
-local function applyRequest(request)
+local appliedState
+local storedState
+local function applyRequest(request, restoring)
+    if type(request) ~= "table" then return response("error", "PWM request rejected") end
     local rejected, pins, state = {}, {}, {}
     local count = 0
     local clock = validInteger(request.clock or 500)
@@ -45,10 +43,12 @@ local function applyRequest(request)
         if pin ~= "clock" and pin ~= "duty" then
             local pinNumber = validInteger(pin)
             local dutyNumber = validInteger(duty)
-            if not pinNumber or pinNumber < 0 or pinNumber > 9 then
-                rejected[tostring(pin)] = "pin must be an integer from 0 to 9"
+            if not pinNumber or pinNumber < 1 or pinNumber > 9 then
+                rejected[tostring(pin)] = "PWM pin must be an integer from 1 to 9"
             elseif not dutyNumber or dutyNumber < 0 or dutyNumber > 1023 then
                 rejected[tostring(pin)] = "duty must be an integer from 0 to 1023"
+            elseif pinOwners[tostring(pinNumber)] and pinOwners[tostring(pinNumber)] ~= "pwm" then
+                rejected[tostring(pin)] = "pin is already used by " .. pinOwners[tostring(pinNumber)]
             else
                 pins[tostring(pinNumber)] = dutyNumber
                 state[tostring(pinNumber)] = dutyNumber
@@ -57,28 +57,38 @@ local function applyRequest(request)
         end
     end
     if count == 0 then rejected.request = "at least one PWM pin is required" end
-    if next(rejected) then return response("error", "PWM request rejected", nil, rejected) end
+    if count > 6 then rejected.request = "at most six PWM pins are supported" end
+    if next(rejected) then return response("error", "PWM request rejected", nil, rejected), false end
 
     state.clock = clock
     for pin, duty in pairs(pins) do
-        pwm.setup(tonumber(pin), clock, duty)
-        pwm.start(tonumber(pin))
+        if not appliedState or appliedState.clock ~= clock or appliedState[pin] ~= duty then
+            pwm.setup(tonumber(pin), clock, duty)
+            pwm.start(tonumber(pin))
+        end
+        pinOwners[pin] = "pwm"
     end
-    saveState(state)
+    appliedState = state
+    if restoring then
+        storedState = state
+    elseif not sameState(storedState, state) then
+        if not saveState(state) then
+            return response("error", "PWM state was applied but could not be persisted", pins, nil, clock), false
+        end
+        storedState = state
+    end
     collectgarbage()
-    return response("ok", "PWM command accepted", pins, nil, clock)
+    return response("ok", "PWM command accepted", pins, nil, clock), true
 end
 
 -- Restores only a state that previously passed the same validation.
 function openPwmJson()
-    if not file.open("json/pwm-action.json") then return false end
-    local encoded = file.read()
-    file.close()
+    local encoded = readStateFile("json/pwm-action.json")
     if not encoded then return false end
     local ok, state = pcall(sjson.decode, encoded)
     if not ok or type(state) ~= "table" then return false end
-    applyRequest(state)
-    return true
+    local _, applied = applyRequest(state, true)
+    return applied
 end
 
 return function(args)

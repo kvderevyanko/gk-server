@@ -35,21 +35,19 @@ if (wifi.getmode() == wifi.STATION) or (wifi.getmode() == wifi.STATIONAP) then
         print("Connected to WiFi Access Point. Got IP: " .. args["IP"])
         startServer()
         wifi.eventmon.register(wifi.eventmon.STA_DISCONNECTED, function(args)
-            print("Lost connectivity! Restarting...")
-            node.restart()
+            print("Lost WiFi connectivity; waiting for reconnect")
         end)
     end)
 
-    -- What if after a while (30 seconds) we didn't connect? Restart and keep trying.
+    -- Keep the outputs stable while the Wi-Fi stack reconnects on its own.
     local watchdogTimer = tmr.create()
-    watchdogTimer:register(30000, tmr.ALARM_SINGLE, function (watchdogTimer)
+    watchdogTimer:register(30000, tmr.ALARM_AUTO, function (watchdogTimer)
         local ip = wifi.sta.getip()
         if (not ip) then ip = wifi.ap.getip() end
         if ip == nil then
-            print("No IP after a while. Restarting...")
-            node.restart()
+            print("No IP yet; waiting for WiFi")
         else
-            --print("Successfully got IP. Good, no need to restart.")
+            startServer()
             watchdogTimer:unregister()
         end
     end)

@@ -48,7 +48,8 @@ class DbPwmValues extends \yii\db\ActiveRecord
             [['active', 'home'], 'boolean'],
             [['name'], 'string'],
             [['deviceId', 'pin'], 'unique', 'targetAttribute' => ['deviceId', 'pin']],
-            [['pin'], 'integer', 'min' => 1, 'max' => 35],
+            [['pin'], 'integer', 'min' => 1, 'max' => 9],
+            [['value'], 'integer', 'min' => 0, 'max' => 1023],
         ];
     }
 

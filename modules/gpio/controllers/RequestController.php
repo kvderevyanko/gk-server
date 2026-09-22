@@ -47,7 +47,7 @@ class RequestController extends Controller
             'options' => ['min_range' => 1],
         ]);
         $pin = filter_var(Yii::$app->request->post('pin'), FILTER_VALIDATE_INT, [
-            'options' => ['min_range' => 0],
+            'options' => ['min_range' => 0, 'max_range' => 9],
         ]);
         $value = Yii::$app->request->post('value');
 

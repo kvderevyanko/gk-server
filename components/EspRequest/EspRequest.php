@@ -28,4 +28,10 @@ abstract class EspRequest implements EspRequestInterface
         $this->file = $file;
         $this->params = $params;
     }
+
+    protected function requestHeaders(): array
+    {
+        $token = getenv('ESP_HTTP_TOKEN');
+        return $token === false || $token === '' ? [] : ['X-ESP-Token' => $token];
+    }
 }

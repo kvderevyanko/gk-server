@@ -76,14 +76,13 @@ local function decodeColor(value, rejected)
 end
 
 local function saveState(state)
-    file.open("json/ws-action.json-tmp", "w")
-    file.write(sjson.encode(state))
-    file.close()
-    file.remove("json/ws-action.json")
-    file.rename("json/ws-action.json-tmp", "json/ws-action.json")
+    return saveStateFile("json/ws-action.json", sjson.encode(state))
 end
 
-local function applyRequest(request)
+local appliedState
+local storedState
+local function applyRequest(request, restoring)
+    if type(request) ~= "table" then return response("error", "WS2812 request rejected") end
     local rejected = {}
     local buffer = integer(request.buffer, nil, 1, 330, "buffer", rejected)
     local mode = request.mode and tostring(request.mode) or nil
@@ -93,15 +92,25 @@ local function applyRequest(request)
     local delay = integer(request.delay, 100, 20, 10000, "delay", rejected)
     local bright = integer(request.bright, 100, 1, 255, "bright", rejected)
     local modeOptions = integer(request.mode_options, 1, 1, 255, "mode_options", rejected)
-    local blink = integer(request.blink, 0, 0, 1, "blink", rejected)
-    local blueBright = integer(request.blueBright, 0, 0, 225, "blueBright", rejected)
-    local blueMinBright = integer(request.blueMinBright, 0, 0, 225, "blueMinBright", rejected)
-    local blueMaxBright = integer(request.blueMaxBright, 0, 0, 225, "blueMaxBright", rejected)
-    local blueSpeed = integer(request.blueSpeed, 5, 5, 1000, "blueSpeed", rejected)
-    local blueStep = integer(request.blueStep, 1, 1, 20, "blueStep", rejected)
     local color, colorJson = decodeColor(request.single_color, rejected)
+    if pinOwners["4"] and pinOwners["4"] ~= "ws" then
+        rejected.pin = "D4 is already used by " .. pinOwners["4"]
+    end
 
-    if next(rejected) then return response("error", "WS2812 request rejected", nil, rejected) end
+    if next(rejected) then return response("error", "WS2812 request rejected", nil, rejected), false end
+    local state = {
+        buffer = buffer, mode = mode, delay = delay, bright = bright,
+        mode_options = modeOptions, single_color = colorJson,
+    }
+    if sameState(appliedState, state) then
+        if not restoring and not sameState(storedState, state) then
+            if not saveState(state) then
+                return response("error", "WS2812 state was applied but could not be persisted", state), false
+            end
+            storedState = state
+        end
+        return response("ok", "WS2812 command accepted", state), true
+    end
     if not wsTimer then _G.wsTimer = tmr.create() end
     wsTimer:stop()
     if mode == "static" then
@@ -112,7 +121,6 @@ local function applyRequest(request)
 
     if mode == "off" then
         wsEffOff(buffer)
-        blueDiode(blink, blueBright, blueMinBright, blueMaxBright, blueSpeed, blueStep)
     elseif mode == "static" then
         wsEffStatic(buffer, color, bright)
     elseif mode == "static-soft-blink" then
@@ -128,29 +136,29 @@ local function applyRequest(request)
     elseif mode == "rainbow-circle" then
         wsEffRainbowCircle(buffer, color, bright, delay, modeOptions)
     end
-
-    local state = {
-        buffer = buffer, mode = mode, delay = delay, bright = bright,
-        mode_options = modeOptions, blink = blink, blueBright = blueBright,
-        blueMinBright = blueMinBright, blueMaxBright = blueMaxBright,
-        blueSpeed = blueSpeed, blueStep = blueStep, single_color = colorJson,
-    }
-    saveState(state)
+    pinOwners["4"] = "ws"
+    appliedState = state
+    if restoring then
+        storedState = state
+    elseif not sameState(storedState, state) then
+        if not saveState(state) then
+            return response("error", "WS2812 state was applied but could not be persisted", state), false
+        end
+        storedState = state
+    end
     collectgarbage()
-    return response("ok", "WS2812 command accepted", state)
+    return response("ok", "WS2812 command accepted", state), true
 end
 
 -- Restores the last accepted state and prepares the shared effect timer.
 function openWsJson()
     _G.wsTimer = tmr.create()
-    if not file.open("json/ws-action.json") then return false end
-    local encoded = file.read()
-    file.close()
+    local encoded = readStateFile("json/ws-action.json")
     if not encoded then return false end
     local ok, state = pcall(sjson.decode, encoded)
     if not ok or type(state) ~= "table" then return false end
-    applyRequest(state)
-    return true
+    local _, applied = applyRequest(state, true)
+    return applied
 end
 
 return function(args)

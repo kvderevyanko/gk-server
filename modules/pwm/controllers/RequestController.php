@@ -30,7 +30,7 @@ class RequestController extends Controller
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $deviceId = filter_var(Yii::$app->request->post('deviceId'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
-        $pin = filter_var(Yii::$app->request->post('pin'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]);
+        $pin = filter_var(Yii::$app->request->post('pin'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 9]]);
         $value = filter_var(Yii::$app->request->post('value'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 0, 'max_range' => 1023]]);
         if ($deviceId === false || $pin === false || $value === false) throw new BadRequestHttpException('Параметры PWM некорректны.');
         if (!Pwm::setStatus($deviceId, $pin, $value)) throw new NotFoundHttpException('Активный PWM не найден.');

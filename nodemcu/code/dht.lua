@@ -19,8 +19,11 @@ end
 return function(args)
     local request = parseArgs(args)
     local pin = tonumber(request.pin)
-    if not pin or pin % 1 ~= 0 or pin < 0 or pin > 9 then
-        return response("error", "pin must be an integer from 0 to 9")
+    if not pin or pin % 1 ~= 0 or pin < 1 or pin > 9 then
+        return response("error", "DHT pin must be an integer from 1 to 9")
+    end
+    if pinOwners[tostring(pin)] then
+        return response("error", "pin is already used by " .. pinOwners[tostring(pin)], pin)
     end
 
     local status, temp, humi, tempDec, humiDec = dht.read(pin)

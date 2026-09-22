@@ -21,6 +21,7 @@ local serverFiles = {
    'server.lua',
    'wi-fi.lua',
    'restart.lua',
+   'state-file.lua',
    'gpio-pwm.lua',
    'gpio.lua',
    '_config.lua',

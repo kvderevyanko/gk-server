@@ -18,8 +18,6 @@ function loadSettings(){
                 Object.keys(response).forEach(function (key) {
                     if (key === "mode") {
                         gi('modeList').value = response[key];
-                    } else if (key === "blink") {
-                        if(Number(response[key])) gi(key).checked = true;
                     } else {
                         if(gi(key))  gi(key).value = response[key];
                         if(gi(key+'BId'))  gi(key+'BId').innerHTML = response[key];
@@ -38,16 +36,7 @@ function loadSettings(){
 function showBlocks(){
     if(gi('modeList').value === "off") {
         gi('wsBlock').style.display = 'none';
-        gi('blueBlock').style.display = 'block';
-        if(gi('blink').checked) {
-            gi('optionsBlue').style.display = 'block';
-            gi('pwmBlue').style.display = 'none';
-        } else {
-            gi('optionsBlue').style.display = 'none';
-            gi('pwmBlue').style.display = 'block';
-        }
     } else {
         gi('wsBlock').style.display = 'block'
-        gi('blueBlock').style.display = 'none'
     }
 }

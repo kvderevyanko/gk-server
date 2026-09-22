@@ -1,15 +1,11 @@
 -- Restores GPIO settings after a restart.
 function openGpioJson()
-    if file.open("json/gpio-action.json") then
-        local stored = file.read()
-        file.close()
-        if stored then
-            local state = sjson.decode(stored)
-            actionRequest(state)
-        end
-        return true
-    end
-    return false
+    local stored = readStateFile("json/gpio-action.json")
+    if not stored then return false end
+    local ok, state = pcall(sjson.decode, stored)
+    if not ok or type(state) ~= "table" then return false end
+    local _, applied = actionRequest(state, true)
+    return applied
 end
 
 local function encodeResponse(status, message, pins, rejected)
@@ -55,36 +51,51 @@ local function validateRequest(request)
 end
 
 local function saveState(pins)
-    local encoded = sjson.encode(pins)
-    if not file.open("json/gpio-action.json-tmp", "w") then
-        return false
-    end
-
-    file.write(encoded)
-    file.close()
-    file.remove("json/gpio-action.json")
-    file.rename("json/gpio-action.json-tmp", "json/gpio-action.json")
-    return true
+    return saveStateFile("json/gpio-action.json", sjson.encode(pins))
 end
 
 -- Applies a complete, validated GPIO request and persists the commanded state.
-function actionRequest(request)
+local configuredPins = {}
+local lastValues = {}
+local storedPins
+function actionRequest(request, restoring)
+    if type(request) ~= "table" then
+        return encodeResponse("error", "GPIO request rejected", nil, {request = "invalid state"}), false
+    end
     local pins, rejected = validateRequest(request)
+    for pin in pairs(pins) do
+        local owner = pinOwners[pin]
+        if owner and owner ~= "gpio" then
+            rejected[pin] = "pin is already used by " .. owner
+        end
+    end
     if next(rejected) ~= nil then
-        return encodeResponse("error", "GPIO request rejected", nil, rejected)
+        return encodeResponse("error", "GPIO request rejected", nil, rejected), false
     end
 
     for pin, value in pairs(pins) do
         local numericPin = tonumber(pin)
-        gpio.mode(numericPin, gpio.OUTPUT)
-        gpio.write(numericPin, value == 1 and gpio.HIGH or gpio.LOW)
+        if not configuredPins[pin] then
+            gpio.mode(numericPin, gpio.OUTPUT)
+            configuredPins[pin] = true
+        end
+        if lastValues[pin] ~= value then
+            gpio.write(numericPin, value == 1 and gpio.HIGH or gpio.LOW)
+            lastValues[pin] = value
+        end
+        pinOwners[pin] = "gpio"
     end
 
-    if not saveState(pins) then
-        return encodeResponse("error", "GPIO state was applied but could not be persisted", pins)
+    if restoring then
+        storedPins = pins
+    elseif not sameState(storedPins, pins) then
+        if not saveState(pins) then
+            return encodeResponse("error", "GPIO state was applied but could not be persisted", pins), false
+        end
+        storedPins = pins
     end
 
-    return encodeResponse("ok", "GPIO command accepted", pins)
+    return encodeResponse("ok", "GPIO command accepted", pins), true
 end
 
 return function(args)

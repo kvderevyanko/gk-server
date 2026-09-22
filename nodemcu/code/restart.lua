@@ -1,11 +1,13 @@
-
-dofile("ws.lc");
+-- A pin must not be driven by two independent modules at the same time.
+_G.pinOwners = {}
+dofile("state-file.lc")
+_G.wsHandler = dofile("ws.lc");
 openWsJson();
 
-dofile("gpio-pwm.lc");
+_G.pwmHandler = dofile("gpio-pwm.lc");
 openPwmJson();
 
-dofile("gpio.lc");
+_G.gpioHandler = dofile("gpio.lc");
 openGpioJson();
 
 collectgarbage();

@@ -4,6 +4,8 @@ local conf = {}
 conf.general = {}
 -- TCP port in which to listen for incoming HTTP requests.
 conf.general.port = 80
+-- Optional shared token for HTTP requests. Set the same ESP_HTTP_TOKEN on Yii2.
+-- conf.general.token = "replace-with-a-long-random-token"
 
 -- WiFi configuration
 conf.wifi = {}

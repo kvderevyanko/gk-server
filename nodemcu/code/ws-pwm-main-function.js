@@ -1,13 +1,13 @@
 function cl(str) {console.log(str);}
 function prepareRequest(){
     showBlocks();
-    let str = ["mode="+gi('modeList').value, 'blink='+(gi('blink').checked?1:0)];
+    let str = ["mode="+gi('modeList').value];
     let inputs = document.getElementsByTagName('input');
     Object.keys(inputs).forEach(function(key) {
         let inputName = inputs[key].name;
         let inputValue = inputs[key].value;
         if(inputName === "single_color" && inputValue) {inputValue = JSON.stringify(hexToGrb(inputValue));}
-        if(inputName && inputName !== "blink") {str.push(inputName+"="+inputValue)}
+        if(inputName) {str.push(inputName+"="+inputValue)}
     });
     sendRequest(str.join('&'))
 }

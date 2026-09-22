@@ -36,6 +36,10 @@ done
 cp "$config" "$staging_dir/_config.lua"
 
 "$uploader" --port "$port" --baud 115200 --start_baud 115200 --timeout 15 file remove_all
+# The old application remains active in RAM after file removal. Restart into
+# an empty console before transfer so its timers cannot disrupt the uploader.
+"$uploader" --port "$port" --baud 115200 --start_baud 115200 --timeout 15 node restart
+sleep 2
 
 set --
 for file in "$staging_dir"/*; do

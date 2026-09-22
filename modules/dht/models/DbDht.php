@@ -38,7 +38,7 @@ class DbDht extends \yii\db\ActiveRecord
             [['deviceId', 'pin'], 'required'],
             [['deviceId', 'pin'], 'integer'],
             [['deviceId', 'pin'], 'unique', 'targetAttribute' => ['deviceId', 'pin']],
-            [['pin'], 'integer', 'min' => 1, 'max' => 12],
+            [['pin'], 'integer', 'min' => 1, 'max' => 9],
             [['active', 'home'], 'boolean'],
             [['name'], 'string', 'max' => 255],
         ];
